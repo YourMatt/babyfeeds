@@ -1,0 +1,40 @@
+{
+  "name": "creativeconsortium-website-2019",
+  "version": "0.0.0",
+  "description": "Website for Creative Consortium",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YourMatt/creativeconsortium-website-2019.git"
+  },
+  "author": "Matt Sadowski",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "async": "~2.2.0",
+    "body-parser": "^1.18.3",
+    "bootstrap": "~4.0.0-beta.3",
+    "compression": "^1.7.2",
+    "dotenv": "~4.0.0",
+    "ejs": "^2.5.7",
+    "express": "^4.16.3",
+    "fb": "^2.0.0",
+    "jquery": "~3.1.1",
+    "moment": "^2.22.2",
+    "mysql": "^2.15.0",
+    "nl2br": "0.0.3",
+    "numeral": "~2.0.6",
+    "sendgrid": "~4.7.1"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.3",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-cssmin": "^2.2.1",
+    "grunt-contrib-sass": "^1.0.0",
+    "grunt-contrib-uglify": "^3.1.0",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-copy": "^0.1.0",
+    "grunt-jekyll": "^0.4.6",
+    "grunt-postcss": "^0.9.0"
+  }
+}
