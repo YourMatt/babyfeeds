@@ -11,7 +11,7 @@ body {
 #bottle-area {
   display: none;
   position: absolute;
-  height: calc(100% - 250px);
+  height: calc(100% - 200px);
   left: 50%;
   transform: translateX(-50%); }
   #bottle-area svg {
@@ -25,21 +25,21 @@ body {
     width: 100%;
     font-family: impact; }
     #bottle-area #remaining-today-area h1 {
-      font-size: 45px;
+      font-size: 40px;
       margin-bottom: 0;
       line-height: 30px;
-      margin-top: 50px; }
+      margin-top: 17px; }
     #bottle-area #remaining-today-area h2 {
-      font-size: 28px;
+      font-size: 22px;
       text-transform: uppercase; }
 
 #feed-area {
   display: none;
   position: relative;
   margin: 0px auto;
-  width: 225px;
-  height: calc(100% - 250px);
-  padding-top: 160px; }
+  width: 130px;
+  height: calc(100% - 200px);
+  padding-top: 52px; }
   #feed-area form {
     display: flex;
     flex-direction: column;
@@ -54,10 +54,10 @@ body {
     #feed-area form #label-feed-volume {
       text-align: center;
       font-family: impact;
-      font-size: 57px;
+      font-size: 40px;
       font-weight: bold;
-      line-height: 50px;
-      margin-top: 20px; }
+      line-height: 30px;
+      margin-top: -12px; }
     #feed-area form #button-feed-save {
       text-transform: uppercase;
       font-family: impact;
@@ -65,7 +65,7 @@ body {
       padding: 0px 30px;
       margin: 0px auto;
       display: block;
-      margin-top: 15px; }
+      margin-top: 0px; }
 
 #input-feed-time {
   width: 0; }
@@ -73,8 +73,8 @@ body {
     margin-top: 90px;
     font-family: impact;
     font-weight: bold;
-    font-size: 40px;
-    line-height: 54px; }
+    font-size: 25px;
+    line-height: 30px; }
     #input-feed-time .timepicker-picker .separator {
       display: inline; }
     #input-feed-time .timepicker-picker button {
@@ -83,8 +83,10 @@ body {
       border: none;
       cursor: pointer; }
     #input-feed-time .timepicker-picker span, #input-feed-time .timepicker-picker button {
-      font-size: 40px;
-      line-height: 54px; }
+      width: auto;
+      height: 30px;
+      font-size: 25px;
+      line-height: 30px; }
       #input-feed-time .timepicker-picker span:hover, #input-feed-time .timepicker-picker button:hover {
         background: none; }
   #input-feed-time .timepicker-hours td, #input-feed-time .timepicker-minutes td {
@@ -100,7 +102,7 @@ body {
 #history-area {
   display: flex;
   justify-content: space-around;
-  margin-top: 40px; }
+  margin-top: 12px; }
   #history-area #input-history-last-month .bootstrap-datetimepicker-widget .datepicker .prev, #history-area #input-history-last-month .bootstrap-datetimepicker-widget .datepicker .next, #history-area #input-history-last-month .bootstrap-datetimepicker-widget .datepicker .dow, #history-area #input-history-current-month .bootstrap-datetimepicker-widget .datepicker .prev, #history-area #input-history-current-month .bootstrap-datetimepicker-widget .datepicker .next, #history-area #input-history-current-month .bootstrap-datetimepicker-widget .datepicker .dow {
     display: none; }
   #history-area #input-history-last-month .bootstrap-datetimepicker-widget .datepicker .picker-switch, #history-area #input-history-current-month .bootstrap-datetimepicker-widget .datepicker .picker-switch {
@@ -138,14 +140,14 @@ body {
       background-color: #24FF00; }
 
 #history-area #input-history-last-month, #history-area #input-history-current-month {
-  width: 200px; }
+  width: 150px; }
   #history-area #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table, #history-area #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table {
-    width: 200px; }
+    width: 150px; }
     #history-area #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table .day, #history-area #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table .day {
-      width: 28.4285714286px;
-      height: 28.4285714286px;
-      font-size: 9.4761904762px;
-      line-height: 18.4285714286px; }
+      width: 21.2857142857px;
+      height: 21.2857142857px;
+      font-size: 7.0952380952px;
+      line-height: 11.2857142857px; }
 
 /*
 @media (max-width: 500px) {
