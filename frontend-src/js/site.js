@@ -2,6 +2,14 @@ $(function(){
 
     babyFeeds.init();
 
+    // reload the page if hidden and showing again
+    $(document).on("mozvisibilitychange visibilitychange", function(){
+        var state = document.visibilityState || document.webkitVisibilityState;
+        if (state === "visible") {
+            babyFeeds.init();
+        }
+    });
+
 });
 
 var babyFeeds = {
@@ -11,6 +19,7 @@ var babyFeeds = {
         babyFeeds.ui.updateFeedVolumeLabel();
         $("#input-feed-volume").off().bind("input", babyFeeds.ui.updateFeedVolumeLabel);
 
+        $("#button-feed-save").prop("disabled", false);
         $("#button-feed-save").off().click(babyFeeds.userActions.saveFeed);
 
         babyFeeds.server.load(function(data) {
@@ -81,7 +90,7 @@ var babyFeeds = {
                 }
 
                 // add the tier and percentage to the calendar date
-                $(".day[data-day=" + calendarDate.replace(/\//g, "\\/") + "]")
+                $(".day[data-day=" + calendarDate.replace(/\//g, "\\/") + "]:not(.old,.new)")
                 .addClass("tier" + tier)
                 .text(percent + "%");
 
@@ -101,6 +110,9 @@ var babyFeeds = {
             $("#input-feed-time .timepicker button").removeClass("btn").removeClass("btn-primary");
             $("#input-feed-time .timepicker-picker table.table-condensed tr:first").hide();
             $("#input-feed-time .timepicker-picker table.table-condensed tr:nth-child(3)").hide();
+
+            $("#input-feed-time").datetimepicker("date", moment())
+
         },
 
         buildHistoryCalendars: function() {
@@ -140,6 +152,7 @@ var babyFeeds = {
 
         saveFeed: function(event) {
             event.preventDefault();
+            $("#button-feed-save").prop("disabled", true);
 
             // find the date - if the time if more than 2 hours into the future, use yesterday, allowing for up to 22
             // hours to enter a past feed
