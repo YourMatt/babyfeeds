@@ -19,13 +19,24 @@ exports.process = function (req, res) {
                     });
 
                     var today = moment().format("YYYY-MM-DD");
+
+                    var lastFeedTime = moment(feedTotalsPerDay[feedTotalsPerDay.length - 1].LastFeedTime).format("h:mma");
+                    var actualAge = moment().diff(moment(process.env.BIRTH_DATE), "week");
+                    var correctedAge = moment().diff(moment(process.env.EXPECTED_DATE), "week");
+                    var weightInOunces = feedTotalsPerDay[feedTotalsPerDay.length - 1].OuncesOnDay;
+                    var weight = Math.floor(weightInOunces / 16) + "lbs " + (weightInOunces % 16) + "oz";
+
                     database.query.getFeedsForDay(today, function (feedsForDay) {
 
                         res.json({
                             today: today,
+                            lastFeedTime: lastFeedTime,
                             feedTotalsPerDay: feedTotalsPerDay,
                             feedsForToday: feedsForDay,
-                            feedRequiredForToday: feedTotalsPerDay[feedTotalsPerDay.length-1].Required
+                            feedRequiredForToday: feedTotalsPerDay[feedTotalsPerDay.length-1].Required,
+                            weight: weight,
+                            actualAge: actualAge,
+                            correctedAge: correctedAge
                         });
 
                     });

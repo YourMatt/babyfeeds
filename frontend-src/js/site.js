@@ -26,10 +26,14 @@ var babyFeeds = {
             console.log(data);
 
             // display controls
-            $("#bottle-area").show();
-            $("#feed-area").show();
             babyFeeds.ui.buildTimeInput();
             babyFeeds.ui.buildHistoryCalendars();
+
+            // set provided data that doesn't require transformation
+            $("#last-feed span").text(data.lastFeedTime);
+            $("#weight").text(data.weight); // convert to ounces
+            $("#actual-age").text(data.actualAge);
+            $("#corrected-age").text(data.correctedAge);
 
             // add the background indicator for each feed
             var totalFeedToday = 0;
@@ -55,11 +59,13 @@ var babyFeeds = {
             // set the amount remaining for today
             var mlsRemaining = data.feedRequiredForToday - totalFeedToday;
             if (mlsRemaining > 0) {
-                $("#remaining-today-area span").text(mlsRemaining);
+                $("#bottle-overflow").hide();
+                $("#stats-today span").text(mlsRemaining);
+                $("#remaining-today-area").show();
             }
             else {
 
-                // remove the remaining amoun text
+                // remove the remaining amount text
                 $("#remaining-today-area").hide();
 
                 // blink the overflow area
@@ -95,6 +101,9 @@ var babyFeeds = {
                 .text(percent + "%");
 
             });
+
+            // display the page
+            $("#container").css("display", "flex");
 
         });
 

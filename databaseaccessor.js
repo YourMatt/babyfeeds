@@ -9,6 +9,7 @@ exports.query = {
                 "SELECT    DATE_FORMAT(f.Date, '%Y-%m-%d') AS Date " +
                 ",         SUM(f.Milliliters) AS Total " +
                 ", (       SELECT Ounces FROM Weights WHERE Date <= DATE_FORMAT(f.Date, '%Y-%m-%d') ORDER BY Date DESC LIMIT 1) AS OuncesOnDay " +
+                ",         DATE_FORMAT(MAX(f.Date), '%Y-%m-%d %H:%i') AS LastFeedTime " +
                 "FROM      Feeds f " +
                 "GROUP BY  DATE_FORMAT(f.Date, '%Y-%m-%d')"
             },
