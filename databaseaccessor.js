@@ -37,9 +37,9 @@ exports.query = {
         exports.access.insert({
             sql:
             "INSERT INTO Feeds " +
-            "(           Date, Milliliters) " +
-            "VALUES (    ?, ?)",
-            values: [dateTime, milliliters]
+            "(           BabyId, RecipeId, Date, Milliliters) " +
+            "VALUES (    ?, ?, ?, ?)",
+            values: [1, 2, dateTime, milliliters]
             },
             callback);
 
