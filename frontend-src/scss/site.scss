@@ -80,6 +80,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    overflow: visible;
     width: 50%;
     height: 50%;
     margin-top: 0%;
@@ -112,6 +113,7 @@ body {
       margin-top: 5px;
     }
     #input-feed-time {
+      position: relative;
       width: 0;
       .timepicker-picker {
         margin-top: 90px;
@@ -138,15 +140,18 @@ body {
           }
         }
       }
-      .timepicker-hours td, .timepicker-minutes td {
-        height: 20px;
-        line-height: 20px;
-        width: 54px;
-        background: white;
-        font-size: 20px;
-        font-family: $font-headings;
-        padding: 10px;
-        border: 5px solid black;
+      .timepicker-hours, .timepicker-minutes {
+        position: absolute;
+        td {
+          height: 20px;
+          line-height: 20px;
+          width: 54px;
+          background: white;
+          font-size: 20px;
+          font-family: $font-headings;
+          padding: 10px;
+          border: 5px solid black;
+        }
       }
     }
   }

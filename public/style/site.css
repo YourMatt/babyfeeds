@@ -62,6 +62,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    overflow: visible;
     width: 50%;
     height: 50%;
     margin-top: 0%;
@@ -90,6 +91,7 @@ body {
       display: block;
       margin-top: 5px; }
     #today form #input-feed-time {
+      position: relative;
       width: 0; }
       #today form #input-feed-time .timepicker-picker {
         margin-top: 90px;
@@ -111,15 +113,17 @@ body {
           line-height: 30px; }
           #today form #input-feed-time .timepicker-picker span:hover, #today form #input-feed-time .timepicker-picker button:hover {
             background: none; }
-      #today form #input-feed-time .timepicker-hours td, #today form #input-feed-time .timepicker-minutes td {
-        height: 20px;
-        line-height: 20px;
-        width: 54px;
-        background: white;
-        font-size: 20px;
-        font-family: "Luckiest Guy", Impact, sans-serif;
-        padding: 10px;
-        border: 5px solid black; }
+      #today form #input-feed-time .timepicker-hours, #today form #input-feed-time .timepicker-minutes {
+        position: absolute; }
+        #today form #input-feed-time .timepicker-hours td, #today form #input-feed-time .timepicker-minutes td {
+          height: 20px;
+          line-height: 20px;
+          width: 54px;
+          background: white;
+          font-size: 20px;
+          font-family: "Luckiest Guy", Impact, sans-serif;
+          padding: 10px;
+          border: 5px solid black; }
 
 #history {
   display: flex;
