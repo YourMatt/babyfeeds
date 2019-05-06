@@ -12,42 +12,45 @@ exports.process = function (req, res) {
 
         case "/api/load":
             if (method === "GET") {
-                database.query.getFeedTotalsPerDay(function (feedTotalsPerDay) {
-                    feedTotalsPerDay.forEach(function (element) {
+                database.query.getBabyInfo(
+                    process.env.SELECTED_BABY,
+                    function(babyData) {
 
-                        var goalCaloriesForDay = Math.ceil(element.WeightOuncesOnDay * process.env.KILOGRAMS_PER_OUNCE * element.GoalCaloriesPerKilogramOnDay);
-                        var totalCaloriesForDay = Math.ceil(element.AverageRecipeCaloriesPerOunce / process.env.MILLILITERS_PER_OUNCE * element.TotalVolume);
+                        database.query.getFeedTotalsPerDay(function (feedTotalsPerDay) {
 
-                        element.Percent = Math.round(totalCaloriesForDay / goalCaloriesForDay * 100);
+                            var goalCaloriesForDay = 0;
+                            var totalCaloriesForDay = 0;
+                            feedTotalsPerDay.forEach(function (element) {
+                                goalCaloriesForDay = Math.ceil(element.WeightOuncesOnDay * process.env.KILOGRAMS_PER_OUNCE * element.GoalCaloriesPerKilogramOnDay);
+                                totalCaloriesForDay = Math.ceil(element.AverageRecipeCaloriesPerOunce / process.env.MILLILITERS_PER_OUNCE * element.TotalVolume);
+                                element.Percent = Math.round(totalCaloriesForDay / goalCaloriesForDay * 100);
+                            });
 
-                        // TODO: Calculate daily requirement only for current day, using query of account info
-                        element.Required = Math.floor(element.WeightOuncesOnDay * process.env.FEED_MLS_PER_BABY_WEIGHT_OUNCE);
+                            var today = moment().format("YYYY-MM-DD");
+                            var lastFeedTime = moment(feedTotalsPerDay[feedTotalsPerDay.length - 1].LastFeedTime).format("h:mma");
+                            var actualAge = moment().diff(moment(babyData.BirthDate), "week");
+                            var correctedAge = moment().diff(moment(babyData.ExpectedDate), "week");
+                            var weightInOunces = feedTotalsPerDay[feedTotalsPerDay.length - 1].WeightOuncesOnDay;
+                            var weight = Math.floor(weightInOunces / 16) + "lbs " + (weightInOunces % 16) + "oz";
+                            var goalVolume = Math.round(goalCaloriesForDay / (babyData.RecipeCaloriesPerOunce / process.env.MILLILITERS_PER_OUNCE));
 
-                    });
+                            database.query.getFeedsForDay(today, function (feedsForDay) {
 
-                    var today = moment().format("YYYY-MM-DD");
+                                res.json({
+                                    today: today,
+                                    lastFeedTime: lastFeedTime,
+                                    feedTotalsPerDay: feedTotalsPerDay,
+                                    feedsForToday: feedsForDay,
+                                    feedRequiredForToday: goalVolume,
+                                    weight: weight,
+                                    actualAge: actualAge,
+                                    correctedAge: correctedAge
+                                });
 
-                    var lastFeedTime = moment(feedTotalsPerDay[feedTotalsPerDay.length - 1].LastFeedTime).format("h:mma");
-                    var actualAge = moment().diff(moment(process.env.BIRTH_DATE), "week");
-                    var correctedAge = moment().diff(moment(process.env.EXPECTED_DATE), "week");
-                    var weightInOunces = feedTotalsPerDay[feedTotalsPerDay.length - 1].WeightOuncesOnDay;
-                    var weight = Math.floor(weightInOunces / 16) + "lbs " + (weightInOunces % 16) + "oz";
-
-                    database.query.getFeedsForDay(today, function (feedsForDay) {
-
-                        res.json({
-                            today: today,
-                            lastFeedTime: lastFeedTime,
-                            feedTotalsPerDay: feedTotalsPerDay,
-                            feedsForToday: feedsForDay,
-                            feedRequiredForToday: feedTotalsPerDay[feedTotalsPerDay.length-1].Required,
-                            weight: weight,
-                            actualAge: actualAge,
-                            correctedAge: correctedAge
+                            });
                         });
-
-                    });
-                });
+                    }
+                );
 
                 processed = true;
             }

@@ -2,6 +2,24 @@ var mysql = require ("mysql");
 
 exports.query = {
 
+    getBabyInfo: function(babyId, callback) {
+
+        exports.access.selectSingle({
+                sql:
+                "SELECT     b.Name " +
+                ",          b.BirthDate " +
+                ",          b.ExpectedDate " +
+                ",          r.RecipeId " +
+                ",          r.CaloriesPerOunce AS RecipeCaloriesPerOunce " +
+                "FROM       Babies b " +
+                "INNER JOIN Recipes r ON r.RecipeId = b.RecipeId " +
+                "WHERE      BabyId = ? ",
+                values: babyId
+            },
+            callback);
+
+    },
+
     getFeedTotalsPerDay: function(callback) {
 
         exports.access.selectMultiple ({
