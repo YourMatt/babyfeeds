@@ -14,8 +14,15 @@ exports.process = function (req, res) {
             if (method === "GET") {
                 database.query.getFeedTotalsPerDay(function (feedTotalsPerDay) {
                     feedTotalsPerDay.forEach(function (element) {
-                        element.Required = Math.floor(element.OuncesOnDay * process.env.FEED_MLS_PER_BABY_WEIGHT_OUNCE);
-                        element.Percent = Math.floor(100 * element.Total / element.Required);
+
+                        var goalCaloriesForDay = Math.ceil(element.WeightOuncesOnDay * process.env.KILOGRAMS_PER_OUNCE * element.GoalCaloriesPerKilogramOnDay);
+                        var totalCaloriesForDay = Math.ceil(element.AverageRecipeCaloriesPerOunce / process.env.MILLILITERS_PER_OUNCE * element.TotalVolume);
+
+                        element.Percent = Math.round(totalCaloriesForDay / goalCaloriesForDay * 100);
+
+                        // TODO: Calculate daily requirement only for current day, using query of account info
+                        element.Required = Math.floor(element.WeightOuncesOnDay * process.env.FEED_MLS_PER_BABY_WEIGHT_OUNCE);
+
                     });
 
                     var today = moment().format("YYYY-MM-DD");
@@ -23,7 +30,7 @@ exports.process = function (req, res) {
                     var lastFeedTime = moment(feedTotalsPerDay[feedTotalsPerDay.length - 1].LastFeedTime).format("h:mma");
                     var actualAge = moment().diff(moment(process.env.BIRTH_DATE), "week");
                     var correctedAge = moment().diff(moment(process.env.EXPECTED_DATE), "week");
-                    var weightInOunces = feedTotalsPerDay[feedTotalsPerDay.length - 1].OuncesOnDay;
+                    var weightInOunces = feedTotalsPerDay[feedTotalsPerDay.length - 1].WeightOuncesOnDay;
                     var weight = Math.floor(weightInOunces / 16) + "lbs " + (weightInOunces % 16) + "oz";
 
                     database.query.getFeedsForDay(today, function (feedsForDay) {

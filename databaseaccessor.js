@@ -6,12 +6,15 @@ exports.query = {
 
         exports.access.selectMultiple ({
                 sql:
-                "SELECT    DATE_FORMAT(f.Date, '%Y-%m-%d') AS Date " +
-                ",         SUM(f.Milliliters) AS Total " +
-                ", (       SELECT Ounces FROM Weights WHERE Date <= DATE_FORMAT(f.Date, '%Y-%m-%d') ORDER BY Date DESC LIMIT 1) AS OuncesOnDay " +
-                ",         DATE_FORMAT(MAX(f.Date), '%Y-%m-%d %H:%i') AS LastFeedTime " +
-                "FROM      Feeds f " +
-                "GROUP BY  DATE_FORMAT(f.Date, '%Y-%m-%d')"
+                "SELECT     DATE_FORMAT(f.Date, '%Y-%m-%d') AS Date " +
+                ",          SUM(f.Milliliters) AS TotalVolume " +
+                ", (        SELECT Ounces FROM Weights WHERE Date <= DATE_FORMAT(f.Date, '%Y-%m-%d') ORDER BY Date DESC LIMIT 1) AS WeightOuncesOnDay " +
+                ", (        SELECT CaloriesPerKilogram FROM Goals WHERE Date <= DATE_FORMAT(f.Date, '%Y-%m-%d') ORDER BY Date DESC LIMIT 1) AS GoalCaloriesPerKilogramOnDay " +
+                ",          DATE_FORMAT(MAX(f.Date), '%Y-%m-%d %H:%i') AS LastFeedTime " +
+                ",          AVG(r.CaloriesPerOunce) AS AverageRecipeCaloriesPerOunce " +
+                "FROM       Feeds f " +
+                "INNER JOIN Recipes r ON r.RecipeId = f.RecipeId " +
+                "GROUP BY   DATE_FORMAT(f.Date, '%Y-%m-%d')"
             },
             callback);
 
