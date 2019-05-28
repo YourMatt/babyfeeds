@@ -13,6 +13,7 @@ exports.display = function (res, pageName, data) {
 
             // render static pages
             case "index":
+            case "index-react":
 
                 res.render (pageName + ".ejs", pageData);
 

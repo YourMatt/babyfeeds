@@ -1,0 +1,115 @@
+/*
+  History
+  Styling for the history area displaying calendars.
+ */
+
+@mixin calendar-gradient($color) {
+  background: linear-gradient(to bottom right, $color, darken($color, 5));
+}
+
+@mixin show-number-calendars($number, $for-landscape: false) {
+  @for $i from 1 through 12 {
+    &.calendars-#{$i} {
+      @if $i < $number or $for-landscape {
+        width: 100% !important; // important required for landscape media query
+      }
+      @else {
+        width: #{$i*100%/$number};
+      }
+    }
+  }
+}
+
+.history {
+  width: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  .scroll {
+    display: flex;
+    flex-direction: row;
+    @include show-number-calendars(2);
+  }
+}
+@media (orientation: landscape) {
+  .history {
+    width: 200px;
+    height: calc(100vh - 94px);
+    overflow-x: hidden;
+    overflow-y: scroll;
+    .scroll {
+      flex-direction: column;
+      @include show-number-calendars(2, true);
+    }
+  }
+}
+
+.calendar {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0 5px 5px;
+  font-size: 1em;
+  text-align: center;
+  .week {
+    display: flex;
+    flex-direction: row;
+    .day {
+      width: 14.29%;
+      padding: 3px 1px;
+      font-family: $font-standard;
+      font-weight: bold;
+      font-size: 0.6em;
+      text-align: center;
+      &.empty {
+        &.even {
+          @include calendar-gradient(#EEE);
+        }
+        &.odd {
+          @include calendar-gradient(#DDD);
+        }
+      }
+      &.tier1 {
+        @include calendar-gradient(#FF0000);
+      }
+      &.tier2 {
+        @include calendar-gradient(#FF3400);
+      }
+      &.tier3 {
+        @include calendar-gradient(#FF6900);
+      }
+      &.tier4 {
+        @include calendar-gradient(#FF9E00);
+      }
+      &.tier5 {
+        @include calendar-gradient(#FFD300);
+      }
+      &.tier6 {
+        @include calendar-gradient(#F7FF00);
+      }
+      &.tier7 {
+        @include calendar-gradient(#C2FF00);
+      }
+      &.tier8 {
+        @include calendar-gradient(#8DFF00);
+      }
+      &.tier9 {
+        @include calendar-gradient(#58FF00);
+      }
+      &.tier10 {
+        @include calendar-gradient(#24FF00);
+      }
+    }
+  }
+}
+
+// for larger displays, show max 3 through 8 calendars at a time with breakpoints starting at 500px, incrementing to
+// accommodate a new calendar with each additional 250px of width
+@for $i from 3 through 8 {
+  @media (min-width: #{-250px + (250px * $i)}) {
+    .history {
+      .scroll {
+        @include show-number-calendars($i);
+      }
+    }
+  }
+}

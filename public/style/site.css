@@ -1,208 +1,483 @@
 /*
-
- SITE
-
+  Modal
+  Styling for modal windows.
  */
-body {
-  background: linear-gradient(to bottom, #b2e1ff 0%, #66b6fc 100%);
-  color: #000;
-  overflow: hidden; }
-
-#container {
-  display: none;
-  flex-direction: column;
-  height: 100vh; }
-
-#last-feed {
-  padding-top: 5px;
-  background: #000;
-  color: #b2e1ff;
-  font-family: "Luckiest Guy", Impact, sans-serif;
-  font-size: 20px;
-  line-height: 25px;
-  text-align: center; }
-
-#today {
-  position: relative;
-  flex-grow: 1; }
-  #today svg {
-    position: absolute;
-    z-index: -1;
-    height: 100%;
-    left: 50%;
-    top: 0;
-    transform: translateX(-50%);
-    filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.5)); }
-    #today svg .bottle-clipped {
-      clip-path: url(#clip-path); }
-    #today svg .bottle-fill-1 {
-      fill: #fff8c9; }
-    #today svg .bottle-fill-2 {
-      fill: #f5eebc; }
-    #today svg .bottle-background {
-      fill: #ffffff; }
-  #today #bottle-overflow {
-    display: none; }
-  #today #stats-today {
-    position: relative;
-    height: 30%;
-    text-align: center;
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  z-index: 100; }
+  .modal .screen {
     width: 100%;
-    font-family: "Luckiest Guy", Impact, sans-serif; }
-    #today #stats-today h1 {
-      font-size: 50px;
-      margin-bottom: 0;
-      line-height: 28px;
-      margin-top: 21px;
-      white-space: nowrap; }
-    #today #stats-today h2 {
-      font-size: 22px;
-      text-transform: uppercase; }
-  #today form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    overflow: visible;
-    width: 50%;
-    height: 50%;
-    margin-top: 0%;
-    margin-left: auto;
-    margin-right: auto; }
-    #today form #feed-time-area {
-      display: flex;
-      justify-content: center; }
-      #today form #feed-time-area #input-feed-time {
-        width: 120px;
-        height: 150px; }
-    #today form #label-feed-volume {
-      text-align: center;
-      font-family: "Luckiest Guy", Impact, sans-serif;
-      font-size: 40px;
-      font-weight: bold;
-      line-height: 30px;
-      margin-top: -5px; }
-    #today form #button-feed-save {
-      text-transform: uppercase;
-      font-family: "Luckiest Guy", Impact, sans-serif;
-      font-size: 25px;
-      line-height: 25px;
-      padding: 7px 30px 0px;
-      margin: 0px auto;
-      display: block;
-      margin-top: 5px; }
-    #today form #input-feed-time {
-      position: relative;
-      width: 0; }
-      #today form #input-feed-time .timepicker-picker {
-        margin-top: 90px;
-        font-family: "Luckiest Guy", Impact, sans-serif;
-        font-weight: bold;
-        font-size: 25px;
-        line-height: 30px; }
-        #today form #input-feed-time .timepicker-picker .separator {
-          display: inline; }
-        #today form #input-feed-time .timepicker-picker button {
-          padding: 0px;
-          background: none;
-          border: none;
-          cursor: pointer; }
-        #today form #input-feed-time .timepicker-picker span, #today form #input-feed-time .timepicker-picker button {
-          width: auto;
-          height: 30px;
-          font-size: 25px;
-          line-height: 30px; }
-          #today form #input-feed-time .timepicker-picker span:hover, #today form #input-feed-time .timepicker-picker button:hover {
-            background: none; }
-      #today form #input-feed-time .timepicker-hours, #today form #input-feed-time .timepicker-minutes {
-        position: absolute; }
-        #today form #input-feed-time .timepicker-hours td, #today form #input-feed-time .timepicker-minutes td {
-          height: 20px;
-          line-height: 20px;
-          width: 54px;
-          background: white;
-          font-size: 20px;
-          font-family: "Luckiest Guy", Impact, sans-serif;
-          padding: 10px;
-          border: 5px solid black; }
-
-#history {
-  display: flex;
-  justify-content: space-evenly; }
-  #history #input-history-last-month .bootstrap-datetimepicker-widget .picker-switch.accordion-toggle, #history #input-history-current-month .bootstrap-datetimepicker-widget .picker-switch.accordion-toggle {
-    display: none; }
-  #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker .prev, #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker .next, #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker .dow, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker .prev, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker .next, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker .dow {
-    display: none; }
-  #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker .picker-switch, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker .picker-switch {
-    cursor: default; }
-    #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker .picker-switch:hover, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker .picker-switch:hover {
-      background: none; }
-  #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table tr, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table tr {
-    height: 0px;
-    line-height: 0px; }
-  #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table th, #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table td, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table th, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table td {
-    border: none;
-    border-radius: 0px; }
-  #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table .day, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table .day {
-    display: inline-block;
-    padding: 0px;
-    height: 16px;
-    line-height: 16px;
-    cursor: default !important;
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.5); }
-    #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table .day:hover, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table .day:hover {
-      background: none; }
-    #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table .day.tier1, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table .day.tier1 {
-      background-color: #FF0000; }
-    #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table .day.tier2, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table .day.tier2 {
-      background-color: #FF3400; }
-    #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table .day.tier3, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table .day.tier3 {
-      background-color: #FF6900; }
-    #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table .day.tier4, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table .day.tier4 {
-      background-color: #FF9E00; }
-    #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table .day.tier5, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table .day.tier5 {
-      background-color: #FFD300; }
-    #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table .day.tier6, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table .day.tier6 {
-      background-color: #F7FF00; }
-    #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table .day.tier7, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table .day.tier7 {
-      background-color: #C2FF00; }
-    #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table .day.tier8, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table .day.tier8 {
-      background-color: #8DFF00; }
-    #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table .day.tier9, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table .day.tier9 {
-      background-color: #58FF00; }
-    #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table .day.tier10, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table .day.tier10 {
-      background-color: #24FF00; }
-
-#history #input-history-last-month, #history #input-history-current-month {
-  width: 162px; }
-  #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table {
-    width: 162px; }
-    #history #input-history-last-month .bootstrap-datetimepicker-widget .datepicker table .day, #history #input-history-current-month .bootstrap-datetimepicker-widget .datepicker table .day {
-      width: 23px;
-      font-size: 7.6666666667px; }
-
-#controls {
-  display: flex;
-  justify-content: space-evenly;
-  margin-top: 10px;
-  background: #000; }
-  #controls div {
-    color: #66b6fc;
-    font-family: "Luckiest Guy", Impact, sans-serif;
-    font-size: 20px;
-    text-align: center; }
-    #controls div h6 {
-      margin: 10px 0px 0px;
-      font-family: sans-serif;
-      font-size: 12px;
-      line-height: 5px;
-      font-weight: bold; }
+    height: 100vh;
+    position: absolute;
+    background: linear-gradient(#b2e1ff, #66b6fc);
+    opacity: 0.9;
+    z-index: 100; }
+  .modal .content {
+    background: #fff;
+    box-shadow: 0 4px 2px rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 101; }
 
 /*
-@media (max-width: 500px) {
-  #history-area {
-    //@include history-calendar(200px);
-  }
-}
-*/
+  History
+  Styling for the history area displaying calendars.
+ */
+.history {
+  width: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden; }
+  .history .scroll {
+    display: flex;
+    flex-direction: row; }
+    .history .scroll.calendars-1 {
+      width: 100% !important; }
+    .history .scroll.calendars-2 {
+      width: 100%; }
+    .history .scroll.calendars-3 {
+      width: 150%; }
+    .history .scroll.calendars-4 {
+      width: 200%; }
+    .history .scroll.calendars-5 {
+      width: 250%; }
+    .history .scroll.calendars-6 {
+      width: 300%; }
+    .history .scroll.calendars-7 {
+      width: 350%; }
+    .history .scroll.calendars-8 {
+      width: 400%; }
+    .history .scroll.calendars-9 {
+      width: 450%; }
+    .history .scroll.calendars-10 {
+      width: 500%; }
+    .history .scroll.calendars-11 {
+      width: 550%; }
+    .history .scroll.calendars-12 {
+      width: 600%; }
+
+@media (orientation: landscape) {
+  .history {
+    width: 200px;
+    height: calc(100vh - 94px);
+    overflow-x: hidden;
+    overflow-y: scroll; }
+    .history .scroll {
+      flex-direction: column; }
+      .history .scroll.calendars-1 {
+        width: 100% !important; }
+      .history .scroll.calendars-2 {
+        width: 100% !important; }
+      .history .scroll.calendars-3 {
+        width: 100% !important; }
+      .history .scroll.calendars-4 {
+        width: 100% !important; }
+      .history .scroll.calendars-5 {
+        width: 100% !important; }
+      .history .scroll.calendars-6 {
+        width: 100% !important; }
+      .history .scroll.calendars-7 {
+        width: 100% !important; }
+      .history .scroll.calendars-8 {
+        width: 100% !important; }
+      .history .scroll.calendars-9 {
+        width: 100% !important; }
+      .history .scroll.calendars-10 {
+        width: 100% !important; }
+      .history .scroll.calendars-11 {
+        width: 100% !important; }
+      .history .scroll.calendars-12 {
+        width: 100% !important; } }
+.calendar {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0 5px 5px;
+  font-size: 1em;
+  text-align: center; }
+  .calendar .week {
+    display: flex;
+    flex-direction: row; }
+    .calendar .week .day {
+      width: 14.29%;
+      padding: 3px 1px;
+      font-family: sans-serif;
+      font-weight: bold;
+      font-size: 0.6em;
+      text-align: center; }
+      .calendar .week .day.empty.even {
+        background: linear-gradient(to bottom right, #EEE, #e1e1e1); }
+      .calendar .week .day.empty.odd {
+        background: linear-gradient(to bottom right, #DDD, #d0d0d0); }
+      .calendar .week .day.tier1 {
+        background: linear-gradient(to bottom right, #FF0000, #e60000); }
+      .calendar .week .day.tier2 {
+        background: linear-gradient(to bottom right, #FF3400, #e62f00); }
+      .calendar .week .day.tier3 {
+        background: linear-gradient(to bottom right, #FF6900, #e65f00); }
+      .calendar .week .day.tier4 {
+        background: linear-gradient(to bottom right, #FF9E00, #e68e00); }
+      .calendar .week .day.tier5 {
+        background: linear-gradient(to bottom right, #FFD300, #e6be00); }
+      .calendar .week .day.tier6 {
+        background: linear-gradient(to bottom right, #F7FF00, #dee600); }
+      .calendar .week .day.tier7 {
+        background: linear-gradient(to bottom right, #C2FF00, #afe600); }
+      .calendar .week .day.tier8 {
+        background: linear-gradient(to bottom right, #8DFF00, #7fe600); }
+      .calendar .week .day.tier9 {
+        background: linear-gradient(to bottom right, #58FF00, #4fe600); }
+      .calendar .week .day.tier10 {
+        background: linear-gradient(to bottom right, #24FF00, #20e600); }
+
+@media (min-width: 500px) {
+  .history .scroll.calendars-1 {
+    width: 100% !important; }
+  .history .scroll.calendars-2 {
+    width: 100% !important; }
+  .history .scroll.calendars-3 {
+    width: 100%; }
+  .history .scroll.calendars-4 {
+    width: 133.3333333333%; }
+  .history .scroll.calendars-5 {
+    width: 166.6666666667%; }
+  .history .scroll.calendars-6 {
+    width: 200%; }
+  .history .scroll.calendars-7 {
+    width: 233.3333333333%; }
+  .history .scroll.calendars-8 {
+    width: 266.6666666667%; }
+  .history .scroll.calendars-9 {
+    width: 300%; }
+  .history .scroll.calendars-10 {
+    width: 333.3333333333%; }
+  .history .scroll.calendars-11 {
+    width: 366.6666666667%; }
+  .history .scroll.calendars-12 {
+    width: 400%; } }
+@media (min-width: 750px) {
+  .history .scroll.calendars-1 {
+    width: 100% !important; }
+  .history .scroll.calendars-2 {
+    width: 100% !important; }
+  .history .scroll.calendars-3 {
+    width: 100% !important; }
+  .history .scroll.calendars-4 {
+    width: 100%; }
+  .history .scroll.calendars-5 {
+    width: 125%; }
+  .history .scroll.calendars-6 {
+    width: 150%; }
+  .history .scroll.calendars-7 {
+    width: 175%; }
+  .history .scroll.calendars-8 {
+    width: 200%; }
+  .history .scroll.calendars-9 {
+    width: 225%; }
+  .history .scroll.calendars-10 {
+    width: 250%; }
+  .history .scroll.calendars-11 {
+    width: 275%; }
+  .history .scroll.calendars-12 {
+    width: 300%; } }
+@media (min-width: 1000px) {
+  .history .scroll.calendars-1 {
+    width: 100% !important; }
+  .history .scroll.calendars-2 {
+    width: 100% !important; }
+  .history .scroll.calendars-3 {
+    width: 100% !important; }
+  .history .scroll.calendars-4 {
+    width: 100% !important; }
+  .history .scroll.calendars-5 {
+    width: 100%; }
+  .history .scroll.calendars-6 {
+    width: 120%; }
+  .history .scroll.calendars-7 {
+    width: 140%; }
+  .history .scroll.calendars-8 {
+    width: 160%; }
+  .history .scroll.calendars-9 {
+    width: 180%; }
+  .history .scroll.calendars-10 {
+    width: 200%; }
+  .history .scroll.calendars-11 {
+    width: 220%; }
+  .history .scroll.calendars-12 {
+    width: 240%; } }
+@media (min-width: 1250px) {
+  .history .scroll.calendars-1 {
+    width: 100% !important; }
+  .history .scroll.calendars-2 {
+    width: 100% !important; }
+  .history .scroll.calendars-3 {
+    width: 100% !important; }
+  .history .scroll.calendars-4 {
+    width: 100% !important; }
+  .history .scroll.calendars-5 {
+    width: 100% !important; }
+  .history .scroll.calendars-6 {
+    width: 100%; }
+  .history .scroll.calendars-7 {
+    width: 116.6666666667%; }
+  .history .scroll.calendars-8 {
+    width: 133.3333333333%; }
+  .history .scroll.calendars-9 {
+    width: 150%; }
+  .history .scroll.calendars-10 {
+    width: 166.6666666667%; }
+  .history .scroll.calendars-11 {
+    width: 183.3333333333%; }
+  .history .scroll.calendars-12 {
+    width: 200%; } }
+@media (min-width: 1500px) {
+  .history .scroll.calendars-1 {
+    width: 100% !important; }
+  .history .scroll.calendars-2 {
+    width: 100% !important; }
+  .history .scroll.calendars-3 {
+    width: 100% !important; }
+  .history .scroll.calendars-4 {
+    width: 100% !important; }
+  .history .scroll.calendars-5 {
+    width: 100% !important; }
+  .history .scroll.calendars-6 {
+    width: 100% !important; }
+  .history .scroll.calendars-7 {
+    width: 100%; }
+  .history .scroll.calendars-8 {
+    width: 114.2857142857%; }
+  .history .scroll.calendars-9 {
+    width: 128.5714285714%; }
+  .history .scroll.calendars-10 {
+    width: 142.8571428571%; }
+  .history .scroll.calendars-11 {
+    width: 157.1428571429%; }
+  .history .scroll.calendars-12 {
+    width: 171.4285714286%; } }
+@media (min-width: 1750px) {
+  .history .scroll.calendars-1 {
+    width: 100% !important; }
+  .history .scroll.calendars-2 {
+    width: 100% !important; }
+  .history .scroll.calendars-3 {
+    width: 100% !important; }
+  .history .scroll.calendars-4 {
+    width: 100% !important; }
+  .history .scroll.calendars-5 {
+    width: 100% !important; }
+  .history .scroll.calendars-6 {
+    width: 100% !important; }
+  .history .scroll.calendars-7 {
+    width: 100% !important; }
+  .history .scroll.calendars-8 {
+    width: 100%; }
+  .history .scroll.calendars-9 {
+    width: 112.5%; }
+  .history .scroll.calendars-10 {
+    width: 125%; }
+  .history .scroll.calendars-11 {
+    width: 137.5%; }
+  .history .scroll.calendars-12 {
+    width: 150%; } }
+body, h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0; }
+
+button {
+  cursor: pointer;
+  font-family: marvin-round, sans-serif;
+  padding: 0 0 0.2em; }
+  button:focus {
+    outline: 0; }
+  button:disabled, button[disabled] {
+    opacity: 0.5; }
+
+body {
+  overflow: hidden;
+  font-family: marvin-round, sans-serif; }
+
+.app {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100vh; }
+
+.loading {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  font-size: 3em;
+  background: #000;
+  color: #b2e1ff;
+  z-index: 200; }
+
+.header {
+  background-color: #000;
+  color: #b2e1ff; }
+
+.footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  background-color: #000;
+  color: #66b6fc; }
+  .footer > div {
+    padding: 5px 10px;
+    text-align: center; }
+
+.age h6, .weight h6 {
+  font-size: 0.8em; }
+.age > span, .weight > span {
+  display: block;
+  margin-top: -0.6em;
+  font-size: 1.3em; }
+  .age > span small, .weight > span small {
+    font-size: 0.8em; }
+
+.body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background: linear-gradient(to bottom, #b2e1ff 0%, #66b6fc 100%); }
+
+@media (orientation: landscape) {
+  .body {
+    flex-direction: row; } }
+.last-feed {
+  padding: 0 0 0.2em;
+  font-size: 1.3em;
+  text-align: center; }
+
+.feed-recorder {
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+  position: relative; }
+  .feed-recorder .areas {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 80%;
+    height: 100%;
+    z-index: 1; }
+    .feed-recorder .areas .remaining {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      height: 39%; }
+      .feed-recorder .areas .remaining h2 {
+        color: #b2e1ff;
+        font-size: 4em;
+        line-height: 1em;
+        letter-spacing: -7px;
+        text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000; }
+        .feed-recorder .areas .remaining h2 small {
+          margin-left: 5px;
+          font-size: 0.7em;
+          letter-spacing: -3px; }
+      .feed-recorder .areas .remaining h3 {
+        margin-top: -1em;
+        font-size: 1.7em;
+        z-index: -1; }
+    .feed-recorder .areas .input {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: center;
+      height: 61%;
+      font-size: 2.2em;
+      line-height: 1em; }
+      .feed-recorder .areas .input small {
+        margin-left: 5px;
+        font-size: 0.7em;
+        letter-spacing: -3px; }
+      .feed-recorder .areas .input .time button {
+        padding-right: 5px;
+        background: none;
+        border: none;
+        font-size: 1em;
+        letter-spacing: -5px; }
+        .feed-recorder .areas .input .time button.small {
+          font-size: 0.7em;
+          letter-spacing: -3px; }
+      .feed-recorder .areas .input .volume-control {
+        width: 100%;
+        text-align: center; }
+        .feed-recorder .areas .input .volume-control .volume {
+          letter-spacing: -5px; }
+        .feed-recorder .areas .input .volume-control .slider {
+          margin-top: -0.5em; }
+          .feed-recorder .areas .input .volume-control .slider input {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 15px;
+            background: linear-gradient(#1a1a1a, #000);
+            border-radius: 8px; }
+            .feed-recorder .areas .input .volume-control .slider input::-webkit-slider-thumb {
+              -webkit-appearance: none;
+              width: 25px;
+              height: 25px;
+              background: linear-gradient(#b2e1ff, #66b6fc);
+              border: 2px solid #000;
+              border-radius: 50%;
+              box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
+              cursor: pointer; }
+            .feed-recorder .areas .input .volume-control .slider input::-moz-range-thumb {
+              width: 25px;
+              height: 25px;
+              background: linear-gradient(#b2e1ff, #66b6fc);
+              border: 2px solid #000;
+              border-radius: 50%;
+              box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
+              cursor: pointer; }
+      .feed-recorder .areas .input .button {
+        width: 50%; }
+        .feed-recorder .areas .input .button button {
+          width: 100%;
+          background: linear-gradient(#b2e1ff, #66b6fc);
+          border: 2px solid #000;
+          border-radius: 5px;
+          color: #000;
+          font-size: 0.75em;
+          line-height: 1em;
+          box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
+          cursor: pointer; }
+  .feed-recorder svg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 90%;
+    height: 100%;
+    padding: 0 5%;
+    filter: drop-shadow(0px 3px 2px rgba(0, 0, 0, 0.5)); }
+    .feed-recorder svg .bottle-clipped {
+      clip-path: url(#bottle-clip-path); }
+    .feed-recorder svg .bottle-background {
+      fill: url(#bottle-background); }
+    .feed-recorder svg .bottle-fill {
+      fill: url(#bottle-fill);
+      opacity: 0.75; }
+    .feed-recorder svg .bottle-fill-topline {
+      fill: #000;
+      opacity: 0.1; }
+
+.options-hour, .options-minute {
+  width: 250px; }
+  .options-hour button, .options-minute button {
+    width: 25%;
+    background: linear-gradient(to bottom right, #FFF, #e6e6e6);
+    border: none;
+    font-size: 2em; }
 
 /*# sourceMappingURL=site.css.map */

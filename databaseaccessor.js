@@ -11,6 +11,9 @@ exports.query = {
                 ",          b.ExpectedDate " +
                 ",          r.RecipeId " +
                 ",          r.CaloriesPerOunce AS RecipeCaloriesPerOunce " +
+                ", (        SELECT DATE_FORMAT(MAX(Date), '%Y-%m-%d %H:%i') FROM Feeds WHERE BabyId = b.BabyId) AS LastFeedTime " +
+                ", (        SELECT Milliliters FROM Feeds WHERE BabyId = b.BabyId ORDER BY Date DESC LIMIT 1 ) AS LastFeedVolume " +
+                ", (        SELECT MAX(Milliliters) FROM Feeds WHERE BabyId = b.BabyId) AS MaxFeedVolume " +
                 "FROM       Babies b " +
                 "INNER JOIN Recipes r ON r.RecipeId = b.RecipeId " +
                 "WHERE      BabyId = ? ",

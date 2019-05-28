@@ -27,7 +27,6 @@ exports.process = function (req, res) {
                             });
 
                             var today = moment().format("YYYY-MM-DD");
-                            var lastFeedTime = moment(feedTotalsPerDay[feedTotalsPerDay.length - 1].LastFeedTime).format("h:mma");
                             var actualAge = moment().diff(moment(babyData.BirthDate), "week");
                             var correctedAge = moment().diff(moment(babyData.ExpectedDate), "week");
                             var weightInOunces = feedTotalsPerDay[feedTotalsPerDay.length - 1].WeightOuncesOnDay;
@@ -37,14 +36,25 @@ exports.process = function (req, res) {
                             database.query.getFeedsForDay(today, function (feedsForDay) {
 
                                 res.json({
+
+                                    // new values after react rewrite
+                                    dateToday: today,
+                                    dateBirth: moment(babyData.BirthDate).format("YYYY-MM-DD"),
+                                    dateExpected: (babyData.ExpectedDate) ? (moment(babyData.ExpectedDate).format("YYYY-MM-DD")) : "",
+                                    lastFeedTime: moment(babyData.LastFeedTime).format("h:mma"),
+                                    lastFeedVolume: babyData.LastFeedVolume,
+                                    maxFeedVolume: babyData.MaxFeedVolume,
+                                    weightOunces: weightInOunces,
+
+                                    // original values
                                     today: today,
-                                    lastFeedTime: lastFeedTime,
                                     feedTotalsPerDay: feedTotalsPerDay,
                                     feedsForToday: feedsForDay,
                                     feedRequiredForToday: goalVolume,
                                     weight: weight,
                                     actualAge: actualAge,
                                     correctedAge: correctedAge
+
                                 });
 
                             });

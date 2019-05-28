@@ -1,0 +1,29 @@
+/*
+  Modal
+  Styling for modal windows.
+ */
+
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  z-index: 100;
+  .screen {
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    background: linear-gradient($color-gradient-start, $color-gradient-end);
+    opacity: 0.9;
+    z-index: 100;
+  }
+  .content {
+    background: $color-white;
+    box-shadow: 0 4px 2px rgba(0,0,0,0.5);
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 101;
+  }
+}
