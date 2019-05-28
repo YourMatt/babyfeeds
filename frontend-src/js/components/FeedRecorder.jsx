@@ -20,9 +20,9 @@ export default class FeedRecorder extends Component {
         this.state = {
             isSaving: false,
             selectedVolume: 0,
-            selectedHour: moment().hour(),
+            selectedHour: parseInt(moment().format("h")),
             selectedMinute: moment().minute(),
-            selectedAmPm: moment().format("a"),
+            selectedAmPm: moment().format("a")
         };
 
         // reload the data after regaining focus
@@ -32,7 +32,7 @@ export default class FeedRecorder extends Component {
             if (state === "visible") {
                 self.props.fnReloadData(() => {
                     self.setState({
-                        selectedHour: moment().hour(),
+                        selectedHour: parseInt(moment().format("h")),
                         selectedMinute: moment().minute(),
                         selectedAmPm: moment().format("a")
                     })
@@ -310,7 +310,7 @@ export default class FeedRecorder extends Component {
 
             self.props.fnReloadData(() => {
                 self.setState({
-                    selectedHour: moment().hour(),
+                    selectedHour: parseInt(moment().format("h")),
                     selectedMinute: moment().minute(),
                     selectedAmPm: moment().format("a"),
                     isSaving: false

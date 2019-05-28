@@ -601,7 +601,7 @@ function (_Component) {
     _this.state = {
       isSaving: false,
       selectedVolume: 0,
-      selectedHour: moment().hour(),
+      selectedHour: parseInt(moment().format("h")),
       selectedMinute: moment().minute(),
       selectedAmPm: moment().format("a")
     }; // reload the data after regaining focus
@@ -614,7 +614,7 @@ function (_Component) {
       if (state === "visible") {
         self.props.fnReloadData(function () {
           self.setState({
-            selectedHour: moment().hour(),
+            selectedHour: parseInt(moment().format("h")),
             selectedMinute: moment().minute(),
             selectedAmPm: moment().format("a")
           });
@@ -877,7 +877,7 @@ function (_Component) {
         // TODO: Handle non-success
         self.props.fnReloadData(function () {
           self.setState({
-            selectedHour: moment().hour(),
+            selectedHour: parseInt(moment().format("h")),
             selectedMinute: moment().minute(),
             selectedAmPm: moment().format("a"),
             isSaving: false
