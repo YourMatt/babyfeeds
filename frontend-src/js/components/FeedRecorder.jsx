@@ -8,6 +8,7 @@ import React, {Component} from "react";
 import FormatCssClass from "../utils/FormatCssClass.jsx";
 
 // import api interactions
+import ApiLoadRecipes from "../api/LoadRecipes.jsx";
 import ApiSaveFeed from "../api/SaveFeed.jsx";
 
 export default class FeedRecorder extends Component {
@@ -19,6 +20,8 @@ export default class FeedRecorder extends Component {
         // intialize the application state
         this.state = {
             isSaving: false,
+            selectedRecipeId: 0,
+            selectedRecipeName: "",
             selectedVolume: 0,
             selectedHour: parseInt(moment().format("h")),
             selectedMinute: moment().minute(),
@@ -43,15 +46,25 @@ export default class FeedRecorder extends Component {
         this.updateVolume = this.updateVolume.bind(this);
         this.displayHourSelection = this.displayHourSelection.bind(this);
         this.displayMinuteSelection = this.displayMinuteSelection.bind(this);
+        this.displayRecipeSelection = this.displayRecipeSelection.bind(this);
         this.changeHourSelection = this.changeHourSelection.bind(this);
         this.changeMinuteSelection = this.changeMinuteSelection.bind(this);
         this.changeAmPmSelection = this.changeAmPmSelection.bind(this);
+        this.changeRecipeSelection = this.changeRecipeSelection.bind(this);
         this.submitFeed = this.submitFeed.bind(this);
 
     };
 
     // Changes when updating component.
     componentDidUpdate() {
+
+        // set the recipe selection if provided by props
+        if (!this.state.selectedRecipeId && this.props.recipeId) {
+            this.setState({
+                selectedRecipeId: this.props.recipeId,
+                selectedRecipeName: this.props.recipeName
+            });
+        }
 
         // set the volume selection if provided by props
         if (!this.state.selectedVolume && this.props.lastFeedVolume) {
@@ -118,6 +131,9 @@ export default class FeedRecorder extends Component {
                         className={FormatCssClass("input")}
                         onSubmit={this.submitFeed}
                     >
+                        <div className={FormatCssClass("recipe")}>
+                            <button onClick={this.displayRecipeSelection}>{this.state.selectedRecipeName}</button>
+                        </div>
                         <div className={FormatCssClass("time")}>
                             <button onClick={this.displayHourSelection}>{this.state.selectedHour}</button>
                             :
@@ -189,9 +205,12 @@ export default class FeedRecorder extends Component {
 
         let options = [];
         for (let i = 1; i <= 12; i++) {
+            let className = "";
+            if (i === this.state.selectedHour) className = "selected";
             options.push(
                 <button
                     key={"hour-" + i}
+                    className={FormatCssClass(className)}
                     onClick={this.changeHourSelection}
                 >{i}</button>
             )
@@ -216,9 +235,12 @@ export default class FeedRecorder extends Component {
 
         let options = [];
         for (let i = 0; i < 60; i += 5) {
+            let className = "";
+            if (i <= this.state.selectedMinute && i > (this.state.selectedMinute - 5)) className = "selected";
             options.push(
                 <button
                     key={"minute-" + i}
+                    className={FormatCssClass(className)}
                     onClick={this.changeMinuteSelection}
                 >{i.toString().padStart(2, "0")}</button>
             )
@@ -233,6 +255,46 @@ export default class FeedRecorder extends Component {
         this.props.fnDisplayModal({
             allowDismiss: true,
             content: modalContent
+        });
+
+    }
+
+    // Display a modal allowing selection of a recipe.
+    displayRecipeSelection(e) {
+        e.preventDefault();
+
+        ApiLoadRecipes(recipes => {
+
+            let options = [];
+            recipes.forEach(recipe => {
+                let lastUsedDate = "Never Used";
+                if (recipe.lastUsed) {
+                    lastUsedDate = "Last Used " + moment(recipe.lastUsed).format("MMM Do, YYYY");
+                }
+                let className = "";
+                if (recipe.recipeId === this.state.selectedRecipeId) className = "selected";
+                options.push(
+                    <button
+                        key={"recipe-" + recipe.recipeId}
+                        className={FormatCssClass(className)}
+                        data-recipe-id={recipe.recipeId}
+                        data-recipe-name={recipe.name}
+                        onClick={this.changeRecipeSelection}
+                    >{recipe.name}<small>{lastUsedDate}</small></button>
+                );
+            });
+
+            let modalContent = (
+                <div className={FormatCssClass("options-recipe")}>
+                    {options}
+                </div>
+            );
+
+            this.props.fnDisplayModal({
+                allowDismiss: true,
+                content: modalContent
+            });
+
         });
 
     }
@@ -265,6 +327,20 @@ export default class FeedRecorder extends Component {
 
         this.setState({
             selectedAmPm: (this.state.selectedAmPm === "am") ? "pm" : "am"
+        });
+
+    }
+
+    // Updates the recipe to the selection.
+    changeRecipeSelection(e) {
+        e.preventDefault();
+
+        let buttonData = e.target.dataset;
+
+        this.props.fnDismissModal();
+        this.setState({
+            selectedRecipeId: parseInt(buttonData.recipeId),
+            selectedRecipeName: buttonData.recipeName
         });
 
     }
@@ -303,7 +379,8 @@ export default class FeedRecorder extends Component {
         let self = this;
         ApiSaveFeed({
             dateTime: date,
-            milliliters: this.state.selectedVolume
+            milliliters: this.state.selectedVolume,
+            recipeId: this.state.selectedRecipeId
         }, success => {
 
             // TODO: Handle non-success

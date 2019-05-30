@@ -150,15 +150,24 @@ body {
     .input {
       display: flex;
       flex-direction: column;
-      justify-content: space-evenly;
+      justify-content: space-between;
       align-items: center;
       height: 61%;
-      font-size: 2.2em;
+      font-size: 2.0em;
       line-height: 1em;
       small {
         margin-left: 5px;
         font-size: 0.7em;
         letter-spacing: -3px;
+      }
+      .recipe {
+        button {
+          padding: 0;
+          background: none;
+          border: none;
+          font-size: 0.4em;
+          line-height: 1em;
+        }
       }
       .time {
         button {
@@ -166,6 +175,7 @@ body {
           background: none;
           border: none;
           font-size: 1em;
+          line-height: 1em;
           letter-spacing: -5px;
           &.small {
             font-size: 0.7em;
@@ -211,6 +221,7 @@ body {
       }
       .button {
         width: 50%;
+        padding-bottom: 0.8em;
         button {
           width: 100%;
           background: linear-gradient($color-gradient-start, $color-gradient-end);
@@ -258,5 +269,30 @@ body {
     background: linear-gradient(to bottom right, $color, darken($color, 10));
     border: none;
     font-size: 2em;
+    &:hover, &.selected {
+      $color: #F7FF00;
+      background: linear-gradient(to bottom right, $color, darken($color, 10));
+    }
+  }
+}
+.options-recipe {
+  width: 250px;
+  button {
+    $color: #FFF;
+    width: 100%;
+    background: linear-gradient(to bottom right, $color, darken($color, 10));
+    border: none;
+    font-size: 1em;
+    line-height: 1em;
+    padding: 0.5em;
+    &:hover, &.selected {
+      $color: #F7FF00;
+      background: linear-gradient(to bottom right, $color, darken($color, 10));
+    }
+    small {
+      display: block;
+      padding-top: 0.4em;
+      font-family: $font-standard;
+    }
   }
 }

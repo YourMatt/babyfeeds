@@ -15,7 +15,8 @@ export default function ApiSaveFeed (saveData, callback) {
         },
         body: JSON.stringify({
             dateTime: saveData.dateTime,
-            milliliters: saveData.milliliters
+            milliliters: saveData.milliliters,
+            recipeId: saveData.recipeId
         })
     })
     .then(results => {

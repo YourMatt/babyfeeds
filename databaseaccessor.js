@@ -10,6 +10,7 @@ exports.query = {
                 ",          b.BirthDate " +
                 ",          b.ExpectedDate " +
                 ",          r.RecipeId " +
+                ",          r.Name AS RecipeName " +
                 ",          r.CaloriesPerOunce AS RecipeCaloriesPerOunce " +
                 ", (        SELECT DATE_FORMAT(MAX(Date), '%Y-%m-%d %H:%i') FROM Feeds WHERE BabyId = b.BabyId) AS LastFeedTime " +
                 ", (        SELECT Milliliters FROM Feeds WHERE BabyId = b.BabyId ORDER BY Date DESC LIMIT 1 ) AS LastFeedVolume " +
@@ -41,6 +42,21 @@ exports.query = {
 
     },
 
+    getRecipes: function(accountId, callback) {
+
+        exports.access.selectMultiple({
+                sql:
+                "SELECT     r.* " +
+                ", (        SELECT MAX(Date) FROM Feeds WHERE RecipeId = r.RecipeId) AS LastUsed " +
+                "FROM       Recipes r " +
+                "WHERE      r.AccountId = ? " +
+                "ORDER BY   r.Name ASC ",
+                values: accountId
+            },
+            callback);
+
+    },
+
     getFeedsForDay: function(day, callback) {
 
         exports.access.selectMultiple ({
@@ -56,14 +72,27 @@ exports.query = {
 
     },
 
-    insertFeed: function(dateTime, milliliters, callback) {
+    insertFeed: function(babyId, dateTime, milliliters, recipeId, callback) {
 
         exports.access.insert({
             sql:
             "INSERT INTO Feeds " +
             "(           BabyId, RecipeId, Date, Milliliters) " +
             "VALUES (    ?, ?, ?, ?)",
-            values: [1, 2, dateTime, milliliters]
+            values: [babyId, recipeId, dateTime, milliliters]
+            },
+            callback);
+
+    },
+
+    updateBabyDefaultRecipe: function(babyId, recipeId, callback) {
+
+        exports.access.update({
+            sql:
+            "UPDATE Babies " +
+            "SET    RecipeId = ? " +
+            "WHERE  BabyId = ? ",
+            values: [recipeId, babyId]
             },
             callback);
 
@@ -86,7 +115,7 @@ exports.access = {
         });
 
         // connect to the database
-        this.db.connect(function (error) {
+        this.db.connect((error) => {
             if (error) {
                 // TODO: write error data to logs
                 console.log('Error connecting to Db: ' + error);
@@ -122,7 +151,7 @@ exports.access = {
         this.init();
 
         // run the query
-        this.db.query(query, function (error, rows) {
+        this.db.query(query, (error, rows) => {
 
             // report error and return if error state
             if (error) return exports.access.handleError(query, error);
@@ -141,12 +170,27 @@ exports.access = {
 
         this.init();
 
-        this.db.query(query, function (error, results) {
+        this.db.query(query, (error, results) => {
 
             if (error) return exports.access.handleError(query, error);
 
             // call the callback with the insert ID
             callback(results.insertId);
+
+        });
+
+    },
+
+    update: function (query, callback) {
+
+        this.init();
+
+        this.db.query(query, (error, results) => {
+
+            if (error) return exports.access.handleError(query, error);
+
+            // call the callback with number of affected records
+            callback(results.affectedRows);
 
         });
 

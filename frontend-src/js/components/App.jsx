@@ -35,6 +35,8 @@ export default class App extends Component {
             lastFeedTime: "",
             lastFeedVolume: 0,
             maxFeedVolume: 0,
+            recipeId: 0,
+            recipeName: "",
             weightOunces: 0,
 
             modal: "",
@@ -85,6 +87,8 @@ export default class App extends Component {
                         feedRequiredForToday={this.state.feedRequiredForToday}
                         lastFeedVolume={this.state.lastFeedVolume}
                         maxFeedVolume={this.state.maxFeedVolume}
+                        recipeId={this.state.recipeId}
+                        recipeName={this.state.recipeName}
                         fnReloadData={this.reloadData}
                         fnDisplayModal={this.displayModal}
                         fnDismissModal={this.dismissModal}
@@ -126,6 +130,8 @@ export default class App extends Component {
                 lastFeedTime: data.lastFeedTime,
                 lastFeedVolume: data.lastFeedVolume,
                 maxFeedVolume: data.maxFeedVolume,
+                recipeId: data.recipeId,
+                recipeName: data.recipeName,
                 weightOunces: data.weightOunces
             });
             if (callback) callback();

@@ -393,20 +393,27 @@ body {
     .feed-recorder .areas .input {
       display: flex;
       flex-direction: column;
-      justify-content: space-evenly;
+      justify-content: space-between;
       align-items: center;
       height: 61%;
-      font-size: 2.2em;
+      font-size: 2.0em;
       line-height: 1em; }
       .feed-recorder .areas .input small {
         margin-left: 5px;
         font-size: 0.7em;
         letter-spacing: -3px; }
+      .feed-recorder .areas .input .recipe button {
+        padding: 0;
+        background: none;
+        border: none;
+        font-size: 0.4em;
+        line-height: 1em; }
       .feed-recorder .areas .input .time button {
         padding-right: 5px;
         background: none;
         border: none;
         font-size: 1em;
+        line-height: 1em;
         letter-spacing: -5px; }
         .feed-recorder .areas .input .time button.small {
           font-size: 0.7em;
@@ -442,7 +449,8 @@ body {
               box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
               cursor: pointer; }
       .feed-recorder .areas .input .button {
-        width: 50%; }
+        width: 50%;
+        padding-bottom: 0.8em; }
         .feed-recorder .areas .input .button button {
           width: 100%;
           background: linear-gradient(#b2e1ff, #66b6fc);
@@ -479,5 +487,23 @@ body {
     background: linear-gradient(to bottom right, #FFF, #e6e6e6);
     border: none;
     font-size: 2em; }
+    .options-hour button:hover, .options-hour button.selected, .options-minute button:hover, .options-minute button.selected {
+      background: linear-gradient(to bottom right, #F7FF00, #c6cc00); }
+
+.options-recipe {
+  width: 250px; }
+  .options-recipe button {
+    width: 100%;
+    background: linear-gradient(to bottom right, #FFF, #e6e6e6);
+    border: none;
+    font-size: 1em;
+    line-height: 1em;
+    padding: 0.5em; }
+    .options-recipe button:hover, .options-recipe button.selected {
+      background: linear-gradient(to bottom right, #F7FF00, #c6cc00); }
+    .options-recipe button small {
+      display: block;
+      padding-top: 0.4em;
+      font-family: sans-serif; }
 
 /*# sourceMappingURL=site.css.map */

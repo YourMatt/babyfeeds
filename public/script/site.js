@@ -25,7 +25,34 @@ function ApiLoad(callback) {
 }
 
 
-},{"react":24}],2:[function(require,module,exports){
+},{"react":25}],2:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = ApiLoadRecipes;
+
+var _react = _interopRequireDefault(require("react"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+/*
+    ApiLoadRecipes
+ */
+// Loads all recipe data from the API.
+function ApiLoadRecipes(callback) {
+  fetch("/api/load/recipes").then(function (results) {
+    return results.json();
+  }).then(function (data) {
+    console.log(data); // TODO: Remove this
+
+    callback(data);
+  });
+}
+
+
+},{"react":25}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -50,7 +77,8 @@ function ApiSaveFeed(saveData, callback) {
     },
     body: JSON.stringify({
       dateTime: saveData.dateTime,
-      milliliters: saveData.milliliters
+      milliliters: saveData.milliliters,
+      recipeId: saveData.recipeId
     })
   }).then(function (results) {
     return results.json();
@@ -60,7 +88,7 @@ function ApiSaveFeed(saveData, callback) {
 }
 
 
-},{"react":24}],3:[function(require,module,exports){
+},{"react":25}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -160,7 +188,7 @@ function (_Component) {
 exports["default"] = Age;
 
 
-},{"../utils/FormatAge.jsx":12,"../utils/FormatCssClass.jsx":13,"react":24}],4:[function(require,module,exports){
+},{"../utils/FormatAge.jsx":13,"../utils/FormatCssClass.jsx":14,"react":25}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -230,6 +258,8 @@ function (_Component) {
       lastFeedTime: "",
       lastFeedVolume: 0,
       maxFeedVolume: 0,
+      recipeId: 0,
+      recipeName: "",
       weightOunces: 0,
       modal: ""
     };
@@ -275,6 +305,8 @@ function (_Component) {
         feedRequiredForToday: this.state.feedRequiredForToday,
         lastFeedVolume: this.state.lastFeedVolume,
         maxFeedVolume: this.state.maxFeedVolume,
+        recipeId: this.state.recipeId,
+        recipeName: this.state.recipeName,
         fnReloadData: this.reloadData,
         fnDisplayModal: this.displayModal,
         fnDismissModal: this.dismissModal
@@ -309,6 +341,8 @@ function (_Component) {
           lastFeedTime: data.lastFeedTime,
           lastFeedVolume: data.lastFeedVolume,
           maxFeedVolume: data.maxFeedVolume,
+          recipeId: data.recipeId,
+          recipeName: data.recipeName,
           weightOunces: data.weightOunces
         });
 
@@ -351,7 +385,7 @@ function (_Component) {
 exports["default"] = App;
 
 
-},{"../api/Load.jsx":1,"../utils/FormatCssClass.jsx":13,"./Age.jsx":3,"./FeedRecorder.jsx":7,"./History.jsx":8,"./LastFeedTime.jsx":9,"./Weight.jsx":10,"react":24}],5:[function(require,module,exports){
+},{"../api/Load.jsx":1,"../utils/FormatCssClass.jsx":14,"./Age.jsx":4,"./FeedRecorder.jsx":8,"./History.jsx":9,"./LastFeedTime.jsx":10,"./Weight.jsx":11,"react":25}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -441,7 +475,7 @@ function (_Component) {
 exports["default"] = CalendarDay;
 
 
-},{"../utils/FormatCssClass.jsx":13,"react":24}],6:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":14,"react":25}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -549,7 +583,7 @@ function (_Component) {
 exports["default"] = CalendarMonth;
 
 
-},{"../utils/FormatCssClass.jsx":13,"./CalendarDay.jsx":5,"react":24}],7:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":14,"./CalendarDay.jsx":6,"react":25}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -560,6 +594,8 @@ exports["default"] = void 0;
 var _react = _interopRequireWildcard(require("react"));
 
 var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
+
+var _LoadRecipes = _interopRequireDefault(require("../api/LoadRecipes.jsx"));
 
 var _SaveFeed = _interopRequireDefault(require("../api/SaveFeed.jsx"));
 
@@ -600,6 +636,8 @@ function (_Component) {
 
     _this.state = {
       isSaving: false,
+      selectedRecipeId: 0,
+      selectedRecipeName: "",
       selectedVolume: 0,
       selectedHour: parseInt(moment().format("h")),
       selectedMinute: moment().minute(),
@@ -624,9 +662,11 @@ function (_Component) {
     _this.updateVolume = _this.updateVolume.bind(_assertThisInitialized(_this));
     _this.displayHourSelection = _this.displayHourSelection.bind(_assertThisInitialized(_this));
     _this.displayMinuteSelection = _this.displayMinuteSelection.bind(_assertThisInitialized(_this));
+    _this.displayRecipeSelection = _this.displayRecipeSelection.bind(_assertThisInitialized(_this));
     _this.changeHourSelection = _this.changeHourSelection.bind(_assertThisInitialized(_this));
     _this.changeMinuteSelection = _this.changeMinuteSelection.bind(_assertThisInitialized(_this));
     _this.changeAmPmSelection = _this.changeAmPmSelection.bind(_assertThisInitialized(_this));
+    _this.changeRecipeSelection = _this.changeRecipeSelection.bind(_assertThisInitialized(_this));
     _this.submitFeed = _this.submitFeed.bind(_assertThisInitialized(_this));
     return _this;
   }
@@ -635,7 +675,15 @@ function (_Component) {
     key: "componentDidUpdate",
     // Changes when updating component.
     value: function componentDidUpdate() {
-      // set the volume selection if provided by props
+      // set the recipe selection if provided by props
+      if (!this.state.selectedRecipeId && this.props.recipeId) {
+        this.setState({
+          selectedRecipeId: this.props.recipeId,
+          selectedRecipeName: this.props.recipeName
+        });
+      } // set the volume selection if provided by props
+
+
       if (!this.state.selectedVolume && this.props.lastFeedVolume) {
         this.setState({
           selectedVolume: this.props.lastFeedVolume
@@ -713,6 +761,10 @@ function (_Component) {
         className: (0, _FormatCssClass["default"])("input"),
         onSubmit: this.submitFeed
       }, _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("recipe")
+      }, _react["default"].createElement("button", {
+        onClick: this.displayRecipeSelection
+      }, this.state.selectedRecipeName)), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("time")
       }, _react["default"].createElement("button", {
         onClick: this.displayHourSelection
@@ -774,8 +826,11 @@ function (_Component) {
       var options = [];
 
       for (var i = 1; i <= 12; i++) {
+        var className = "";
+        if (i === this.state.selectedHour) className = "selected";
         options.push(_react["default"].createElement("button", {
           key: "hour-" + i,
+          className: (0, _FormatCssClass["default"])(className),
           onClick: this.changeHourSelection
         }, i));
       }
@@ -797,8 +852,11 @@ function (_Component) {
       var options = [];
 
       for (var i = 0; i < 60; i += 5) {
+        var className = "";
+        if (i <= this.state.selectedMinute && i > this.state.selectedMinute - 5) className = "selected";
         options.push(_react["default"].createElement("button", {
           key: "minute-" + i,
+          className: (0, _FormatCssClass["default"])(className),
           onClick: this.changeMinuteSelection
         }, i.toString().padStart(2, "0")));
       }
@@ -810,6 +868,43 @@ function (_Component) {
       this.props.fnDisplayModal({
         allowDismiss: true,
         content: modalContent
+      });
+    } // Display a modal allowing selection of a recipe.
+
+  }, {
+    key: "displayRecipeSelection",
+    value: function displayRecipeSelection(e) {
+      var _this2 = this;
+
+      e.preventDefault();
+      (0, _LoadRecipes["default"])(function (recipes) {
+        var options = [];
+        recipes.forEach(function (recipe) {
+          var lastUsedDate = "Never Used";
+
+          if (recipe.lastUsed) {
+            lastUsedDate = "Last Used " + moment(recipe.lastUsed).format("MMM Do, YYYY");
+          }
+
+          var className = "";
+          if (recipe.recipeId === _this2.state.selectedRecipeId) className = "selected";
+          options.push(_react["default"].createElement("button", {
+            key: "recipe-" + recipe.recipeId,
+            className: (0, _FormatCssClass["default"])(className),
+            "data-recipe-id": recipe.recipeId,
+            "data-recipe-name": recipe.name,
+            onClick: _this2.changeRecipeSelection
+          }, recipe.name, _react["default"].createElement("small", null, lastUsedDate)));
+        });
+
+        var modalContent = _react["default"].createElement("div", {
+          className: (0, _FormatCssClass["default"])("options-recipe")
+        }, options);
+
+        _this2.props.fnDisplayModal({
+          allowDismiss: true,
+          content: modalContent
+        });
       });
     } // Updates the hours to the selection.
 
@@ -839,6 +934,18 @@ function (_Component) {
       e.preventDefault();
       this.setState({
         selectedAmPm: this.state.selectedAmPm === "am" ? "pm" : "am"
+      });
+    } // Updates the recipe to the selection.
+
+  }, {
+    key: "changeRecipeSelection",
+    value: function changeRecipeSelection(e) {
+      e.preventDefault();
+      var buttonData = e.target.dataset;
+      this.props.fnDismissModal();
+      this.setState({
+        selectedRecipeId: parseInt(buttonData.recipeId),
+        selectedRecipeName: buttonData.recipeName
       });
     } // Change the current selection of the feed volume.
 
@@ -872,7 +979,8 @@ function (_Component) {
       var self = this;
       (0, _SaveFeed["default"])({
         dateTime: date,
-        milliliters: this.state.selectedVolume
+        milliliters: this.state.selectedVolume,
+        recipeId: this.state.selectedRecipeId
       }, function (success) {
         // TODO: Handle non-success
         self.props.fnReloadData(function () {
@@ -893,7 +1001,7 @@ function (_Component) {
 exports["default"] = FeedRecorder;
 
 
-},{"../api/SaveFeed.jsx":2,"../utils/FormatCssClass.jsx":13,"react":24}],8:[function(require,module,exports){
+},{"../api/LoadRecipes.jsx":2,"../api/SaveFeed.jsx":3,"../utils/FormatCssClass.jsx":14,"react":25}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -993,7 +1101,7 @@ function (_Component) {
 exports["default"] = History;
 
 
-},{"../utils/FormatCssClass.jsx":13,"./CalendarMonth.jsx":6,"react":24}],9:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":14,"./CalendarMonth.jsx":7,"react":25}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1053,7 +1161,7 @@ function (_Component) {
 exports["default"] = LastFeedTime;
 
 
-},{"../utils/FormatCssClass.jsx":13,"react":24}],10:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":14,"react":25}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1139,7 +1247,7 @@ function (_Component) {
 exports["default"] = Weight;
 
 
-},{"../utils/FormatCssClass.jsx":13,"../utils/FormatWeight.jsx":14,"react":24}],11:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":14,"../utils/FormatWeight.jsx":15,"react":25}],12:[function(require,module,exports){
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -1165,7 +1273,7 @@ _reactDom["default"].render(_react["default"].createElement(_App["default"], nul
 */
 
 
-},{"./components/App.jsx":4,"react":24,"react-dom":21}],12:[function(require,module,exports){
+},{"./components/App.jsx":5,"react":25,"react-dom":22}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1219,7 +1327,7 @@ function FormatAge(today, ageDate) {
 }
 
 
-},{"react":24}],13:[function(require,module,exports){
+},{"react":25}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1237,7 +1345,7 @@ function FormatCssClass(classes) {
 }
 
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1268,7 +1376,7 @@ function FormatWeight(ounces, returnKilograms) {
 }
 
 
-},{"react":24}],15:[function(require,module,exports){
+},{"react":25}],16:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -1360,7 +1468,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -1546,7 +1654,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -1652,7 +1760,7 @@ checkPropTypes.resetWarningCache = function() {
 module.exports = checkPropTypes;
 
 }).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":18,"_process":16}],18:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":19,"_process":17}],19:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -1666,7 +1774,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 (function (process){
 /** @license React v16.8.6
  * react-dom.development.js
@@ -22948,7 +23056,7 @@ module.exports = reactDom;
 }
 
 }).call(this,require('_process'))
-},{"_process":16,"object-assign":15,"prop-types/checkPropTypes":17,"react":24,"scheduler":29,"scheduler/tracing":30}],20:[function(require,module,exports){
+},{"_process":17,"object-assign":16,"prop-types/checkPropTypes":18,"react":25,"scheduler":30,"scheduler/tracing":31}],21:[function(require,module,exports){
 /** @license React v16.8.6
  * react-dom.production.min.js
  *
@@ -23219,7 +23327,7 @@ x("38"):void 0;return Si(a,b,c,!1,d)},unmountComponentAtNode:function(a){Qi(a)?v
 X;X=!0;try{ki(a)}finally{(X=b)||W||Yh(1073741823,!1)}},__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{Events:[Ia,Ja,Ka,Ba.injectEventPluginsByName,pa,Qa,function(a){ya(a,Pa)},Eb,Fb,Dd,Da]}};function Ui(a,b){Qi(a)?void 0:x("299","unstable_createRoot");return new Pi(a,!0,null!=b&&!0===b.hydrate)}
 (function(a){var b=a.findFiberByHostInstance;return Te(n({},a,{overrideProps:null,currentDispatcherRef:Tb.ReactCurrentDispatcher,findHostInstanceByFiber:function(a){a=hd(a);return null===a?null:a.stateNode},findFiberByHostInstance:function(a){return b?b(a):null}}))})({findFiberByHostInstance:Ha,bundleType:0,version:"16.8.6",rendererPackageName:"react-dom"});var Wi={default:Vi},Xi=Wi&&Vi||Wi;module.exports=Xi.default||Xi;
 
-},{"object-assign":15,"react":24,"scheduler":29}],21:[function(require,module,exports){
+},{"object-assign":16,"react":25,"scheduler":30}],22:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -23261,7 +23369,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react-dom.development.js":19,"./cjs/react-dom.production.min.js":20,"_process":16}],22:[function(require,module,exports){
+},{"./cjs/react-dom.development.js":20,"./cjs/react-dom.production.min.js":21,"_process":17}],23:[function(require,module,exports){
 (function (process){
 /** @license React v16.8.6
  * react.development.js
@@ -25166,7 +25274,7 @@ module.exports = react;
 }
 
 }).call(this,require('_process'))
-},{"_process":16,"object-assign":15,"prop-types/checkPropTypes":17}],23:[function(require,module,exports){
+},{"_process":17,"object-assign":16,"prop-types/checkPropTypes":18}],24:[function(require,module,exports){
 /** @license React v16.8.6
  * react.production.min.js
  *
@@ -25193,7 +25301,7 @@ b,d){return W().useImperativeHandle(a,b,d)},useDebugValue:function(){},useLayout
 b){void 0!==b.ref&&(h=b.ref,f=J.current);void 0!==b.key&&(g=""+b.key);var l=void 0;a.type&&a.type.defaultProps&&(l=a.type.defaultProps);for(c in b)K.call(b,c)&&!L.hasOwnProperty(c)&&(e[c]=void 0===b[c]&&void 0!==l?l[c]:b[c])}c=arguments.length-2;if(1===c)e.children=d;else if(1<c){l=Array(c);for(var m=0;m<c;m++)l[m]=arguments[m+2];e.children=l}return{$$typeof:p,type:a.type,key:g,ref:h,props:e,_owner:f}},createFactory:function(a){var b=M.bind(null,a);b.type=a;return b},isValidElement:N,version:"16.8.6",
 unstable_ConcurrentMode:x,unstable_Profiler:u,__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentDispatcher:I,ReactCurrentOwner:J,assign:k}},Y={default:X},Z=Y&&X||Y;module.exports=Z.default||Z;
 
-},{"object-assign":15}],24:[function(require,module,exports){
+},{"object-assign":16}],25:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -25204,7 +25312,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react.development.js":22,"./cjs/react.production.min.js":23,"_process":16}],25:[function(require,module,exports){
+},{"./cjs/react.development.js":23,"./cjs/react.production.min.js":24,"_process":17}],26:[function(require,module,exports){
 (function (process){
 /** @license React v0.13.6
  * scheduler-tracing.development.js
@@ -25631,7 +25739,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 }
 
 }).call(this,require('_process'))
-},{"_process":16}],26:[function(require,module,exports){
+},{"_process":17}],27:[function(require,module,exports){
 /** @license React v0.13.6
  * scheduler-tracing.production.min.js
  *
@@ -25643,7 +25751,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 
 'use strict';Object.defineProperty(exports,"__esModule",{value:!0});var b=0;exports.__interactionsRef=null;exports.__subscriberRef=null;exports.unstable_clear=function(a){return a()};exports.unstable_getCurrent=function(){return null};exports.unstable_getThreadID=function(){return++b};exports.unstable_trace=function(a,d,c){return c()};exports.unstable_wrap=function(a){return a};exports.unstable_subscribe=function(){};exports.unstable_unsubscribe=function(){};
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 (function (process,global){
 /** @license React v0.13.6
  * scheduler.development.js
@@ -26346,7 +26454,7 @@ exports.unstable_getFirstCallbackNode = unstable_getFirstCallbackNode;
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":16}],28:[function(require,module,exports){
+},{"_process":17}],29:[function(require,module,exports){
 (function (global){
 /** @license React v0.13.6
  * scheduler.production.min.js
@@ -26371,7 +26479,7 @@ b=c.previous;b.next=c.previous=a;a.next=c;a.previous=b}return a};exports.unstabl
 exports.unstable_shouldYield=function(){return!e&&(null!==d&&d.expirationTime<l||w())};exports.unstable_continueExecution=function(){null!==d&&p()};exports.unstable_pauseExecution=function(){};exports.unstable_getFirstCallbackNode=function(){return d};
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -26382,7 +26490,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler.development.js":27,"./cjs/scheduler.production.min.js":28,"_process":16}],30:[function(require,module,exports){
+},{"./cjs/scheduler.development.js":28,"./cjs/scheduler.production.min.js":29,"_process":17}],31:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -26393,4 +26501,4 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler-tracing.development.js":25,"./cjs/scheduler-tracing.production.min.js":26,"_process":16}]},{},[11]);
+},{"./cjs/scheduler-tracing.development.js":26,"./cjs/scheduler-tracing.production.min.js":27,"_process":17}]},{},[12]);
