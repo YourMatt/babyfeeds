@@ -20,9 +20,9 @@ export default class FeedRecorder extends Component {
         // intialize the application state
         this.state = {
             isSaving: false,
+            selectedCalories: 0,
             selectedRecipeId: 0,
             selectedRecipeName: "",
-            selectedVolume: 0,
             selectedHour: parseInt(moment().format("h")),
             selectedMinute: moment().minute(),
             selectedAmPm: moment().format("a")
@@ -43,7 +43,7 @@ export default class FeedRecorder extends Component {
             }
         });
 
-        this.updateVolume = this.updateVolume.bind(this);
+        this.updateCalories = this.updateCalories.bind(this);
         this.displayHourSelection = this.displayHourSelection.bind(this);
         this.displayMinuteSelection = this.displayMinuteSelection.bind(this);
         this.displayRecipeSelection = this.displayRecipeSelection.bind(this);
@@ -66,10 +66,10 @@ export default class FeedRecorder extends Component {
             });
         }
 
-        // set the volume selection if provided by props
-        if (!this.state.selectedVolume && this.props.lastFeedVolume) {
+        // set the calorie selection if provided by props
+        if (!this.state.selectedCalories && this.props.caloriesLastFeed) {
             this.setState({
-                selectedVolume: this.props.lastFeedVolume
+                selectedCalories: this.props.caloriesLastFeed
             });
         }
 
@@ -79,17 +79,17 @@ export default class FeedRecorder extends Component {
     render() {
 
         // find the total volume for the day
-        let totalFeeds = 0;
+        let totalCalories = 0;
         this.props.feedsForToday.forEach((value) => {
-            totalFeeds += value.Milliliters;
+            totalCalories += value.Calories;
         });
 
         // find the remaining amount
-        let remainingMls = (totalFeeds < this.props.feedRequiredForToday) ? (this.props.feedRequiredForToday - totalFeeds) : 0;
-        let pluralRemainingMls = (remainingMls === 1) ? "" : "s";
+        let remainingCalories = (totalCalories < this.props.caloriesGoal) ? (this.props.caloriesGoal - totalCalories) : 0;
+        let pluralRemainingCalories = (remainingCalories === 1) ? "" : "s";
 
-        let currentVolume = this.state.selectedVolume;
-        let volumeMax = this.props.maxFeedVolume + 20; // TODO: Change to vary by percentage, ending in even numbers - maybe set a minimum based upon the baby's weight for new signups
+        let caloriesCurrent = this.state.selectedCalories;
+        let caloriesMax = this.props.caloriesFeedMax + 20; // TODO: Change to vary by percentage, ending in even numbers - maybe set a minimum based upon the baby's weight for new signups
 
         // return jsx
         return (
@@ -118,13 +118,13 @@ export default class FeedRecorder extends Component {
                     <g className="bottle-clipped">
                         <rect className={FormatCssClass("bottle-background")} x="0" y="0" width="100%" height="100%"/>
                         <g id="bottle-fills">
-                            {this.buildSvgFeedVolumeBlocks(this.props.feedRequiredForToday, this.props.feedsForToday)}
+                            {this.buildSvgFeedVolumeBlocks(this.props.caloriesGoal, this.props.feedsForToday)}
                         </g>
                     </g>
                 </svg>
                 <div className={FormatCssClass("areas")}>
                     <div className={FormatCssClass("remaining")}>
-                        <h2>{remainingMls}<small>ML{pluralRemainingMls}</small></h2>
+                        <h2>{remainingCalories}<small>Cal{pluralRemainingCalories}</small></h2>
                         <h3>Remaining</h3>
                     </div>
                     <form
@@ -142,15 +142,15 @@ export default class FeedRecorder extends Component {
                         </div>
                         <div className={FormatCssClass("volume-control")}>
                             <div className={FormatCssClass("volume")}>
-                                {currentVolume}<small>ML{(currentVolume === 1) ? "" : "s"}</small>
+                                {caloriesCurrent}<small>Cal{(caloriesCurrent === 1) ? "" : "s"}</small>
                             </div>
                             <div className={FormatCssClass("slider")}>
                                 <input
                                     type="range"
                                     min="1"
-                                    max={volumeMax}
-                                    value={currentVolume}
-                                    onChange={this.updateVolume}
+                                    max={caloriesMax}
+                                    value={caloriesCurrent}
+                                    onChange={this.updateCalories}
                                 />
                             </div>
                         </div>
@@ -171,7 +171,7 @@ export default class FeedRecorder extends Component {
         let feedBlocks = [];
         feedsForToday.forEach((value) => {
 
-            let feedPercent = 100 * value.Milliliters / totalFeedsRequired;
+            let feedPercent = 100 * value.Calories / totalFeedsRequired;
             currentPercent -= feedPercent;
 
             feedBlocks.push(
@@ -346,9 +346,9 @@ export default class FeedRecorder extends Component {
     }
 
     // Change the current selection of the feed volume.
-    updateVolume(e) {
+    updateCalories(e) {
 
-        this.setState({selectedVolume: e.target.value});
+        this.setState({selectedCalories: e.target.value});
 
     }
 
@@ -358,7 +358,7 @@ export default class FeedRecorder extends Component {
 
         // validate provided data
         // TODO: Validate time and show feedback if error
-        if (!this.state.selectedVolume) return;
+        if (!this.state.selectedCalories) return;
 
         // set state to saving to disable the form
         this.setState({
@@ -379,7 +379,7 @@ export default class FeedRecorder extends Component {
         let self = this;
         ApiSaveFeed({
             dateTime: date,
-            milliliters: this.state.selectedVolume,
+            calories: this.state.selectedCalories,
             recipeId: this.state.selectedRecipeId
         }, success => {
 

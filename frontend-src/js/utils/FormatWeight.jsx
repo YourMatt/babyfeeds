@@ -5,12 +5,10 @@
 import React from "react";
 
 // Converts provided number of ounces into readable weight. If passing in true, then will convert ounces to kilograms.
-export default function FormatWeight (ounces, returnKilograms) {
+export default function FormatWeight (kilograms, returnKilograms) {
 
-    // convert ounces to kilograms if requested
+    // return kilograms if requested
     if (returnKilograms) {
-
-        let kilograms = ounces * 0.0283495;
 
         return (
             <div>
@@ -20,10 +18,12 @@ export default function FormatWeight (ounces, returnKilograms) {
 
     }
 
-    // format for lbs/oz if not returning in kilos
+    // convert from kilos and format for lbs/oz if not returning in kilos
     else {
 
+        let ounces =  Math.round(kilograms / 0.0283495);
         let pounds = Math.floor(ounces / 16);
+
         ounces %= 16;
         let pluralPounds = (pounds === 1) ? "" : "s";
 

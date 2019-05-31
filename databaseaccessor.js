@@ -1,8 +1,8 @@
-var mysql = require ("mysql");
+const mysql = require ("mysql");
 
 exports.query = {
 
-    getBabyInfo: function(babyId, callback) {
+    getBabyInfo: (babyId, callback) => {
 
         exports.access.selectSingle({
                 sql:
@@ -12,9 +12,10 @@ exports.query = {
                 ",          r.RecipeId " +
                 ",          r.Name AS RecipeName " +
                 ",          r.CaloriesPerOunce AS RecipeCaloriesPerOunce " +
+                ", (        SELECT Kilograms FROM Weights WHERE BabyId = b.BabyId ORDER BY Date DESC LIMIT 1) AS WeightKilograms " +
                 ", (        SELECT DATE_FORMAT(MAX(Date), '%Y-%m-%d %H:%i') FROM Feeds WHERE BabyId = b.BabyId) AS LastFeedTime " +
-                ", (        SELECT Milliliters FROM Feeds WHERE BabyId = b.BabyId ORDER BY Date DESC LIMIT 1 ) AS LastFeedVolume " +
-                ", (        SELECT MAX(Milliliters) FROM Feeds WHERE BabyId = b.BabyId) AS MaxFeedVolume " +
+                ", (        SELECT Calories FROM Feeds WHERE BabyId = b.BabyId ORDER BY Date DESC LIMIT 1) AS LastFeedCalories " +
+                ", (        SELECT MAX(Calories) FROM Feeds WHERE BabyId = b.BabyId) AS MaxFeedCalories " +
                 "FROM       Babies b " +
                 "INNER JOIN Recipes r ON r.RecipeId = b.RecipeId " +
                 "WHERE      BabyId = ? ",
@@ -24,25 +25,24 @@ exports.query = {
 
     },
 
-    getFeedTotalsPerDay: function(callback) {
+    getFeedTotalsPerDay: (babyId, callback) => {
 
         exports.access.selectMultiple ({
                 sql:
-                "SELECT     DATE_FORMAT(f.Date, '%Y-%m-%d') AS Date " +
-                ",          SUM(f.Milliliters) AS TotalVolume " +
-                ", (        SELECT Ounces FROM Weights WHERE Date <= DATE_FORMAT(f.Date, '%Y-%m-%d') ORDER BY Date DESC LIMIT 1) AS WeightOuncesOnDay " +
-                ", (        SELECT CaloriesPerKilogram FROM Goals WHERE Date <= DATE_FORMAT(f.Date, '%Y-%m-%d') ORDER BY Date DESC LIMIT 1) AS GoalCaloriesPerKilogramOnDay " +
-                ",          DATE_FORMAT(MAX(f.Date), '%Y-%m-%d %H:%i') AS LastFeedTime " +
-                ",          AVG(r.CaloriesPerOunce) AS AverageRecipeCaloriesPerOunce " +
-                "FROM       Feeds f " +
-                "INNER JOIN Recipes r ON r.RecipeId = f.RecipeId " +
-                "GROUP BY   DATE_FORMAT(f.Date, '%Y-%m-%d')"
+                "SELECT     DATE_FORMAT(Date, '%Y-%m-%d') AS Date " +
+                ",          GoalCalories " +
+                ",          TotalCalories " +
+                ",          ROUND(TotalCalories / GoalCalories * 100) AS Percent " +
+                "FROM       DailyTotals " +
+                "WHERE      BabyId = ? " +
+                "ORDER BY   Date ASC ",
+                values: [babyId]
             },
             callback);
 
     },
 
-    getRecipes: function(accountId, callback) {
+    getRecipes: (accountId, callback) => {
 
         exports.access.selectMultiple({
                 sql:
@@ -57,12 +57,25 @@ exports.query = {
 
     },
 
-    getFeedsForDay: function(day, callback) {
+    getRecipe: (recipeId, callback) => {
+
+        exports.access.selectSingle({
+                sql:
+                "SELECT * " +
+                "FROM   Recipes " +
+                "WHERE  RecipeId = ? ",
+                values: recipeId
+            },
+            callback);
+
+    },
+
+    getFeedsForDay: (day, callback) => {
 
         exports.access.selectMultiple ({
                 sql:
                 "SELECT    DATE_FORMAT(Date, '%H:%i') AS Time " +
-                ",         Milliliters " +
+                ",         Calories " +
                 "FROM      Feeds " +
                 "WHERE     DATE_FORMAT(Date, '%Y-%m-%d') = ? " +
                 "ORDER BY  Date",
@@ -72,27 +85,70 @@ exports.query = {
 
     },
 
-    insertFeed: function(babyId, dateTime, milliliters, recipeId, callback) {
+    insertFeed: (babyId, dateTime, calories, recipeId, callback) => {
 
         exports.access.insert({
-            sql:
-            "INSERT INTO Feeds " +
-            "(           BabyId, RecipeId, Date, Milliliters) " +
-            "VALUES (    ?, ?, ?, ?)",
-            values: [babyId, recipeId, dateTime, milliliters]
+                sql:
+                "INSERT INTO Feeds " +
+                "(           BabyId, RecipeId, Date, Calories) " +
+                "VALUES (    ?, ?, ?, ?) ",
+                values: [babyId, recipeId, dateTime, calories]
             },
-            callback);
+            (numInserted) => {
+
+                // update the running total to include the new feed
+                exports.query.refreshDailyTotalsForDay(
+                    babyId,
+                    dateTime.split(" ")[0],
+                    callback
+                );
+
+            });
 
     },
 
-    updateBabyDefaultRecipe: function(babyId, recipeId, callback) {
+    refreshDailyTotalsForDay: (babyId, date, callback) => {
 
+        // remove any existing daily totals
         exports.access.update({
             sql:
-            "UPDATE Babies " +
-            "SET    RecipeId = ? " +
-            "WHERE  BabyId = ? ",
-            values: [recipeId, babyId]
+            "DELETE FROM DailyTotals " +
+            "WHERE       BabyId = ? " +
+            "AND         Date = ? ",
+            values: [babyId, date]
+        }, (numDeleted) => {
+
+            // calculate the new total for the day
+            exports.access.insert({
+                    sql:
+                    "INSERT INTO DailyTotals " +
+                    "(           BabyId, Date, GoalCalories, TotalCalories) " +
+                    "SELECT      f.BabyId " +
+                    ",           DATE_FORMAT(f.Date, '%Y-%m-%d') AS Date " +
+                    ", (         SELECT Kilograms FROM Weights WHERE Date <= DATE_FORMAT(f.Date, '%Y-%m-%d') ORDER BY Date DESC LIMIT 1) * " +
+                    "  (         SELECT CaloriesPerKilogram FROM Goals WHERE Date <= DATE_FORMAT(f.Date, '%Y-%m-%d') ORDER BY Date DESC LIMIT 1) AS GoalCaloriesForDay " +
+                    ",           SUM(f.Calories) AS TotalCalories " +
+                    "FROM        Feeds f " +
+                    "INNER JOIN  Recipes r ON r.RecipeId = f.RecipeId " +
+                    "WHERE       f.BabyId = ? " +
+                    "AND         f.Date >= ? AND f.Date < DATE_ADD(?, INTERVAL 1 DAY) " +
+                    "GROUP BY    DATE_FORMAT(f.Date, '%Y-%m-%d') ",
+                    values: [babyId, date, date]
+                },
+                callback);
+
+        });
+
+    },
+
+    updateBabyDefaultRecipe: (babyId, recipeId, callback) => {
+
+        exports.access.update({
+                sql:
+                "UPDATE Babies " +
+                "SET    RecipeId = ? " +
+                "WHERE  BabyId = ? ",
+                values: [recipeId, babyId]
             },
             callback);
 
@@ -104,10 +160,10 @@ exports.access = {
 
     db: null,
 
-    init: function () {
+    init: () => {
 
         // create the db connection
-        this.db = mysql.createConnection({
+        exports.access.db = mysql.createConnection({
             host: process.env.DB_HOST,
             user: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
@@ -115,7 +171,7 @@ exports.access = {
         });
 
         // connect to the database
-        this.db.connect((error) => {
+        exports.access.db.connect((error) => {
             if (error) {
                 // TODO: write error data to logs
                 console.log('Error connecting to Db: ' + error);
@@ -125,14 +181,14 @@ exports.access = {
 
     },
 
-    close: function () {
+    close: () => {
 
         // close the database connection
-        this.db.end();
+        exports.access.db.end();
 
     },
 
-    handleError: function (query, error) {
+    handleError: (query, error) => {
 
         // TODO: write error data to logs
         console.log("Error running query: " + error);
@@ -140,21 +196,22 @@ exports.access = {
 
     },
 
-    selectSingle: function (query, callback) {
+    selectSingle: (query, callback) => {
 
-        this.selectMultiple(query, callback, true);
+        exports.access.selectMultiple(query, callback, true);
 
     },
 
-    selectMultiple: function (query, callback, returnSingle) {
+    selectMultiple: (query, callback, returnSingle) => {
 
-        this.init();
+        exports.access.init();
 
         // run the query
-        this.db.query(query, (error, rows) => {
+        exports.access.db.query(query, (error, rows) => {
 
             // report error and return if error state
             if (error) return exports.access.handleError(query, error);
+            exports.access.close();
 
             // call the callback with data
             if (returnSingle) callback(rows[0]);
@@ -162,17 +219,17 @@ exports.access = {
 
         });
 
-        this.close();
 
     },
 
-    insert: function (query, callback) {
+    insert: (query, callback) => {
 
-        this.init();
+        exports.access.init();
 
         this.db.query(query, (error, results) => {
 
             if (error) return exports.access.handleError(query, error);
+            exports.access.close();
 
             // call the callback with the insert ID
             callback(results.insertId);
@@ -181,13 +238,14 @@ exports.access = {
 
     },
 
-    update: function (query, callback) {
+    update: (query, callback) => {
 
-        this.init();
+        exports.access.init();
 
-        this.db.query(query, (error, results) => {
+        exports.access.db.query(query, (error, results) => {
 
             if (error) return exports.access.handleError(query, error);
+            exports.access.close();
 
             // call the callback with number of affected records
             callback(results.affectedRows);

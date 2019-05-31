@@ -26,18 +26,18 @@ export default class App extends Component {
 
         // intialize the application state
         this.state = {
+            caloriesFeedMax: 0,
+            caloriesLastFeed: 0,
+            caloriesGoal: 0,
             dateToday: "",
             dateBirth: "",
             dateExpected: "",
             feedsForToday: [],
-            feedRequiredForToday: 0,
             feedTotalsPerDay: [],
             lastFeedTime: "",
-            lastFeedVolume: 0,
-            maxFeedVolume: 0,
             recipeId: 0,
             recipeName: "",
-            weightOunces: 0,
+            weightKilograms: 0,
 
             modal: "",
 
@@ -84,9 +84,9 @@ export default class App extends Component {
                 <div className={FormatCssClass("body")}>
                     <FeedRecorder
                         feedsForToday={this.state.feedsForToday}
-                        feedRequiredForToday={this.state.feedRequiredForToday}
-                        lastFeedVolume={this.state.lastFeedVolume}
-                        maxFeedVolume={this.state.maxFeedVolume}
+                        caloriesGoal={this.state.caloriesGoal}
+                        caloriesFeedMax={this.state.caloriesFeedMax}
+                        caloriesLastFeed={this.state.caloriesLastFeed}
                         recipeId={this.state.recipeId}
                         recipeName={this.state.recipeName}
                         fnReloadData={this.reloadData}
@@ -101,7 +101,7 @@ export default class App extends Component {
                 </div>
                 <div className={FormatCssClass("footer")}>
                     <Weight
-                        weightOunces={this.state.weightOunces}
+                        weightKilograms={this.state.weightKilograms}
                     />
                     <Age
                         dateToday={this.state.dateToday}
@@ -121,18 +121,18 @@ export default class App extends Component {
 
         ApiLoad(data => {
             this.setState({
+                caloriesFeedMax: data.caloriesFeedMax,
+                caloriesLastFeed: data.caloriesLastFeed,
+                caloriesGoal: data.caloriesGoal,
                 dateToday: data.dateToday,
                 dateBirth: data.dateBirth,
                 dateExpected: data.dateExpected,
                 feedsForToday: data.feedsForToday,
-                feedRequiredForToday: data.feedRequiredForToday,
                 feedTotalsPerDay: data.feedTotalsPerDay,
                 lastFeedTime: data.lastFeedTime,
-                lastFeedVolume: data.lastFeedVolume,
-                maxFeedVolume: data.maxFeedVolume,
                 recipeId: data.recipeId,
                 recipeName: data.recipeName,
-                weightOunces: data.weightOunces
+                weightKilograms: data.weightKilograms
             });
             if (callback) callback();
         });

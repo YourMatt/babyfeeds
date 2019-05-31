@@ -36,7 +36,7 @@ export default class Weight extends Component {
             >
                 <div className={FormatCssClass("weight")}>
                     <h6>Weight</h6>
-                    <span>{FormatWeight(this.props.weightOunces, this.state.showMetric)}</span>
+                    <span>{FormatWeight(this.props.weightKilograms, this.state.showMetric)}</span>
                 </div>
             </div>
         );

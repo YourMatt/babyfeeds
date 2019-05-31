@@ -84,6 +84,7 @@ module.exports = function (grunt) {
             watch_jsx_files: {
                 files: [
                     "frontend-src/js/*.jsx",
+                    "frontend-src/js/api/*.jsx",
                     "frontend-src/js/components/*.jsx",
                     "frontend-src/js/utils/*.jsx"
                 ],

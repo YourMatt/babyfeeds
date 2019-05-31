@@ -1,7 +1,7 @@
 
 exports.display = function (res, pageName, data) {
 
-    var pageData = loadCommonEjsVariables ();
+    let pageData = loadCommonEjsVariables ();
     pageData.PAGE = pageName;
 
     res.locals = ""; // fixes object conversion error in production environment
@@ -27,7 +27,7 @@ exports.display = function (res, pageName, data) {
 
 function loadCommonEjsVariables () {
 
-    var ejsVariables = loadBasePageDataFromEnvironmentVariables ();
+    let ejsVariables = loadBasePageDataFromEnvironmentVariables ();
     ejsVariables.UTILS = loadEjsUtilities ();
     ejsVariables.PAGE = "";
 

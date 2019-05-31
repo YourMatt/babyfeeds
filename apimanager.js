@@ -1,4 +1,4 @@
-var database = require ("./databaseaccessor.js"),
+const database = require ("./databaseaccessor.js"),
     moment = require("moment");
 
 exports.process = function (req, res) {
@@ -15,47 +15,24 @@ exports.process = function (req, res) {
                     process.env.SELECTED_BABY,
                     (babyData) => {
 
-                        database.query.getFeedTotalsPerDay((feedTotalsPerDay) => {
-
-                            let goalCaloriesForDay = 0;
-                            let totalCaloriesForDay = 0;
-                            feedTotalsPerDay.forEach(function (element) {
-                                goalCaloriesForDay = Math.ceil(element.WeightOuncesOnDay * process.env.KILOGRAMS_PER_OUNCE * element.GoalCaloriesPerKilogramOnDay);
-                                totalCaloriesForDay = Math.ceil(element.AverageRecipeCaloriesPerOunce / process.env.MILLILITERS_PER_OUNCE * element.TotalVolume);
-                                element.Percent = Math.round(totalCaloriesForDay / goalCaloriesForDay * 100);
-                            });
+                        database.query.getFeedTotalsPerDay(process.env.SELECTED_BABY, (feedTotalsPerDay) => {
 
                             let today = moment().format("YYYY-MM-DD");
-                            let actualAge = moment().diff(moment(babyData.BirthDate), "week");
-                            let correctedAge = moment().diff(moment(babyData.ExpectedDate), "week");
-                            let weightInOunces = feedTotalsPerDay[feedTotalsPerDay.length - 1].WeightOuncesOnDay;
-                            let weight = Math.floor(weightInOunces / 16) + "lbs " + (weightInOunces % 16) + "oz";
-                            let goalVolume = Math.round(goalCaloriesForDay / (babyData.RecipeCaloriesPerOunce / process.env.MILLILITERS_PER_OUNCE));
-
                             database.query.getFeedsForDay(today, (feedsForDay) => {
 
                                 res.json({
-
-                                    // new values after react rewrite
+                                    caloriesFeedMax: babyData.MaxFeedCalories,
+                                    caloriesLastFeed: babyData.LastFeedCalories,
+                                    caloriesGoal: feedTotalsPerDay[feedTotalsPerDay.length - 1].GoalCalories,
                                     dateToday: today,
                                     dateBirth: moment(babyData.BirthDate).format("YYYY-MM-DD"),
                                     dateExpected: (babyData.ExpectedDate) ? (moment(babyData.ExpectedDate).format("YYYY-MM-DD")) : "",
+                                    feedsForToday: feedsForDay,
+                                    feedTotalsPerDay: feedTotalsPerDay,
                                     lastFeedTime: moment(babyData.LastFeedTime).format("h:mma"),
-                                    lastFeedVolume: babyData.LastFeedVolume,
-                                    maxFeedVolume: babyData.MaxFeedVolume,
                                     recipeId: babyData.RecipeId,
                                     recipeName: babyData.RecipeName,
-                                    weightOunces: weightInOunces,
-
-                                    // original values
-                                    today: today,
-                                    feedTotalsPerDay: feedTotalsPerDay,
-                                    feedsForToday: feedsForDay,
-                                    feedRequiredForToday: goalVolume,
-                                    weight: weight,
-                                    actualAge: actualAge,
-                                    correctedAge: correctedAge
-
+                                    weightKilograms: babyData.WeightKilograms
                                 });
 
                             });
@@ -97,14 +74,26 @@ exports.process = function (req, res) {
             if (method === "POST") {
 
                 let dateTime = req.body.dateTime;
-                let milliliters = req.body.milliliters;
+                let calories = req.body.calories;
                 let recipeId = req.body.recipeId;
 
-                database.query.insertFeed(process.env.SELECTED_BABY, dateTime, milliliters, recipeId, () => {
-                    database.query.updateBabyDefaultRecipe(process.env.SELECTED_BABY, recipeId, () => {
-                        res.json({});
-                    });
-                });
+                database.query.getRecipe(
+                    recipeId,
+                    (recipe) => {
+
+                        database.query.insertFeed(
+                            process.env.SELECTED_BABY,
+                            dateTime,
+                            calories,
+                            recipeId,
+                            () => {
+                                database.query.updateBabyDefaultRecipe(process.env.SELECTED_BABY, recipeId, () => {
+                                    res.json({});
+                                });
+                            });
+
+                    }
+                );
 
                 processed = true;
             }

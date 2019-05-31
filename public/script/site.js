@@ -77,7 +77,7 @@ function ApiSaveFeed(saveData, callback) {
     },
     body: JSON.stringify({
       dateTime: saveData.dateTime,
-      milliliters: saveData.milliliters,
+      calories: saveData.calories,
       recipeId: saveData.recipeId
     })
   }).then(function (results) {
@@ -249,18 +249,18 @@ function (_Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(App).call(this, props, context)); // intialize the application state
 
     _this.state = {
+      caloriesFeedMax: 0,
+      caloriesLastFeed: 0,
+      caloriesGoal: 0,
       dateToday: "",
       dateBirth: "",
       dateExpected: "",
       feedsForToday: [],
-      feedRequiredForToday: 0,
       feedTotalsPerDay: [],
       lastFeedTime: "",
-      lastFeedVolume: 0,
-      maxFeedVolume: 0,
       recipeId: 0,
       recipeName: "",
-      weightOunces: 0,
+      weightKilograms: 0,
       modal: ""
     };
     _this.reloadData = _this.reloadData.bind(_assertThisInitialized(_this));
@@ -302,9 +302,9 @@ function (_Component) {
         className: (0, _FormatCssClass["default"])("body")
       }, _react["default"].createElement(_FeedRecorder["default"], {
         feedsForToday: this.state.feedsForToday,
-        feedRequiredForToday: this.state.feedRequiredForToday,
-        lastFeedVolume: this.state.lastFeedVolume,
-        maxFeedVolume: this.state.maxFeedVolume,
+        caloriesGoal: this.state.caloriesGoal,
+        caloriesFeedMax: this.state.caloriesFeedMax,
+        caloriesLastFeed: this.state.caloriesLastFeed,
         recipeId: this.state.recipeId,
         recipeName: this.state.recipeName,
         fnReloadData: this.reloadData,
@@ -317,7 +317,7 @@ function (_Component) {
       })), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("footer")
       }, _react["default"].createElement(_Weight["default"], {
-        weightOunces: this.state.weightOunces
+        weightKilograms: this.state.weightKilograms
       }), _react["default"].createElement(_Age["default"], {
         dateToday: this.state.dateToday,
         dateBirth: this.state.dateBirth,
@@ -332,18 +332,18 @@ function (_Component) {
 
       (0, _Load["default"])(function (data) {
         _this2.setState({
+          caloriesFeedMax: data.caloriesFeedMax,
+          caloriesLastFeed: data.caloriesLastFeed,
+          caloriesGoal: data.caloriesGoal,
           dateToday: data.dateToday,
           dateBirth: data.dateBirth,
           dateExpected: data.dateExpected,
           feedsForToday: data.feedsForToday,
-          feedRequiredForToday: data.feedRequiredForToday,
           feedTotalsPerDay: data.feedTotalsPerDay,
           lastFeedTime: data.lastFeedTime,
-          lastFeedVolume: data.lastFeedVolume,
-          maxFeedVolume: data.maxFeedVolume,
           recipeId: data.recipeId,
           recipeName: data.recipeName,
-          weightOunces: data.weightOunces
+          weightKilograms: data.weightKilograms
         });
 
         if (callback) callback();
@@ -636,9 +636,9 @@ function (_Component) {
 
     _this.state = {
       isSaving: false,
+      selectedCalories: 0,
       selectedRecipeId: 0,
       selectedRecipeName: "",
-      selectedVolume: 0,
       selectedHour: parseInt(moment().format("h")),
       selectedMinute: moment().minute(),
       selectedAmPm: moment().format("a")
@@ -659,7 +659,7 @@ function (_Component) {
         });
       }
     });
-    _this.updateVolume = _this.updateVolume.bind(_assertThisInitialized(_this));
+    _this.updateCalories = _this.updateCalories.bind(_assertThisInitialized(_this));
     _this.displayHourSelection = _this.displayHourSelection.bind(_assertThisInitialized(_this));
     _this.displayMinuteSelection = _this.displayMinuteSelection.bind(_assertThisInitialized(_this));
     _this.displayRecipeSelection = _this.displayRecipeSelection.bind(_assertThisInitialized(_this));
@@ -681,12 +681,12 @@ function (_Component) {
           selectedRecipeId: this.props.recipeId,
           selectedRecipeName: this.props.recipeName
         });
-      } // set the volume selection if provided by props
+      } // set the calorie selection if provided by props
 
 
-      if (!this.state.selectedVolume && this.props.lastFeedVolume) {
+      if (!this.state.selectedCalories && this.props.caloriesLastFeed) {
         this.setState({
-          selectedVolume: this.props.lastFeedVolume
+          selectedCalories: this.props.caloriesLastFeed
         });
       }
     } // Renders the feed recorder.
@@ -695,15 +695,15 @@ function (_Component) {
     key: "render",
     value: function render() {
       // find the total volume for the day
-      var totalFeeds = 0;
+      var totalCalories = 0;
       this.props.feedsForToday.forEach(function (value) {
-        totalFeeds += value.Milliliters;
+        totalCalories += value.Calories;
       }); // find the remaining amount
 
-      var remainingMls = totalFeeds < this.props.feedRequiredForToday ? this.props.feedRequiredForToday - totalFeeds : 0;
-      var pluralRemainingMls = remainingMls === 1 ? "" : "s";
-      var currentVolume = this.state.selectedVolume;
-      var volumeMax = this.props.maxFeedVolume + 20; // TODO: Change to vary by percentage, ending in even numbers - maybe set a minimum based upon the baby's weight for new signups
+      var remainingCalories = totalCalories < this.props.caloriesGoal ? this.props.caloriesGoal - totalCalories : 0;
+      var pluralRemainingCalories = remainingCalories === 1 ? "" : "s";
+      var caloriesCurrent = this.state.selectedCalories;
+      var caloriesMax = this.props.caloriesFeedMax + 20; // TODO: Change to vary by percentage, ending in even numbers - maybe set a minimum based upon the baby's weight for new signups
       // return jsx
 
       return _react["default"].createElement("div", {
@@ -753,11 +753,11 @@ function (_Component) {
         height: "100%"
       }), _react["default"].createElement("g", {
         id: "bottle-fills"
-      }, this.buildSvgFeedVolumeBlocks(this.props.feedRequiredForToday, this.props.feedsForToday)))), _react["default"].createElement("div", {
+      }, this.buildSvgFeedVolumeBlocks(this.props.caloriesGoal, this.props.feedsForToday)))), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("areas")
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("remaining")
-      }, _react["default"].createElement("h2", null, remainingMls, _react["default"].createElement("small", null, "ML", pluralRemainingMls)), _react["default"].createElement("h3", null, "Remaining")), _react["default"].createElement("form", {
+      }, _react["default"].createElement("h2", null, remainingCalories, _react["default"].createElement("small", null, "Cal", pluralRemainingCalories)), _react["default"].createElement("h3", null, "Remaining")), _react["default"].createElement("form", {
         className: (0, _FormatCssClass["default"])("input"),
         onSubmit: this.submitFeed
       }, _react["default"].createElement("div", {
@@ -777,14 +777,14 @@ function (_Component) {
         className: (0, _FormatCssClass["default"])("volume-control")
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("volume")
-      }, currentVolume, _react["default"].createElement("small", null, "ML", currentVolume === 1 ? "" : "s")), _react["default"].createElement("div", {
+      }, caloriesCurrent, _react["default"].createElement("small", null, "Cal", caloriesCurrent === 1 ? "" : "s")), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("slider")
       }, _react["default"].createElement("input", {
         type: "range",
         min: "1",
-        max: volumeMax,
-        value: currentVolume,
-        onChange: this.updateVolume
+        max: caloriesMax,
+        value: caloriesCurrent,
+        onChange: this.updateCalories
       }))), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("button")
       }, _react["default"].createElement("button", {
@@ -799,7 +799,7 @@ function (_Component) {
       var currentPercent = 100;
       var feedBlocks = [];
       feedsForToday.forEach(function (value) {
-        var feedPercent = 100 * value.Milliliters / totalFeedsRequired;
+        var feedPercent = 100 * value.Calories / totalFeedsRequired;
         currentPercent -= feedPercent;
         feedBlocks.push(_react["default"].createElement("rect", {
           key: value.Time,
@@ -950,10 +950,10 @@ function (_Component) {
     } // Change the current selection of the feed volume.
 
   }, {
-    key: "updateVolume",
-    value: function updateVolume(e) {
+    key: "updateCalories",
+    value: function updateCalories(e) {
       this.setState({
-        selectedVolume: e.target.value
+        selectedCalories: e.target.value
       });
     } // Saves the current selections.
 
@@ -963,7 +963,7 @@ function (_Component) {
       e.preventDefault(); // validate provided data
       // TODO: Validate time and show feedback if error
 
-      if (!this.state.selectedVolume) return; // set state to saving to disable the form
+      if (!this.state.selectedCalories) return; // set state to saving to disable the form
 
       this.setState({
         isSaving: true
@@ -979,7 +979,7 @@ function (_Component) {
       var self = this;
       (0, _SaveFeed["default"])({
         dateTime: date,
-        milliliters: this.state.selectedVolume,
+        calories: this.state.selectedCalories,
         recipeId: this.state.selectedRecipeId
       }, function (success) {
         // TODO: Handle non-success
@@ -1229,7 +1229,7 @@ function (_Component) {
         onClick: this.changeWeightDisplay
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("weight")
-      }, _react["default"].createElement("h6", null, "Weight"), _react["default"].createElement("span", null, (0, _FormatWeight["default"])(this.props.weightOunces, this.state.showMetric))));
+      }, _react["default"].createElement("h6", null, "Weight"), _react["default"].createElement("span", null, (0, _FormatWeight["default"])(this.props.weightKilograms, this.state.showMetric))));
     } // Changes the display between actual and corrected age.
 
   }, {
@@ -1361,13 +1361,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
     FormatWeight
  */
 // Converts provided number of ounces into readable weight. If passing in true, then will convert ounces to kilograms.
-function FormatWeight(ounces, returnKilograms) {
-  // convert ounces to kilograms if requested
+function FormatWeight(kilograms, returnKilograms) {
+  // return kilograms if requested
   if (returnKilograms) {
-    var kilograms = ounces * 0.0283495;
     return _react["default"].createElement("div", null, kilograms.toFixed(1), _react["default"].createElement("small", null, "kgs"));
-  } // format for lbs/oz if not returning in kilos
+  } // convert from kilos and format for lbs/oz if not returning in kilos
   else {
+      var ounces = Math.round(kilograms / 0.0283495);
       var pounds = Math.floor(ounces / 16);
       ounces %= 16;
       var pluralPounds = pounds === 1 ? "" : "s";
