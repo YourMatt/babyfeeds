@@ -25,7 +25,7 @@ function ApiLoad(callback) {
 }
 
 
-},{"react":25}],2:[function(require,module,exports){
+},{"react":28}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52,7 +52,7 @@ function ApiLoadRecipes(callback) {
 }
 
 
-},{"react":25}],3:[function(require,module,exports){
+},{"react":28}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -88,7 +88,7 @@ function ApiSaveFeed(saveData, callback) {
 }
 
 
-},{"react":25}],4:[function(require,module,exports){
+},{"react":28}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -188,7 +188,7 @@ function (_Component) {
 exports["default"] = Age;
 
 
-},{"../utils/FormatAge.jsx":13,"../utils/FormatCssClass.jsx":14,"react":25}],5:[function(require,module,exports){
+},{"../utils/FormatAge.jsx":15,"../utils/FormatCssClass.jsx":16,"react":28}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -260,6 +260,7 @@ function (_Component) {
       lastFeedTime: "",
       recipeId: 0,
       recipeName: "",
+      recipeCaloriesPerOunce: 0,
       weightKilograms: 0,
       modal: ""
     };
@@ -307,6 +308,7 @@ function (_Component) {
         caloriesLastFeed: this.state.caloriesLastFeed,
         recipeId: this.state.recipeId,
         recipeName: this.state.recipeName,
+        recipeCaloriesPerOunce: this.state.recipeCaloriesPerOunce,
         fnReloadData: this.reloadData,
         fnDisplayModal: this.displayModal,
         fnDismissModal: this.dismissModal
@@ -343,6 +345,7 @@ function (_Component) {
           lastFeedTime: data.lastFeedTime,
           recipeId: data.recipeId,
           recipeName: data.recipeName,
+          recipeCaloriesPerOunce: data.recipeCaloriesPerOunce,
           weightKilograms: data.weightKilograms
         });
 
@@ -385,7 +388,7 @@ function (_Component) {
 exports["default"] = App;
 
 
-},{"../api/Load.jsx":1,"../utils/FormatCssClass.jsx":14,"./Age.jsx":4,"./FeedRecorder.jsx":8,"./History.jsx":9,"./LastFeedTime.jsx":10,"./Weight.jsx":11,"react":25}],6:[function(require,module,exports){
+},{"../api/Load.jsx":1,"../utils/FormatCssClass.jsx":16,"./Age.jsx":4,"./FeedRecorder.jsx":8,"./History.jsx":9,"./LastFeedTime.jsx":10,"./Weight.jsx":11,"react":28}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -475,7 +478,7 @@ function (_Component) {
 exports["default"] = CalendarDay;
 
 
-},{"../utils/FormatCssClass.jsx":14,"react":25}],7:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":16,"react":28}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -583,7 +586,7 @@ function (_Component) {
 exports["default"] = CalendarMonth;
 
 
-},{"../utils/FormatCssClass.jsx":14,"./CalendarDay.jsx":6,"react":25}],8:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":16,"./CalendarDay.jsx":6,"react":28}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -593,7 +596,11 @@ exports["default"] = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
+var _Converters = require("../utils/Converters.jsx");
+
 var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
+
+var _FormatFeedVolume = _interopRequireDefault(require("../utils/FormatFeedVolume.jsx"));
 
 var _LoadRecipes = _interopRequireDefault(require("../api/LoadRecipes.jsx"));
 
@@ -636,12 +643,22 @@ function (_Component) {
 
     _this.state = {
       isSaving: false,
+      // true during a save operation
+      selectedVolume: 0,
+      // the displayed feed volume in the selected unit
       selectedCalories: 0,
+      // the current calorie content of the selected volume - could be refactored out to be derived only when needed
       selectedRecipeId: 0,
+      // the selected recipe ID
       selectedRecipeName: "",
+      // the selected recipe name
+      selectedRecipeCaloriesPerOunce: 0,
+      // the selected recipe calorie density
       selectedHour: parseInt(moment().format("h")),
       selectedMinute: moment().minute(),
-      selectedAmPm: moment().format("a")
+      selectedAmPm: moment().format("a"),
+      units: "mls" // can be: cals, mls, ozs
+
     }; // reload the data after regaining focus
 
     var self = _assertThisInitialized(_this);
@@ -659,13 +676,14 @@ function (_Component) {
         });
       }
     });
-    _this.updateCalories = _this.updateCalories.bind(_assertThisInitialized(_this));
+    _this.updateVolume = _this.updateVolume.bind(_assertThisInitialized(_this));
     _this.displayHourSelection = _this.displayHourSelection.bind(_assertThisInitialized(_this));
     _this.displayMinuteSelection = _this.displayMinuteSelection.bind(_assertThisInitialized(_this));
     _this.displayRecipeSelection = _this.displayRecipeSelection.bind(_assertThisInitialized(_this));
     _this.changeHourSelection = _this.changeHourSelection.bind(_assertThisInitialized(_this));
     _this.changeMinuteSelection = _this.changeMinuteSelection.bind(_assertThisInitialized(_this));
     _this.changeAmPmSelection = _this.changeAmPmSelection.bind(_assertThisInitialized(_this));
+    _this.changeUnitSelection = _this.changeUnitSelection.bind(_assertThisInitialized(_this));
     _this.changeRecipeSelection = _this.changeRecipeSelection.bind(_assertThisInitialized(_this));
     _this.submitFeed = _this.submitFeed.bind(_assertThisInitialized(_this));
     return _this;
@@ -679,14 +697,16 @@ function (_Component) {
       if (!this.state.selectedRecipeId && this.props.recipeId) {
         this.setState({
           selectedRecipeId: this.props.recipeId,
-          selectedRecipeName: this.props.recipeName
+          selectedRecipeName: this.props.recipeName,
+          selectedRecipeCaloriesPerOunce: this.props.recipeCaloriesPerOunce
         });
       } // set the calorie selection if provided by props
 
 
       if (!this.state.selectedCalories && this.props.caloriesLastFeed) {
         this.setState({
-          selectedCalories: this.props.caloriesLastFeed
+          selectedCalories: this.props.caloriesLastFeed,
+          selectedVolume: (0, _Converters.ConvertCaloriesToVolume)(this.props.caloriesLastFeed, this.state.units, this.props.recipeCaloriesPerOunce)
         });
       }
     } // Renders the feed recorder.
@@ -699,12 +719,15 @@ function (_Component) {
       this.props.feedsForToday.forEach(function (value) {
         totalCalories += value.Calories;
       }); // find the remaining amount
+      //let remainingCalories = (totalCalories < this.props.caloriesGoal) ? (this.props.caloriesGoal - totalCalories) : 0;
+      //let pluralRemainingCalories = (remainingCalories === 1) ? "" : "s";
 
-      var remainingCalories = totalCalories < this.props.caloriesGoal ? this.props.caloriesGoal - totalCalories : 0;
-      var pluralRemainingCalories = remainingCalories === 1 ? "" : "s";
       var caloriesCurrent = this.state.selectedCalories;
       var caloriesMax = this.props.caloriesFeedMax + 20; // TODO: Change to vary by percentage, ending in even numbers - maybe set a minimum based upon the baby's weight for new signups
-      // return jsx
+      // convert volume to the current unit
+
+      var remainingVolumeData = (0, _FormatFeedVolume["default"])(this.state.units, totalCalories < this.props.caloriesGoal ? this.props.caloriesGoal - totalCalories : 0, 0, this.state.selectedRecipeCaloriesPerOunce);
+      var sliderVolumeData = (0, _FormatFeedVolume["default"])(this.state.units, this.state.selectedCalories, this.props.caloriesFeedMax, this.state.selectedRecipeCaloriesPerOunce); // return jsx
 
       return _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("feed-recorder")
@@ -757,7 +780,9 @@ function (_Component) {
         className: (0, _FormatCssClass["default"])("areas")
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("remaining")
-      }, _react["default"].createElement("h2", null, remainingCalories, _react["default"].createElement("small", null, "Cal", pluralRemainingCalories)), _react["default"].createElement("h3", null, "Remaining")), _react["default"].createElement("form", {
+      }, _react["default"].createElement("h2", null, remainingVolumeData.volume, _react["default"].createElement("small", {
+        onClick: this.changeUnitSelection
+      }, remainingVolumeData.unitLabel)), _react["default"].createElement("h3", null, "Remaining")), _react["default"].createElement("form", {
         className: (0, _FormatCssClass["default"])("input"),
         onSubmit: this.submitFeed
       }, _react["default"].createElement("div", {
@@ -777,14 +802,15 @@ function (_Component) {
         className: (0, _FormatCssClass["default"])("volume-control")
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("volume")
-      }, caloriesCurrent, _react["default"].createElement("small", null, "Cal", caloriesCurrent === 1 ? "" : "s")), _react["default"].createElement("div", {
+      }, this.state.selectedVolume, _react["default"].createElement("small", null, sliderVolumeData.unitLabel)), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("slider")
       }, _react["default"].createElement("input", {
         type: "range",
-        min: "1",
-        max: caloriesMax,
-        value: caloriesCurrent,
-        onChange: this.updateCalories
+        min: sliderVolumeData.sliderMin,
+        max: sliderVolumeData.sliderMax,
+        value: this.state.selectedVolume,
+        step: sliderVolumeData.sliderIncrement,
+        onChange: this.updateVolume
       }))), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("button")
       }, _react["default"].createElement("button", {
@@ -893,6 +919,7 @@ function (_Component) {
             className: (0, _FormatCssClass["default"])(className),
             "data-recipe-id": recipe.recipeId,
             "data-recipe-name": recipe.name,
+            "data-recipe-calories-per-ounce": recipe.caloriesPerOunce,
             onClick: _this2.changeRecipeSelection
           }, recipe.name, _react["default"].createElement("small", null, lastUsedDate)));
         });
@@ -935,6 +962,20 @@ function (_Component) {
       this.setState({
         selectedAmPm: this.state.selectedAmPm === "am" ? "pm" : "am"
       });
+    } // Cycles through units of: cals, mls, ozs.
+
+  }, {
+    key: "changeUnitSelection",
+    value: function changeUnitSelection(e) {
+      e.preventDefault();
+      var units = ["mls", "ozs"]; // can use "cals", but leaving out because less practical
+
+      var newUnit = units[(units.indexOf(this.state.units) + 1) % units.length]; // find the next unit in the list, or the first if already using the final element
+
+      this.setState({
+        units: newUnit,
+        selectedVolume: (0, _Converters.ConvertCaloriesToVolume)(this.state.selectedCalories, newUnit, this.props.recipeCaloriesPerOunce)
+      });
     } // Updates the recipe to the selection.
 
   }, {
@@ -945,15 +986,17 @@ function (_Component) {
       this.props.fnDismissModal();
       this.setState({
         selectedRecipeId: parseInt(buttonData.recipeId),
-        selectedRecipeName: buttonData.recipeName
+        selectedRecipeName: buttonData.recipeName,
+        selectedRecipeCaloriesPerOunce: buttonData.recipeCaloriesPerOunce
       });
     } // Change the current selection of the feed volume.
 
   }, {
-    key: "updateCalories",
-    value: function updateCalories(e) {
+    key: "updateVolume",
+    value: function updateVolume(e) {
       this.setState({
-        selectedCalories: e.target.value
+        selectedVolume: e.target.value,
+        selectedCalories: (0, _Converters.ConvertVolumeToCalories)(e.target.value, this.state.units, this.state.selectedRecipeCaloriesPerOunce)
       });
     } // Saves the current selections.
 
@@ -1001,7 +1044,7 @@ function (_Component) {
 exports["default"] = FeedRecorder;
 
 
-},{"../api/LoadRecipes.jsx":2,"../api/SaveFeed.jsx":3,"../utils/FormatCssClass.jsx":14,"react":25}],9:[function(require,module,exports){
+},{"../api/LoadRecipes.jsx":2,"../api/SaveFeed.jsx":3,"../utils/Converters.jsx":14,"../utils/FormatCssClass.jsx":16,"../utils/FormatFeedVolume.jsx":17,"react":28}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1101,7 +1144,7 @@ function (_Component) {
 exports["default"] = History;
 
 
-},{"../utils/FormatCssClass.jsx":14,"./CalendarMonth.jsx":7,"react":25}],10:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":16,"./CalendarMonth.jsx":7,"react":28}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1161,7 +1204,7 @@ function (_Component) {
 exports["default"] = LastFeedTime;
 
 
-},{"../utils/FormatCssClass.jsx":14,"react":25}],11:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":16,"react":28}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1247,7 +1290,7 @@ function (_Component) {
 exports["default"] = Weight;
 
 
-},{"../utils/FormatCssClass.jsx":14,"../utils/FormatWeight.jsx":15,"react":25}],12:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":16,"../utils/FormatWeight.jsx":18,"react":28}],12:[function(require,module,exports){
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -1273,7 +1316,81 @@ _reactDom["default"].render(_react["default"].createElement(_App["default"], nul
 */
 
 
-},{"./components/App.jsx":5,"react":25,"react-dom":22}],13:[function(require,module,exports){
+},{"./components/App.jsx":5,"react":28,"react-dom":25}],13:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.MillilitersPerOunce = exports.KilogramsPerOunce = void 0;
+
+/*
+    Constants
+ */
+var KilogramsPerOunce = 0.0283495;
+exports.KilogramsPerOunce = KilogramsPerOunce;
+var MillilitersPerOunce = 29.5735;
+exports.MillilitersPerOunce = MillilitersPerOunce;
+
+
+},{}],14:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ConvertCaloriesToVolume = ConvertCaloriesToVolume;
+exports.ConvertVolumeToCalories = ConvertVolumeToCalories;
+
+var Constants = _interopRequireWildcard(require("./Constants.jsx"));
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+
+/*
+    Converters
+ */
+function ConvertCaloriesToVolume(calories, volumeUnit, recipeCaloriesPerOunce) {
+  var volume = 0;
+
+  switch (volumeUnit) {
+    case "mls":
+      volume = Math.round(calories * Constants.MillilitersPerOunce / recipeCaloriesPerOunce);
+      break;
+
+    case "ozs":
+      volume = (calories / recipeCaloriesPerOunce).toFixed(1);
+      break;
+
+    case "cals":
+      volume = calories;
+      break;
+  }
+
+  return volume;
+}
+
+function ConvertVolumeToCalories(volume, volumeUnit, recipeCaloriesPerOunce) {
+  var calories = 0;
+
+  switch (volumeUnit) {
+    case "mls":
+      calories = Math.round(volume / Constants.MillilitersPerOunce * recipeCaloriesPerOunce);
+      break;
+
+    case "ozs":
+      calories = Math.round(volume * recipeCaloriesPerOunce).toFixed(1);
+      break;
+
+    case "cals":
+      calories = volume;
+      break;
+  }
+
+  return calories;
+}
+
+
+},{"./Constants.jsx":13}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1327,7 +1444,7 @@ function FormatAge(today, ageDate) {
 }
 
 
-},{"react":25}],14:[function(require,module,exports){
+},{"react":28}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1345,7 +1462,82 @@ function FormatCssClass(classes) {
 }
 
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = FormatFeedVolume;
+
+var _react = _interopRequireDefault(require("react"));
+
+var Constants = _interopRequireWildcard(require("./Constants.jsx"));
+
+var _Converters = require("./Converters.jsx");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+/*
+    FormatFeedVolume
+ */
+// Formats the feed volume given number of calories and the unit. Returns an object containing:
+// volume: number matching the volume for the converted unit
+// unitLabel: pluralized label
+// sliderIncrement: the amount to increment with each slider step
+// sliderMax: the max value to allow for the slider
+function FormatFeedVolume(units, calories, topCaloriesForDay, recipeCaloriesPerOunce) {
+  var volume = (0, _Converters.ConvertCaloriesToVolume)(calories, units, recipeCaloriesPerOunce),
+      unitLabel = "",
+      sliderIncrement = 0,
+      sliderMax = 0;
+
+  switch (units) {
+    case "cals":
+      unitLabel = "Cal";
+
+      if (topCaloriesForDay) {
+        sliderIncrement = 1;
+        sliderMax = topCaloriesForDay + 20; // TODO: Calculate as percentage
+      }
+
+      break;
+
+    case "mls":
+      unitLabel = "Ml";
+
+      if (topCaloriesForDay) {
+        sliderIncrement = 5;
+        sliderMax = (0, _Converters.ConvertCaloriesToVolume)(topCaloriesForDay, units, recipeCaloriesPerOunce) + 20; // TODO: Calculate as percentage after mls conversion
+      }
+
+      break;
+
+    case "ozs":
+      unitLabel = "Oz";
+
+      if (topCaloriesForDay) {
+        sliderIncrement = 0.1;
+        sliderMax = (0, _Converters.ConvertCaloriesToVolume)(topCaloriesForDay, units, recipeCaloriesPerOunce) + 1; // TODO: Calculate as percentage after ounce conversion
+      }
+
+      break;
+  }
+
+  if (volume !== 1) unitLabel += "s";
+  return {
+    volume: volume,
+    unitLabel: unitLabel,
+    sliderIncrement: sliderIncrement,
+    sliderMin: sliderIncrement,
+    sliderMax: sliderMax
+  };
+}
+
+
+},{"./Constants.jsx":13,"./Converters.jsx":14,"react":28}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1376,7 +1568,7 @@ function FormatWeight(kilograms, returnKilograms) {
 }
 
 
-},{"react":25}],16:[function(require,module,exports){
+},{"react":28}],19:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -1468,7 +1660,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],17:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -1654,7 +1846,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],18:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -1760,7 +1952,7 @@ checkPropTypes.resetWarningCache = function() {
 module.exports = checkPropTypes;
 
 }).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":19,"_process":17}],19:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":22,"_process":20}],22:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -1774,7 +1966,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],20:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 (function (process){
 /** @license React v16.8.6
  * react-dom.development.js
@@ -23056,7 +23248,7 @@ module.exports = reactDom;
 }
 
 }).call(this,require('_process'))
-},{"_process":17,"object-assign":16,"prop-types/checkPropTypes":18,"react":25,"scheduler":30,"scheduler/tracing":31}],21:[function(require,module,exports){
+},{"_process":20,"object-assign":19,"prop-types/checkPropTypes":21,"react":28,"scheduler":33,"scheduler/tracing":34}],24:[function(require,module,exports){
 /** @license React v16.8.6
  * react-dom.production.min.js
  *
@@ -23327,7 +23519,7 @@ x("38"):void 0;return Si(a,b,c,!1,d)},unmountComponentAtNode:function(a){Qi(a)?v
 X;X=!0;try{ki(a)}finally{(X=b)||W||Yh(1073741823,!1)}},__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{Events:[Ia,Ja,Ka,Ba.injectEventPluginsByName,pa,Qa,function(a){ya(a,Pa)},Eb,Fb,Dd,Da]}};function Ui(a,b){Qi(a)?void 0:x("299","unstable_createRoot");return new Pi(a,!0,null!=b&&!0===b.hydrate)}
 (function(a){var b=a.findFiberByHostInstance;return Te(n({},a,{overrideProps:null,currentDispatcherRef:Tb.ReactCurrentDispatcher,findHostInstanceByFiber:function(a){a=hd(a);return null===a?null:a.stateNode},findFiberByHostInstance:function(a){return b?b(a):null}}))})({findFiberByHostInstance:Ha,bundleType:0,version:"16.8.6",rendererPackageName:"react-dom"});var Wi={default:Vi},Xi=Wi&&Vi||Wi;module.exports=Xi.default||Xi;
 
-},{"object-assign":16,"react":25,"scheduler":30}],22:[function(require,module,exports){
+},{"object-assign":19,"react":28,"scheduler":33}],25:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -23369,7 +23561,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react-dom.development.js":20,"./cjs/react-dom.production.min.js":21,"_process":17}],23:[function(require,module,exports){
+},{"./cjs/react-dom.development.js":23,"./cjs/react-dom.production.min.js":24,"_process":20}],26:[function(require,module,exports){
 (function (process){
 /** @license React v16.8.6
  * react.development.js
@@ -25274,7 +25466,7 @@ module.exports = react;
 }
 
 }).call(this,require('_process'))
-},{"_process":17,"object-assign":16,"prop-types/checkPropTypes":18}],24:[function(require,module,exports){
+},{"_process":20,"object-assign":19,"prop-types/checkPropTypes":21}],27:[function(require,module,exports){
 /** @license React v16.8.6
  * react.production.min.js
  *
@@ -25301,7 +25493,7 @@ b,d){return W().useImperativeHandle(a,b,d)},useDebugValue:function(){},useLayout
 b){void 0!==b.ref&&(h=b.ref,f=J.current);void 0!==b.key&&(g=""+b.key);var l=void 0;a.type&&a.type.defaultProps&&(l=a.type.defaultProps);for(c in b)K.call(b,c)&&!L.hasOwnProperty(c)&&(e[c]=void 0===b[c]&&void 0!==l?l[c]:b[c])}c=arguments.length-2;if(1===c)e.children=d;else if(1<c){l=Array(c);for(var m=0;m<c;m++)l[m]=arguments[m+2];e.children=l}return{$$typeof:p,type:a.type,key:g,ref:h,props:e,_owner:f}},createFactory:function(a){var b=M.bind(null,a);b.type=a;return b},isValidElement:N,version:"16.8.6",
 unstable_ConcurrentMode:x,unstable_Profiler:u,__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentDispatcher:I,ReactCurrentOwner:J,assign:k}},Y={default:X},Z=Y&&X||Y;module.exports=Z.default||Z;
 
-},{"object-assign":16}],25:[function(require,module,exports){
+},{"object-assign":19}],28:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -25312,7 +25504,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react.development.js":23,"./cjs/react.production.min.js":24,"_process":17}],26:[function(require,module,exports){
+},{"./cjs/react.development.js":26,"./cjs/react.production.min.js":27,"_process":20}],29:[function(require,module,exports){
 (function (process){
 /** @license React v0.13.6
  * scheduler-tracing.development.js
@@ -25739,7 +25931,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 }
 
 }).call(this,require('_process'))
-},{"_process":17}],27:[function(require,module,exports){
+},{"_process":20}],30:[function(require,module,exports){
 /** @license React v0.13.6
  * scheduler-tracing.production.min.js
  *
@@ -25751,7 +25943,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 
 'use strict';Object.defineProperty(exports,"__esModule",{value:!0});var b=0;exports.__interactionsRef=null;exports.__subscriberRef=null;exports.unstable_clear=function(a){return a()};exports.unstable_getCurrent=function(){return null};exports.unstable_getThreadID=function(){return++b};exports.unstable_trace=function(a,d,c){return c()};exports.unstable_wrap=function(a){return a};exports.unstable_subscribe=function(){};exports.unstable_unsubscribe=function(){};
 
-},{}],28:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 (function (process,global){
 /** @license React v0.13.6
  * scheduler.development.js
@@ -26454,7 +26646,7 @@ exports.unstable_getFirstCallbackNode = unstable_getFirstCallbackNode;
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":17}],29:[function(require,module,exports){
+},{"_process":20}],32:[function(require,module,exports){
 (function (global){
 /** @license React v0.13.6
  * scheduler.production.min.js
@@ -26479,7 +26671,7 @@ b=c.previous;b.next=c.previous=a;a.next=c;a.previous=b}return a};exports.unstabl
 exports.unstable_shouldYield=function(){return!e&&(null!==d&&d.expirationTime<l||w())};exports.unstable_continueExecution=function(){null!==d&&p()};exports.unstable_pauseExecution=function(){};exports.unstable_getFirstCallbackNode=function(){return d};
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],30:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -26490,7 +26682,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler.development.js":28,"./cjs/scheduler.production.min.js":29,"_process":17}],31:[function(require,module,exports){
+},{"./cjs/scheduler.development.js":31,"./cjs/scheduler.production.min.js":32,"_process":20}],34:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -26501,4 +26693,4 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler-tracing.development.js":26,"./cjs/scheduler-tracing.production.min.js":27,"_process":17}]},{},[12]);
+},{"./cjs/scheduler-tracing.development.js":29,"./cjs/scheduler-tracing.production.min.js":30,"_process":20}]},{},[12]);

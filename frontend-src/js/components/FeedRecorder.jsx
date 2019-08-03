@@ -5,7 +5,9 @@
 import React, {Component} from "react";
 
 // import utilities
+import {ConvertCaloriesToVolume, ConvertVolumeToCalories} from "../utils/Converters.jsx";
 import FormatCssClass from "../utils/FormatCssClass.jsx";
+import FormatFeedVolume from "../utils/FormatFeedVolume.jsx";
 
 // import api interactions
 import ApiLoadRecipes from "../api/LoadRecipes.jsx";
@@ -19,13 +21,16 @@ export default class FeedRecorder extends Component {
 
         // intialize the application state
         this.state = {
-            isSaving: false,
-            selectedCalories: 0,
-            selectedRecipeId: 0,
-            selectedRecipeName: "",
+            isSaving: false, // true during a save operation
+            selectedVolume: 0, // the displayed feed volume in the selected unit
+            selectedCalories: 0, // the current calorie content of the selected volume - could be refactored out to be derived only when needed
+            selectedRecipeId: 0, // the selected recipe ID
+            selectedRecipeName: "", // the selected recipe name
+            selectedRecipeCaloriesPerOunce: 0, // the selected recipe calorie density
             selectedHour: parseInt(moment().format("h")),
             selectedMinute: moment().minute(),
-            selectedAmPm: moment().format("a")
+            selectedAmPm: moment().format("a"),
+            units: "mls" // can be: cals, mls, ozs
         };
 
         // reload the data after regaining focus
@@ -43,13 +48,14 @@ export default class FeedRecorder extends Component {
             }
         });
 
-        this.updateCalories = this.updateCalories.bind(this);
+        this.updateVolume = this.updateVolume.bind(this);
         this.displayHourSelection = this.displayHourSelection.bind(this);
         this.displayMinuteSelection = this.displayMinuteSelection.bind(this);
         this.displayRecipeSelection = this.displayRecipeSelection.bind(this);
         this.changeHourSelection = this.changeHourSelection.bind(this);
         this.changeMinuteSelection = this.changeMinuteSelection.bind(this);
         this.changeAmPmSelection = this.changeAmPmSelection.bind(this);
+        this.changeUnitSelection = this.changeUnitSelection.bind(this);
         this.changeRecipeSelection = this.changeRecipeSelection.bind(this);
         this.submitFeed = this.submitFeed.bind(this);
 
@@ -62,14 +68,16 @@ export default class FeedRecorder extends Component {
         if (!this.state.selectedRecipeId && this.props.recipeId) {
             this.setState({
                 selectedRecipeId: this.props.recipeId,
-                selectedRecipeName: this.props.recipeName
+                selectedRecipeName: this.props.recipeName,
+                selectedRecipeCaloriesPerOunce: this.props.recipeCaloriesPerOunce
             });
         }
 
         // set the calorie selection if provided by props
         if (!this.state.selectedCalories && this.props.caloriesLastFeed) {
             this.setState({
-                selectedCalories: this.props.caloriesLastFeed
+                selectedCalories: this.props.caloriesLastFeed,
+                selectedVolume: ConvertCaloriesToVolume(this.props.caloriesLastFeed, this.state.units, this.props.recipeCaloriesPerOunce)
             });
         }
 
@@ -85,11 +93,25 @@ export default class FeedRecorder extends Component {
         });
 
         // find the remaining amount
-        let remainingCalories = (totalCalories < this.props.caloriesGoal) ? (this.props.caloriesGoal - totalCalories) : 0;
-        let pluralRemainingCalories = (remainingCalories === 1) ? "" : "s";
+        //let remainingCalories = (totalCalories < this.props.caloriesGoal) ? (this.props.caloriesGoal - totalCalories) : 0;
+        //let pluralRemainingCalories = (remainingCalories === 1) ? "" : "s";
 
         let caloriesCurrent = this.state.selectedCalories;
         let caloriesMax = this.props.caloriesFeedMax + 20; // TODO: Change to vary by percentage, ending in even numbers - maybe set a minimum based upon the baby's weight for new signups
+
+        // convert volume to the current unit
+        let remainingVolumeData = FormatFeedVolume(
+            this.state.units,
+            (totalCalories < this.props.caloriesGoal) ? (this.props.caloriesGoal - totalCalories) : 0,
+            0,
+            this.state.selectedRecipeCaloriesPerOunce
+        );
+        let sliderVolumeData = FormatFeedVolume(
+            this.state.units,
+            this.state.selectedCalories,
+            this.props.caloriesFeedMax,
+            this.state.selectedRecipeCaloriesPerOunce
+        );
 
         // return jsx
         return (
@@ -124,7 +146,7 @@ export default class FeedRecorder extends Component {
                 </svg>
                 <div className={FormatCssClass("areas")}>
                     <div className={FormatCssClass("remaining")}>
-                        <h2>{remainingCalories}<small>Cal{pluralRemainingCalories}</small></h2>
+                        <h2>{remainingVolumeData.volume}<small onClick={this.changeUnitSelection}>{remainingVolumeData.unitLabel}</small></h2>
                         <h3>Remaining</h3>
                     </div>
                     <form
@@ -142,15 +164,16 @@ export default class FeedRecorder extends Component {
                         </div>
                         <div className={FormatCssClass("volume-control")}>
                             <div className={FormatCssClass("volume")}>
-                                {caloriesCurrent}<small>Cal{(caloriesCurrent === 1) ? "" : "s"}</small>
+                                {this.state.selectedVolume}<small>{sliderVolumeData.unitLabel}</small>
                             </div>
                             <div className={FormatCssClass("slider")}>
                                 <input
                                     type="range"
-                                    min="1"
-                                    max={caloriesMax}
-                                    value={caloriesCurrent}
-                                    onChange={this.updateCalories}
+                                    min={sliderVolumeData.sliderMin}
+                                    max={sliderVolumeData.sliderMax}
+                                    value={this.state.selectedVolume}
+                                    step={sliderVolumeData.sliderIncrement}
+                                    onChange={this.updateVolume}
                                 />
                             </div>
                         </div>
@@ -279,6 +302,7 @@ export default class FeedRecorder extends Component {
                         className={FormatCssClass(className)}
                         data-recipe-id={recipe.recipeId}
                         data-recipe-name={recipe.name}
+                        data-recipe-calories-per-ounce={recipe.caloriesPerOunce}
                         onClick={this.changeRecipeSelection}
                     >{recipe.name}<small>{lastUsedDate}</small></button>
                 );
@@ -331,6 +355,21 @@ export default class FeedRecorder extends Component {
 
     }
 
+    // Cycles through units of: cals, mls, ozs.
+    changeUnitSelection(e) {
+        e.preventDefault();
+
+        const units = ["mls", "ozs"]; // can use "cals", but leaving out because less practical
+        let newUnit = units[(units.indexOf(this.state.units) + 1) % units.length];
+
+        // find the next unit in the list, or the first if already using the final element
+        this.setState({
+            units: newUnit,
+            selectedVolume: ConvertCaloriesToVolume(this.state.selectedCalories, newUnit, this.props.recipeCaloriesPerOunce)
+        });
+
+    }
+
     // Updates the recipe to the selection.
     changeRecipeSelection(e) {
         e.preventDefault();
@@ -340,15 +379,19 @@ export default class FeedRecorder extends Component {
         this.props.fnDismissModal();
         this.setState({
             selectedRecipeId: parseInt(buttonData.recipeId),
-            selectedRecipeName: buttonData.recipeName
+            selectedRecipeName: buttonData.recipeName,
+            selectedRecipeCaloriesPerOunce: buttonData.recipeCaloriesPerOunce
         });
 
     }
 
     // Change the current selection of the feed volume.
-    updateCalories(e) {
+    updateVolume(e) {
 
-        this.setState({selectedCalories: e.target.value});
+        this.setState({
+            selectedVolume: e.target.value,
+            selectedCalories: ConvertVolumeToCalories(e.target.value, this.state.units, this.state.selectedRecipeCaloriesPerOunce)
+        });
 
     }
 

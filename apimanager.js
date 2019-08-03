@@ -32,6 +32,7 @@ exports.process = function (req, res) {
                                     lastFeedTime: moment(babyData.LastFeedTime).format("h:mma"),
                                     recipeId: babyData.RecipeId,
                                     recipeName: babyData.RecipeName,
+                                    recipeCaloriesPerOunce: babyData.RecipeCaloriesPerOunce,
                                     weightKilograms: babyData.WeightKilograms
                                 });
 

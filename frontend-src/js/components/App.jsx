@@ -37,6 +37,7 @@ export default class App extends Component {
             lastFeedTime: "",
             recipeId: 0,
             recipeName: "",
+            recipeCaloriesPerOunce: 0,
             weightKilograms: 0,
 
             modal: "",
@@ -89,6 +90,7 @@ export default class App extends Component {
                         caloriesLastFeed={this.state.caloriesLastFeed}
                         recipeId={this.state.recipeId}
                         recipeName={this.state.recipeName}
+                        recipeCaloriesPerOunce={this.state.recipeCaloriesPerOunce}
                         fnReloadData={this.reloadData}
                         fnDisplayModal={this.displayModal}
                         fnDismissModal={this.dismissModal}
@@ -132,6 +134,7 @@ export default class App extends Component {
                 lastFeedTime: data.lastFeedTime,
                 recipeId: data.recipeId,
                 recipeName: data.recipeName,
+                recipeCaloriesPerOunce: data.recipeCaloriesPerOunce,
                 weightKilograms: data.weightKilograms
             });
             if (callback) callback();

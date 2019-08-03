@@ -226,7 +226,7 @@ exports.access = {
 
         exports.access.init();
 
-        this.db.query(query, (error, results) => {
+        exports.access.db.query(query, (error, results) => {
 
             if (error) return exports.access.handleError(query, error);
             exports.access.close();
