@@ -1,0 +1,103 @@
+/*
+  Menu
+  Styling for the menu control.
+ */
+
+$hamburger-layer-color: $color-header-text;
+$hamburger-active-layer-color: $color-header-background;
+@import "../../../node_modules/hamburgers/_sass/hamburgers/hamburgers.scss";
+
+$menu-width: 350px;
+
+.menu-area {
+  position: relative;
+  .menu-open-close {
+    position: relative;
+    z-index: 1000;
+    margin-bottom: -5px; // accounts for bottom padding in the hamburger svg
+  }
+  .menu {
+    position: absolute;
+    z-index: 999;
+    left: 75px;
+    top: 0px;
+    width: $menu-width;
+    height: 100vh;
+    box-shadow: -3px 0px 3px rgba(0,0,0,0.25);
+    transition: left 0.25s;
+    transition-timing-function: ease-out;
+    &.open {
+      left: #{-$menu-width + 70px};
+      transition: left 0.25s;
+      transition-timing-function: ease-out;
+    }
+    .menu-panel-main {
+      position: absolute;
+      width: $menu-width;
+      height: 100vh;
+      left: 0px;
+      top: 0px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: $color-menu-background;
+      h1 {
+        font-size: 2em;
+        margin: -2px 0px 0px;
+        padding: 0px 0px 2px 20px;
+        color: $color-menu-headings;
+      }
+      ul {
+        list-style: none;
+        margin: 0px;
+        padding: 0px;
+        border-bottom: 1px solid $color-black;
+        li {
+          padding: 0px;
+          border-top: 1px solid $color-black;
+          overflow: hidden;
+          &.panel {
+            height: auto;
+          }
+          button {
+            padding: 0px 0px 0.1em;
+            width: 100%;
+            background: none;
+            border: none;
+            color: $color-menu-buttons-text;
+            font-size: 1.3em;
+            &:hover {
+              color: rgba(0,0,0,0.8);
+              background: $color-menu-buttons-background-hover;
+            }
+          }
+        }
+      }
+    }
+    .menu-panel-sub {
+      position: absolute;
+      width: $menu-width;
+      height: 100vh;
+      left: 0px;
+      top: 0px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: $color-menu-background;
+      animation: submenu-slide-from-offscreen 0.5s ease;
+      h1 {
+        font-size: 2em;
+        margin: -2px 0px 0px;
+        padding: 0px 0px 2px 20px;
+        color: $color-menu-headings;
+      }
+    }
+  }
+}
+
+@keyframes submenu-slide-from-offscreen {
+  0% {
+    left: #{$menu-width + 5px};
+  }
+  100% {
+    left: 0px;
+  }
+}

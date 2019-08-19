@@ -9,6 +9,8 @@ import Age from "./Age.jsx";
 import FeedRecorder from "./FeedRecorder.jsx";
 import History from "./History.jsx";
 import LastFeedTime from "./LastFeedTime.jsx";
+import Menu from "./Menu.jsx";
+import SiteTitle from "./SiteTitle.jsx";
 import Weight from "./Weight.jsx"
 
 // import utilities
@@ -80,6 +82,8 @@ export default class App extends Component {
                 <div className={FormatCssClass("header")}>
                     <LastFeedTime
                         lastFeedTime={this.state.lastFeedTime}
+                    />
+                    <Menu
                     />
                 </div>
                 <div className={FormatCssClass("body")}>

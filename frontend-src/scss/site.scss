@@ -11,11 +11,18 @@ $color-header-text:       $color-gradient-start;
 $color-footer-background: $color-black;
 $color-footer-text:       $color-gradient-end;
 
+$color-menu-background:               $color-white;
+$color-menu-headings:                 $color-black;
+$color-menu-buttons-text:             $color-black;
+$color-menu-buttons-background-hover: lighten($color-gradient-start, 10);
+
 $font-stylized: marvin-round, sans-serif;
 $font-standard: sans-serif;
 
+@import "./components/header.scss";
 @import "./components/modal.scss";
 @import "./components/history.scss";
+@import "./components/menu.scss";
 
 // resets
 body, h1, h2, h3, h4, h5, h6 {
@@ -61,11 +68,6 @@ body {
   z-index: 200;
 }
 
-.header {
-  background-color: $color-header-background;
-  color: $color-header-text;
-}
-
 .footer {
   display: flex;
   flex-direction: row;
@@ -102,12 +104,6 @@ body {
   .body {
     flex-direction: row;
   }
-}
-
-.last-feed {
-  padding: 0 0 0.2em;
-  font-size: 1.3em;
-  text-align: center;
 }
 
 .feed-recorder {

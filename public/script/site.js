@@ -25,7 +25,7 @@ function ApiLoad(callback) {
 }
 
 
-},{"react":28}],2:[function(require,module,exports){
+},{"react":36}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52,7 +52,7 @@ function ApiLoadRecipes(callback) {
 }
 
 
-},{"react":28}],3:[function(require,module,exports){
+},{"react":36}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -88,7 +88,7 @@ function ApiSaveFeed(saveData, callback) {
 }
 
 
-},{"react":28}],4:[function(require,module,exports){
+},{"react":36}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -188,7 +188,7 @@ function (_Component) {
 exports["default"] = Age;
 
 
-},{"../utils/FormatAge.jsx":15,"../utils/FormatCssClass.jsx":16,"react":28}],5:[function(require,module,exports){
+},{"../utils/FormatAge.jsx":23,"../utils/FormatCssClass.jsx":24,"react":36}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -205,6 +205,10 @@ var _FeedRecorder = _interopRequireDefault(require("./FeedRecorder.jsx"));
 var _History = _interopRequireDefault(require("./History.jsx"));
 
 var _LastFeedTime = _interopRequireDefault(require("./LastFeedTime.jsx"));
+
+var _Menu = _interopRequireDefault(require("./Menu.jsx"));
+
+var _SiteTitle = _interopRequireDefault(require("./SiteTitle.jsx"));
 
 var _Weight = _interopRequireDefault(require("./Weight.jsx"));
 
@@ -299,7 +303,7 @@ function (_Component) {
         className: (0, _FormatCssClass["default"])("header")
       }, _react["default"].createElement(_LastFeedTime["default"], {
         lastFeedTime: this.state.lastFeedTime
-      })), _react["default"].createElement("div", {
+      }), _react["default"].createElement(_Menu["default"], null)), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("body")
       }, _react["default"].createElement(_FeedRecorder["default"], {
         feedsForToday: this.state.feedsForToday,
@@ -388,7 +392,7 @@ function (_Component) {
 exports["default"] = App;
 
 
-},{"../api/Load.jsx":1,"../utils/FormatCssClass.jsx":16,"./Age.jsx":4,"./FeedRecorder.jsx":8,"./History.jsx":9,"./LastFeedTime.jsx":10,"./Weight.jsx":11,"react":28}],6:[function(require,module,exports){
+},{"../api/Load.jsx":1,"../utils/FormatCssClass.jsx":24,"./Age.jsx":4,"./FeedRecorder.jsx":8,"./History.jsx":9,"./LastFeedTime.jsx":10,"./Menu.jsx":11,"./SiteTitle.jsx":18,"./Weight.jsx":19,"react":36}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -478,7 +482,7 @@ function (_Component) {
 exports["default"] = CalendarDay;
 
 
-},{"../utils/FormatCssClass.jsx":16,"react":28}],7:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":24,"react":36}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -586,7 +590,7 @@ function (_Component) {
 exports["default"] = CalendarMonth;
 
 
-},{"../utils/FormatCssClass.jsx":16,"./CalendarDay.jsx":6,"react":28}],8:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":24,"./CalendarDay.jsx":6,"react":36}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1044,7 +1048,7 @@ function (_Component) {
 exports["default"] = FeedRecorder;
 
 
-},{"../api/LoadRecipes.jsx":2,"../api/SaveFeed.jsx":3,"../utils/Converters.jsx":14,"../utils/FormatCssClass.jsx":16,"../utils/FormatFeedVolume.jsx":17,"react":28}],9:[function(require,module,exports){
+},{"../api/LoadRecipes.jsx":2,"../api/SaveFeed.jsx":3,"../utils/Converters.jsx":22,"../utils/FormatCssClass.jsx":24,"../utils/FormatFeedVolume.jsx":25,"react":36}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1144,7 +1148,7 @@ function (_Component) {
 exports["default"] = History;
 
 
-},{"../utils/FormatCssClass.jsx":16,"./CalendarMonth.jsx":7,"react":28}],10:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":24,"./CalendarMonth.jsx":7,"react":36}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1204,7 +1208,669 @@ function (_Component) {
 exports["default"] = LastFeedTime;
 
 
-},{"../utils/FormatCssClass.jsx":16,"react":28}],11:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":24,"react":36}],11:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _MenuBabies = _interopRequireDefault(require("./MenuBabies.jsx"));
+
+var _MenuFeeds = _interopRequireDefault(require("./MenuFeeds.jsx"));
+
+var _MenuWeights = _interopRequireDefault(require("./MenuWeights.jsx"));
+
+var _MenuRecipes = _interopRequireDefault(require("./MenuRecipes.jsx"));
+
+var _MenuAccount = _interopRequireDefault(require("./MenuAccount.jsx"));
+
+var _MenuAbout = _interopRequireDefault(require("./MenuAbout.jsx"));
+
+var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+// export object
+var Menu =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(Menu, _Component);
+
+  // Constructor.
+  function Menu(props, context) {
+    var _this;
+
+    _classCallCheck(this, Menu);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Menu).call(this, props, context)); // intialize the state
+
+    _this.state = {
+      menuClosed: false,
+      // change to true after testing
+      displayedPanel: "" // the name of the panel to display, if any
+
+    }; // bind event handlers
+
+    _this.changeOpenCloseStatus = _this.changeOpenCloseStatus.bind(_assertThisInitialized(_this));
+    _this.openPanel = _this.openPanel.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(Menu, [{
+    key: "render",
+    // Renders the menu.
+    value: function render() {
+      // load the menu selection
+      var displayPanelContents = "";
+
+      switch (this.state.displayedPanel) {
+        case "babies":
+          displayPanelContents = _react["default"].createElement(_MenuBabies["default"], null);
+          break;
+
+        case "feeds":
+          displayPanelContents = _react["default"].createElement(_MenuFeeds["default"], null);
+          break;
+
+        case "weights":
+          displayPanelContents = _react["default"].createElement(_MenuWeights["default"], null);
+          break;
+
+        case "recipes":
+          displayPanelContents = _react["default"].createElement(_MenuRecipes["default"], null);
+          break;
+
+        case "account":
+          displayPanelContents = _react["default"].createElement(_MenuAccount["default"], null);
+          break;
+
+        case "about":
+          displayPanelContents = _react["default"].createElement(_MenuAbout["default"], null);
+          break;
+      } // return jsx
+
+
+      return _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("menu-area")
+      }, _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("menu-open-close")
+      }, _react["default"].createElement("button", {
+        className: (0, _FormatCssClass["default"])(["hamburger", "hamburger--squeeze", this.state.menuClosed ? "" : "is-active"]),
+        type: "button",
+        onClick: this.changeOpenCloseStatus
+      }, _react["default"].createElement("span", {
+        className: (0, _FormatCssClass["default"])("hamburger-box")
+      }, _react["default"].createElement("span", {
+        className: (0, _FormatCssClass["default"])("hamburger-inner")
+      })))), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])(["menu", this.state.menuClosed ? "" : "open"])
+      }, _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("menu-panel-main")
+      }, _react["default"].createElement("h1", null, "Menu"), _react["default"].createElement("ul", null, _react["default"].createElement("li", null, _react["default"].createElement("button", {
+        type: "button",
+        "data-panel": "babies",
+        onClick: this.openPanel
+      }, "Babies")), _react["default"].createElement("li", null, _react["default"].createElement("button", {
+        type: "button",
+        "data-panel": "feeds",
+        onClick: this.openPanel
+      }, "Feed History")), _react["default"].createElement("li", null, _react["default"].createElement("button", {
+        type: "button",
+        "data-panel": "weights",
+        onClick: this.openPanel
+      }, "Weight")), _react["default"].createElement("li", null, _react["default"].createElement("button", {
+        type: "button",
+        "data-panel": "recipes",
+        onClick: this.openPanel
+      }, "Recipes")), _react["default"].createElement("li", null, _react["default"].createElement("button", {
+        type: "button",
+        "data-panel": "account",
+        onClick: this.openPanel
+      }, "Account Info")), _react["default"].createElement("li", null, _react["default"].createElement("button", {
+        type: "button",
+        "data-panel": "about",
+        onClick: this.openPanel
+      }, "About Cooper Eats")))), displayPanelContents));
+    } // Handles open/close events.
+
+  }, {
+    key: "changeOpenCloseStatus",
+    value: function changeOpenCloseStatus(e) {
+      var newClosedStatus = !this.state.menuClosed;
+      this.setState({
+        menuClosed: newClosedStatus,
+        displayedPanel: newClosedStatus ? "" : this.state.displayedPanel // hide sub-panels if changing to closed
+
+      });
+    } // Handles panel selection.
+
+  }, {
+    key: "openPanel",
+    value: function openPanel(e) {
+      this.setState({
+        displayedPanel: e.target.dataset.panel
+      });
+    }
+  }]);
+
+  return Menu;
+}(_react.Component);
+
+exports["default"] = Menu;
+
+
+},{"../utils/FormatCssClass.jsx":24,"./MenuAbout.jsx":12,"./MenuAccount.jsx":13,"./MenuBabies.jsx":14,"./MenuFeeds.jsx":15,"./MenuRecipes.jsx":16,"./MenuWeights.jsx":17,"react":36}],12:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+// export object
+var MenuAbout =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(MenuAbout, _Component);
+
+  // Constructor.
+  function MenuAbout(props, context) {
+    var _this;
+
+    _classCallCheck(this, MenuAbout);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuAbout).call(this, props, context)); // intialize the state
+
+    _this.state = {};
+    return _this;
+  }
+
+  _createClass(MenuAbout, [{
+    key: "render",
+    // Renders the menu panel.
+    value: function render() {
+      return _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("menu-panel-sub open")
+      }, _react["default"].createElement("h1", null, "About"), _react["default"].createElement("p", null, "About panel."));
+    }
+  }]);
+
+  return MenuAbout;
+}(_react.Component);
+
+exports["default"] = MenuAbout;
+
+
+},{"../utils/FormatCssClass.jsx":24,"react":36}],13:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+// export object
+var MenuAccount =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(MenuAccount, _Component);
+
+  // Constructor.
+  function MenuAccount(props, context) {
+    var _this;
+
+    _classCallCheck(this, MenuAccount);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuAccount).call(this, props, context)); // intialize the state
+
+    _this.state = {};
+    return _this;
+  }
+
+  _createClass(MenuAccount, [{
+    key: "render",
+    // Renders the menu panel.
+    value: function render() {
+      return _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("menu-panel-sub open")
+      }, _react["default"].createElement("h1", null, "Account"), _react["default"].createElement("p", null, "Account panel."));
+    }
+  }]);
+
+  return MenuAccount;
+}(_react.Component);
+
+exports["default"] = MenuAccount;
+
+
+},{"../utils/FormatCssClass.jsx":24,"react":36}],14:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+// export object
+var MenuBabies =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(MenuBabies, _Component);
+
+  // Constructor.
+  function MenuBabies(props, context) {
+    var _this;
+
+    _classCallCheck(this, MenuBabies);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuBabies).call(this, props, context)); // intialize the state
+
+    _this.state = {};
+    return _this;
+  }
+
+  _createClass(MenuBabies, [{
+    key: "render",
+    // Renders the menu panel.
+    value: function render() {
+      return _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("menu-panel-sub open")
+      }, _react["default"].createElement("h1", null, "Babies"), _react["default"].createElement("p", null, "Babies panel."));
+    }
+  }]);
+
+  return MenuBabies;
+}(_react.Component);
+
+exports["default"] = MenuBabies;
+
+
+},{"../utils/FormatCssClass.jsx":24,"react":36}],15:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+// export object
+var MenuFeeds =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(MenuFeeds, _Component);
+
+  // Constructor.
+  function MenuFeeds(props, context) {
+    var _this;
+
+    _classCallCheck(this, MenuFeeds);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuFeeds).call(this, props, context)); // intialize the state
+
+    _this.state = {};
+    return _this;
+  }
+
+  _createClass(MenuFeeds, [{
+    key: "render",
+    // Renders the menu panel.
+    value: function render() {
+      return _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("menu-panel-sub open")
+      }, _react["default"].createElement("h1", null, "Feeds"), _react["default"].createElement("p", null, "Feeds panel."));
+    }
+  }]);
+
+  return MenuFeeds;
+}(_react.Component);
+
+exports["default"] = MenuFeeds;
+
+
+},{"../utils/FormatCssClass.jsx":24,"react":36}],16:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+// export object
+var MenuRecipes =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(MenuRecipes, _Component);
+
+  // Constructor.
+  function MenuRecipes(props, context) {
+    var _this;
+
+    _classCallCheck(this, MenuRecipes);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuRecipes).call(this, props, context)); // intialize the state
+
+    _this.state = {};
+    return _this;
+  }
+
+  _createClass(MenuRecipes, [{
+    key: "render",
+    // Renders the menu panel.
+    value: function render() {
+      return _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("menu-panel-sub open")
+      }, _react["default"].createElement("h1", null, "Recipes"), _react["default"].createElement("p", null, "Recipes panel."));
+    }
+  }]);
+
+  return MenuRecipes;
+}(_react.Component);
+
+exports["default"] = MenuRecipes;
+
+
+},{"../utils/FormatCssClass.jsx":24,"react":36}],17:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+// export object
+var MenuWeights =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(MenuWeights, _Component);
+
+  // Constructor.
+  function MenuWeights(props, context) {
+    var _this;
+
+    _classCallCheck(this, MenuWeights);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuWeights).call(this, props, context)); // intialize the state
+
+    _this.state = {};
+    return _this;
+  }
+
+  _createClass(MenuWeights, [{
+    key: "render",
+    // Renders the menu panel.
+    value: function render() {
+      return _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("menu-panel-sub open")
+      }, _react["default"].createElement("h1", null, "Weights"), _react["default"].createElement("p", null, "Weights panel."));
+    }
+  }]);
+
+  return MenuWeights;
+}(_react.Component);
+
+exports["default"] = MenuWeights;
+
+
+},{"../utils/FormatCssClass.jsx":24,"react":36}],18:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+// export object
+var SiteTitle =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(SiteTitle, _Component);
+
+  // Constructor.
+  function SiteTitle(props, context) {
+    var _this;
+
+    _classCallCheck(this, SiteTitle);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(SiteTitle).call(this, props, context)); // intialize the state
+
+    _this.state = {
+      selectedBaby: {}
+    }; // bind event handlers
+
+    _this.changeBaby = _this.changeBaby.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(SiteTitle, [{
+    key: "render",
+    // Renders the age block.
+    value: function render() {
+      // return jsx
+      return _react["default"].createElement("div", {
+        onClick: this.changeBaby
+      }, "Cooper Eats");
+    } // Changes the selected baby.
+
+  }, {
+    key: "changeBaby",
+    value: function changeBaby(e) {
+      /*
+      this.setState({
+          selectedBaby: GET BABY
+      });
+      */
+    }
+  }]);
+
+  return SiteTitle;
+}(_react.Component);
+
+exports["default"] = SiteTitle;
+
+
+},{"react":36}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1290,7 +1956,7 @@ function (_Component) {
 exports["default"] = Weight;
 
 
-},{"../utils/FormatCssClass.jsx":16,"../utils/FormatWeight.jsx":18,"react":28}],12:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":24,"../utils/FormatWeight.jsx":26,"react":36}],20:[function(require,module,exports){
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -1302,21 +1968,9 @@ var _App = _interopRequireDefault(require("./components/App.jsx"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 _reactDom["default"].render(_react["default"].createElement(_App["default"], null), document.querySelector("#container"));
-/*
-    RELOAD CODE FROM ORIGINAL JS
-
-    // reload the page if hidden and showing again
-    $(document).on("mozvisibilitychange visibilitychange", function(){
-        var state = document.visibilityState || document.webkitVisibilityState;
-        if (state === "visible") {
-            babyFeeds.init();
-        }
-    });
-
-*/
 
 
-},{"./components/App.jsx":5,"react":28,"react-dom":25}],13:[function(require,module,exports){
+},{"./components/App.jsx":5,"react":36,"react-dom":33}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1333,7 +1987,7 @@ var MillilitersPerOunce = 29.5735;
 exports.MillilitersPerOunce = MillilitersPerOunce;
 
 
-},{}],14:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1390,7 +2044,7 @@ function ConvertVolumeToCalories(volume, volumeUnit, recipeCaloriesPerOunce) {
 }
 
 
-},{"./Constants.jsx":13}],15:[function(require,module,exports){
+},{"./Constants.jsx":21}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1444,7 +2098,7 @@ function FormatAge(today, ageDate) {
 }
 
 
-},{"react":28}],16:[function(require,module,exports){
+},{"react":36}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1462,7 +2116,7 @@ function FormatCssClass(classes) {
 }
 
 
-},{}],17:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1537,7 +2191,7 @@ function FormatFeedVolume(units, calories, topCaloriesForDay, recipeCaloriesPerO
 }
 
 
-},{"./Constants.jsx":13,"./Converters.jsx":14,"react":28}],18:[function(require,module,exports){
+},{"./Constants.jsx":21,"./Converters.jsx":22,"react":36}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1568,7 +2222,7 @@ function FormatWeight(kilograms, returnKilograms) {
 }
 
 
-},{"react":28}],19:[function(require,module,exports){
+},{"react":36}],27:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -1660,7 +2314,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],20:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -1846,7 +2500,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],21:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -1952,7 +2606,7 @@ checkPropTypes.resetWarningCache = function() {
 module.exports = checkPropTypes;
 
 }).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":22,"_process":20}],22:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":30,"_process":28}],30:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -1966,7 +2620,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],23:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 (function (process){
 /** @license React v16.8.6
  * react-dom.development.js
@@ -23248,7 +23902,7 @@ module.exports = reactDom;
 }
 
 }).call(this,require('_process'))
-},{"_process":20,"object-assign":19,"prop-types/checkPropTypes":21,"react":28,"scheduler":33,"scheduler/tracing":34}],24:[function(require,module,exports){
+},{"_process":28,"object-assign":27,"prop-types/checkPropTypes":29,"react":36,"scheduler":41,"scheduler/tracing":42}],32:[function(require,module,exports){
 /** @license React v16.8.6
  * react-dom.production.min.js
  *
@@ -23519,7 +24173,7 @@ x("38"):void 0;return Si(a,b,c,!1,d)},unmountComponentAtNode:function(a){Qi(a)?v
 X;X=!0;try{ki(a)}finally{(X=b)||W||Yh(1073741823,!1)}},__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{Events:[Ia,Ja,Ka,Ba.injectEventPluginsByName,pa,Qa,function(a){ya(a,Pa)},Eb,Fb,Dd,Da]}};function Ui(a,b){Qi(a)?void 0:x("299","unstable_createRoot");return new Pi(a,!0,null!=b&&!0===b.hydrate)}
 (function(a){var b=a.findFiberByHostInstance;return Te(n({},a,{overrideProps:null,currentDispatcherRef:Tb.ReactCurrentDispatcher,findHostInstanceByFiber:function(a){a=hd(a);return null===a?null:a.stateNode},findFiberByHostInstance:function(a){return b?b(a):null}}))})({findFiberByHostInstance:Ha,bundleType:0,version:"16.8.6",rendererPackageName:"react-dom"});var Wi={default:Vi},Xi=Wi&&Vi||Wi;module.exports=Xi.default||Xi;
 
-},{"object-assign":19,"react":28,"scheduler":33}],25:[function(require,module,exports){
+},{"object-assign":27,"react":36,"scheduler":41}],33:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -23561,7 +24215,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react-dom.development.js":23,"./cjs/react-dom.production.min.js":24,"_process":20}],26:[function(require,module,exports){
+},{"./cjs/react-dom.development.js":31,"./cjs/react-dom.production.min.js":32,"_process":28}],34:[function(require,module,exports){
 (function (process){
 /** @license React v16.8.6
  * react.development.js
@@ -25466,7 +26120,7 @@ module.exports = react;
 }
 
 }).call(this,require('_process'))
-},{"_process":20,"object-assign":19,"prop-types/checkPropTypes":21}],27:[function(require,module,exports){
+},{"_process":28,"object-assign":27,"prop-types/checkPropTypes":29}],35:[function(require,module,exports){
 /** @license React v16.8.6
  * react.production.min.js
  *
@@ -25493,7 +26147,7 @@ b,d){return W().useImperativeHandle(a,b,d)},useDebugValue:function(){},useLayout
 b){void 0!==b.ref&&(h=b.ref,f=J.current);void 0!==b.key&&(g=""+b.key);var l=void 0;a.type&&a.type.defaultProps&&(l=a.type.defaultProps);for(c in b)K.call(b,c)&&!L.hasOwnProperty(c)&&(e[c]=void 0===b[c]&&void 0!==l?l[c]:b[c])}c=arguments.length-2;if(1===c)e.children=d;else if(1<c){l=Array(c);for(var m=0;m<c;m++)l[m]=arguments[m+2];e.children=l}return{$$typeof:p,type:a.type,key:g,ref:h,props:e,_owner:f}},createFactory:function(a){var b=M.bind(null,a);b.type=a;return b},isValidElement:N,version:"16.8.6",
 unstable_ConcurrentMode:x,unstable_Profiler:u,__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentDispatcher:I,ReactCurrentOwner:J,assign:k}},Y={default:X},Z=Y&&X||Y;module.exports=Z.default||Z;
 
-},{"object-assign":19}],28:[function(require,module,exports){
+},{"object-assign":27}],36:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -25504,7 +26158,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react.development.js":26,"./cjs/react.production.min.js":27,"_process":20}],29:[function(require,module,exports){
+},{"./cjs/react.development.js":34,"./cjs/react.production.min.js":35,"_process":28}],37:[function(require,module,exports){
 (function (process){
 /** @license React v0.13.6
  * scheduler-tracing.development.js
@@ -25931,7 +26585,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 }
 
 }).call(this,require('_process'))
-},{"_process":20}],30:[function(require,module,exports){
+},{"_process":28}],38:[function(require,module,exports){
 /** @license React v0.13.6
  * scheduler-tracing.production.min.js
  *
@@ -25943,7 +26597,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 
 'use strict';Object.defineProperty(exports,"__esModule",{value:!0});var b=0;exports.__interactionsRef=null;exports.__subscriberRef=null;exports.unstable_clear=function(a){return a()};exports.unstable_getCurrent=function(){return null};exports.unstable_getThreadID=function(){return++b};exports.unstable_trace=function(a,d,c){return c()};exports.unstable_wrap=function(a){return a};exports.unstable_subscribe=function(){};exports.unstable_unsubscribe=function(){};
 
-},{}],31:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 (function (process,global){
 /** @license React v0.13.6
  * scheduler.development.js
@@ -26646,7 +27300,7 @@ exports.unstable_getFirstCallbackNode = unstable_getFirstCallbackNode;
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":20}],32:[function(require,module,exports){
+},{"_process":28}],40:[function(require,module,exports){
 (function (global){
 /** @license React v0.13.6
  * scheduler.production.min.js
@@ -26671,7 +27325,7 @@ b=c.previous;b.next=c.previous=a;a.next=c;a.previous=b}return a};exports.unstabl
 exports.unstable_shouldYield=function(){return!e&&(null!==d&&d.expirationTime<l||w())};exports.unstable_continueExecution=function(){null!==d&&p()};exports.unstable_pauseExecution=function(){};exports.unstable_getFirstCallbackNode=function(){return d};
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],33:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -26682,7 +27336,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler.development.js":31,"./cjs/scheduler.production.min.js":32,"_process":20}],34:[function(require,module,exports){
+},{"./cjs/scheduler.development.js":39,"./cjs/scheduler.production.min.js":40,"_process":28}],42:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -26693,4 +27347,4 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler-tracing.development.js":29,"./cjs/scheduler-tracing.production.min.js":30,"_process":20}]},{},[12]);
+},{"./cjs/scheduler-tracing.development.js":37,"./cjs/scheduler-tracing.production.min.js":38,"_process":28}]},{},[20]);

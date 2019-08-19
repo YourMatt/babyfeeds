@@ -1,0 +1,18 @@
+/*
+  Header
+  Styling for the header area.
+ */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  background-color: $color-header-background;
+  color: $color-header-text;
+  .last-feed {
+    margin-left: 1em;
+    padding: 0 0 0.2em;
+    font-size: 1.3em;
+  }
+}
