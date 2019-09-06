@@ -14,6 +14,7 @@ export default function ApiSaveFeed (saveData, callback) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
+            feedId: saveData.feedId,
             dateTime: saveData.dateTime,
             calories: saveData.calories,
             recipeId: saveData.recipeId

@@ -25,7 +25,32 @@ function ApiLoad(callback) {
 }
 
 
-},{"react":36}],2:[function(require,module,exports){
+},{"react":38}],2:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = ApiLoadFeeds;
+
+var _react = _interopRequireDefault(require("react"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+/*
+    ApiLoadFeeds
+ */
+// Loads all feed data from the API.
+function ApiLoadFeeds(callback) {
+  fetch("/api/load/feeds").then(function (results) {
+    return results.json();
+  }).then(function (data) {
+    callback(data);
+  });
+}
+
+
+},{"react":38}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -45,14 +70,12 @@ function ApiLoadRecipes(callback) {
   fetch("/api/load/recipes").then(function (results) {
     return results.json();
   }).then(function (data) {
-    console.log(data); // TODO: Remove this
-
     callback(data);
   });
 }
 
 
-},{"react":36}],3:[function(require,module,exports){
+},{"react":38}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -76,6 +99,7 @@ function ApiSaveFeed(saveData, callback) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
+      feedId: saveData.feedId,
       dateTime: saveData.dateTime,
       calories: saveData.calories,
       recipeId: saveData.recipeId
@@ -88,7 +112,7 @@ function ApiSaveFeed(saveData, callback) {
 }
 
 
-},{"react":36}],4:[function(require,module,exports){
+},{"react":38}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -188,7 +212,7 @@ function (_Component) {
 exports["default"] = Age;
 
 
-},{"../utils/FormatAge.jsx":23,"../utils/FormatCssClass.jsx":24,"react":36}],5:[function(require,module,exports){
+},{"../utils/FormatAge.jsx":25,"../utils/FormatCssClass.jsx":26,"react":38}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -392,7 +416,7 @@ function (_Component) {
 exports["default"] = App;
 
 
-},{"../api/Load.jsx":1,"../utils/FormatCssClass.jsx":24,"./Age.jsx":4,"./FeedRecorder.jsx":8,"./History.jsx":9,"./LastFeedTime.jsx":10,"./Menu.jsx":11,"./SiteTitle.jsx":18,"./Weight.jsx":19,"react":36}],6:[function(require,module,exports){
+},{"../api/Load.jsx":1,"../utils/FormatCssClass.jsx":26,"./Age.jsx":5,"./FeedRecorder.jsx":10,"./History.jsx":11,"./LastFeedTime.jsx":12,"./Menu.jsx":13,"./SiteTitle.jsx":20,"./Weight.jsx":21,"react":38}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -482,7 +506,7 @@ function (_Component) {
 exports["default"] = CalendarDay;
 
 
-},{"../utils/FormatCssClass.jsx":24,"react":36}],7:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":26,"react":38}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -536,14 +560,15 @@ function (_Component) {
     value: function render() {
       var _this = this;
 
-      var monthName = moment(this.props.month).format("MMMM"); // build the day controls
+      var monthObj = moment(this.props.month);
+      var monthName = monthObj.format("MMMM"); // build the day controls
 
       var weeks = [];
       var days = [];
-      var firstDay = moment(this.props.month).format("d");
+      var firstDay = monthObj.format("d");
 
-      for (var i = 1; i <= 35; i++) {
-        // always show 5 rows of 7 days
+      for (var i = 1; i <= 42; i++) {
+        // always show 6 rows of 7 days
         // find the percentage to goal for the given day
         var day = i - firstDay;
         var dayPercent = 0;
@@ -564,14 +589,14 @@ function (_Component) {
 
 
         days.push(_react["default"].createElement(_CalendarDay["default"], {
-          key: monthName + "-day-" + i,
+          key: monthObj.format("YMM") + "-day-" + i,
           percent: dayPercent,
           dayIndex: i
         })); // move days into weekly row after 7 days
 
         if (i % 7 === 0) {
           weeks.push(_react["default"].createElement("div", {
-            key: monthName + "-week-" + i,
+            key: monthObj.format("YMM") + "-week-" + i,
             className: (0, _FormatCssClass["default"])("week")
           }, days));
           days = [];
@@ -590,7 +615,173 @@ function (_Component) {
 exports["default"] = CalendarMonth;
 
 
-},{"../utils/FormatCssClass.jsx":24,"./CalendarDay.jsx":6,"react":36}],8:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":26,"./CalendarDay.jsx":7,"react":38}],9:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
+
+var _Converters = require("../utils/Converters.jsx");
+
+var _SaveFeed = _interopRequireDefault(require("../api/SaveFeed.jsx"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+// export object
+var FeedEditor =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(FeedEditor, _Component);
+
+  // Constructor.
+  function FeedEditor(props, context) {
+    var _this;
+
+    _classCallCheck(this, FeedEditor);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(FeedEditor).call(this, props, context)); // intialize the state
+
+    _this.state = {
+      isSaving: false
+    };
+    _this.submitFeed = _this.submitFeed.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(FeedEditor, [{
+    key: "render",
+    // Renders the menu panel.
+    value: function render() {
+      var _this2 = this;
+
+      if (!this.props.feed.RecipeId) return null;
+      var title = this.props.feed.FeedId ? "Edit Feed" : "Add Feed";
+      var optionsRecipes = [];
+      var volumeUnit = "mls";
+      var recipeCaloriesPerOunce = 0;
+      this.props.recipes.forEach(function (recipe) {
+        if (recipe.recipeId === _this2.props.feed.RecipeId) {
+          recipeCaloriesPerOunce = recipe.caloriesPerOunce;
+          if (!recipeCaloriesPerOunce) volumeUnit = "cals";
+        }
+
+        optionsRecipes.push(_react["default"].createElement("option", {
+          key: "option-recipe-" + recipe.recipeId,
+          value: recipe.recipeId
+        }, recipe.name));
+      });
+      var volume = (0, _Converters.ConvertCaloriesToVolume)(this.props.feed.Calories, volumeUnit, recipeCaloriesPerOunce);
+      return _react["default"].createElement("div", null, _react["default"].createElement("h1", null, title), _react["default"].createElement("form", {
+        className: (0, _FormatCssClass["default"])("content"),
+        onSubmit: this.submitFeed
+      }, _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("form-fields")
+      }, _react["default"].createElement("h2", null, "Date"), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("fields")
+      }, _react["default"].createElement("input", {
+        id: "input-feed-date",
+        name: "inputFeedDate",
+        type: "date",
+        defaultValue: this.props.feed.Date
+      })), _react["default"].createElement("h2", null, "Time"), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("fields")
+      }, _react["default"].createElement("input", {
+        id: "input-feed-time",
+        name: "inputFeedTime",
+        type: "time",
+        defaultValue: this.props.feed.Time
+      })), _react["default"].createElement("h2", null, "Recipe"), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("fields")
+      }, _react["default"].createElement("select", {
+        id: "select-feed-recipe",
+        name: "inputFeedRecipe",
+        defaultValue: this.props.feed.RecipeId
+      }, optionsRecipes)), _react["default"].createElement("h2", null, "Volume"), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("fields")
+      }, _react["default"].createElement("input", {
+        id: "input-feed-volume",
+        name: "inputFeedVolume",
+        type: "number",
+        defaultValue: volume
+      }), _react["default"].createElement("select", {
+        id: "select-feed-volume-unit",
+        name: "inputFeedVolumeUnit",
+        defaultValue: volumeUnit
+      }, _react["default"].createElement("option", {
+        value: "mls"
+      }, "Mls"), _react["default"].createElement("option", {
+        value: "ozs"
+      }, "Ozs"), _react["default"].createElement("option", {
+        value: "cals"
+      }, "Cals")))), _react["default"].createElement("button", {
+        type: "submit",
+        className: (0, _FormatCssClass["default"])("save"),
+        disabled: this.state.isSaving
+      }, "Save")));
+    }
+  }, {
+    key: "submitFeed",
+    value: function submitFeed(e) {
+      e.preventDefault();
+      this.setState({
+        isSaving: true
+      });
+      var recipeId = parseInt(e.target.inputFeedRecipe.value);
+      var recipeCaloriesPerOunce = 0;
+      this.props.recipes.forEach(function (recipe) {
+        if (recipe.recipeId === recipeId) {
+          recipeCaloriesPerOunce = recipe.caloriesPerOunce;
+        }
+      });
+      var feed = this.props.feed;
+      feed.Date = e.target.inputFeedDate.value;
+      feed.Time = e.target.inputFeedTime.value;
+      feed.RecipeId = recipeId;
+      feed.Calories = (0, _Converters.ConvertVolumeToCalories)(parseInt(e.target.inputFeedVolume.value), e.target.inputFeedVolumeUnit.value, recipeCaloriesPerOunce);
+      (0, _SaveFeed["default"])({
+        feedId: feed.FeedId,
+        dateTime: feed.Date + " " + feed.Time,
+        calories: feed.Calories,
+        recipeId: feed.RecipeId
+      }, function (success) {
+        console.log("saved!");
+      });
+    }
+  }]);
+
+  return FeedEditor;
+}(_react.Component);
+
+exports["default"] = FeedEditor;
+
+
+},{"../api/SaveFeed.jsx":4,"../utils/Converters.jsx":24,"../utils/FormatCssClass.jsx":26,"react":38}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1048,7 +1239,7 @@ function (_Component) {
 exports["default"] = FeedRecorder;
 
 
-},{"../api/LoadRecipes.jsx":2,"../api/SaveFeed.jsx":3,"../utils/Converters.jsx":22,"../utils/FormatCssClass.jsx":24,"../utils/FormatFeedVolume.jsx":25,"react":36}],9:[function(require,module,exports){
+},{"../api/LoadRecipes.jsx":3,"../api/SaveFeed.jsx":4,"../utils/Converters.jsx":24,"../utils/FormatCssClass.jsx":26,"../utils/FormatFeedVolume.jsx":27,"react":38}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1148,7 +1339,7 @@ function (_Component) {
 exports["default"] = History;
 
 
-},{"../utils/FormatCssClass.jsx":24,"./CalendarMonth.jsx":7,"react":36}],10:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":26,"./CalendarMonth.jsx":8,"react":38}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1208,7 +1399,7 @@ function (_Component) {
 exports["default"] = LastFeedTime;
 
 
-},{"../utils/FormatCssClass.jsx":24,"react":36}],11:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":26,"react":38}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1383,7 +1574,7 @@ function (_Component) {
 exports["default"] = Menu;
 
 
-},{"../utils/FormatCssClass.jsx":24,"./MenuAbout.jsx":12,"./MenuAccount.jsx":13,"./MenuBabies.jsx":14,"./MenuFeeds.jsx":15,"./MenuRecipes.jsx":16,"./MenuWeights.jsx":17,"react":36}],12:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":26,"./MenuAbout.jsx":14,"./MenuAccount.jsx":15,"./MenuBabies.jsx":16,"./MenuFeeds.jsx":17,"./MenuRecipes.jsx":18,"./MenuWeights.jsx":19,"react":38}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1451,7 +1642,7 @@ function (_Component) {
 exports["default"] = MenuAbout;
 
 
-},{"../utils/FormatCssClass.jsx":24,"react":36}],13:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":26,"react":38}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1519,7 +1710,7 @@ function (_Component) {
 exports["default"] = MenuAccount;
 
 
-},{"../utils/FormatCssClass.jsx":24,"react":36}],14:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":26,"react":38}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1587,7 +1778,7 @@ function (_Component) {
 exports["default"] = MenuBabies;
 
 
-},{"../utils/FormatCssClass.jsx":24,"react":36}],15:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":26,"react":38}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1597,7 +1788,17 @@ exports["default"] = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
+var _FeedEditor = _interopRequireDefault(require("./FeedEditor.jsx"));
+
+var Constants = _interopRequireWildcard(require("../utils/Constants.jsx"));
+
 var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
+
+var _LoadFeeds = _interopRequireDefault(require("../api/LoadFeeds.jsx"));
+
+var _LoadRecipes = _interopRequireDefault(require("../api/LoadRecipes.jsx"));
+
+var _Converters = require("../utils/Converters.jsx");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -1613,9 +1814,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -1635,17 +1836,171 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuFeeds).call(this, props, context)); // intialize the state
 
-    _this.state = {};
+    _this.state = {
+      feeds: [],
+      recipes: [],
+      condenseList: true,
+      // shows only last [Constants.FeedHistoryDisplayDays] days if condensed
+      editingFeed: {},
+      // will be populated when a feed is being edited
+      volumeUnits: "mls" // TODO: Move to state of App
+
+    };
+    _this.showMoreFeeds = _this.showMoreFeeds.bind(_assertThisInitialized(_this));
+    _this.editFeed = _this.editFeed.bind(_assertThisInitialized(_this));
     return _this;
   }
 
   _createClass(MenuFeeds, [{
+    key: "componentWillMount",
+    // Pre-mount logic.
+    value: function componentWillMount() {
+      this.reloadFeeds();
+    } // Renders the menu panel.
+
+  }, {
     key: "render",
-    // Renders the menu panel.
     value: function render() {
+      var content = "";
+
+      if (this.state.feeds.length) {
+        var currentDate = moment().format("Y-MM-DD");
+        var oldestDate = this.state.feeds[0].Date;
+        var dayBlocks = [];
+        var isComplete = false;
+        var iteration = 0;
+
+        while (!isComplete) {
+          var checkDate = moment().add(-iteration, "days");
+          var dateLabel = "";
+          if (!iteration) dateLabel = "Today";else if (iteration === 1) dateLabel = "Yesterday";else dateLabel = checkDate.format("MMMM Do");
+          var feedBlocks = this.renderFeedBlocks(checkDate.format("Y-MM-DD"));
+          dayBlocks.push(_react["default"].createElement("div", {
+            className: (0, _FormatCssClass["default"])("feeds-day-block"),
+            key: "feeds-for-day-" + checkDate
+          }, _react["default"].createElement("div", {
+            className: (0, _FormatCssClass["default"])("feeds-day-block-contents")
+          }, _react["default"].createElement("h2", null, dateLabel, _react["default"].createElement("button", {
+            className: (0, _FormatCssClass["default"])("btn-add")
+          }, "+")), feedBlocks)));
+          iteration++;
+          if (this.state.condenseList && iteration >= Constants.FeedHistoryDisplayDays) isComplete = true;else if (!this.state.condenseList && checkDate.format("Y-MM-DD") === oldestDate) isComplete = true;
+        }
+
+        if (this.state.condenseList) {
+          dayBlocks.push(_react["default"].createElement("button", {
+            key: "feeds-load-more",
+            onClick: this.showMoreFeeds
+          }, "Load Older Feeds"));
+        }
+
+        content = dayBlocks;
+      } else content = _react["default"].createElement("p", null, "No Feeds Recorded");
+
       return _react["default"].createElement("div", {
-        className: (0, _FormatCssClass["default"])("menu-panel-sub open")
-      }, _react["default"].createElement("h1", null, "Feeds"), _react["default"].createElement("p", null, "Feeds panel."));
+        className: (0, _FormatCssClass["default"])(["menu-panel-sub", "menu-feeds"])
+      }, _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])(["menu-panel-edit-form", this.state.editingFeed.RecipeId ? "open" : "closed"])
+      }, _react["default"].createElement(_FeedEditor["default"], {
+        feed: this.state.editingFeed,
+        recipes: this.state.recipes
+      })), _react["default"].createElement("h1", null, "Feeds"), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("content")
+      }, _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("data")
+      }, content), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("graph")
+      }, "[GRAPH]")));
+    }
+  }, {
+    key: "renderFeedBlocks",
+    value: function renderFeedBlocks(dateString) {
+      var feedBlocks = [];
+
+      for (var i = this.state.feeds.length; i > 0; i--) {
+        var feed = this.state.feeds[i - 1];
+        if (feed.Date !== dateString) continue;
+        var time = moment(feed.Date + " " + feed.Time).format("h:mm");
+        var timeUnit = moment(feed.Date + " " + feed.Time).format("a");
+        var recipe = this.getRecipeById(feed.RecipeId);
+        var volume = 0;
+        var volumeUnits = "";
+
+        if (recipe.caloriesPerOunce) {
+          volume = (0, _Converters.ConvertCaloriesToVolume)(feed.Calories, this.state.volumeUnits, recipe.caloriesPerOunce);
+          volumeUnits = this.state.volumeUnits;
+        } else {
+          volume = feed.Calories;
+          volumeUnits = "cals";
+        }
+
+        feedBlocks.push(_react["default"].createElement("div", {
+          className: (0, _FormatCssClass["default"])(["row", feedBlocks.length % 2 ? "even" : "odd"]),
+          onClick: this.editFeed,
+          "data-feed-id": feed.FeedId,
+          key: "feeds-for-day-" + dateString + "-" + i
+        }, _react["default"].createElement("span", {
+          className: (0, _FormatCssClass["default"])("cell-time")
+        }, _react["default"].createElement("strong", null, time), timeUnit), _react["default"].createElement("span", {
+          className: (0, _FormatCssClass["default"])("cell-volume")
+        }, _react["default"].createElement("strong", null, volume)), _react["default"].createElement("span", {
+          className: (0, _FormatCssClass["default"])("cell-unit")
+        }, volumeUnits), _react["default"].createElement("button", {
+          className: (0, _FormatCssClass["default"])("btn-edit")
+        }, "^")));
+      }
+
+      return feedBlocks;
+    }
+  }, {
+    key: "getRecipeById",
+    value: function getRecipeById(recipeId) {
+      for (var i = 0; i < this.state.recipes.length; i++) {
+        if (this.state.recipes[i].recipeId === recipeId) return this.state.recipes[i];
+      }
+
+      return {
+        name: "Unknown"
+      };
+    }
+  }, {
+    key: "reloadFeeds",
+    value: function reloadFeeds() {
+      var _this2 = this;
+
+      (0, _LoadFeeds["default"])(function (feedData) {
+        (0, _LoadRecipes["default"])(function (recipeData) {
+          _this2.setState({
+            feeds: feedData,
+            recipes: recipeData
+          });
+        });
+      });
+    }
+  }, {
+    key: "showMoreFeeds",
+    value: function showMoreFeeds(e) {
+      e.preventDefault();
+      this.setState({
+        condenseList: false
+      });
+    }
+  }, {
+    key: "editFeed",
+    value: function editFeed(e) {
+      var _this3 = this;
+
+      e.preventDefault();
+      var feedId = parseInt(e.currentTarget.dataset.feedId);
+      this.state.feeds.forEach(function (feed) {
+        if (feed.FeedId === feedId) {
+          _this3.setState({
+            editingFeed: feed
+          });
+
+          return false;
+        }
+      });
     }
   }]);
 
@@ -1655,7 +2010,7 @@ function (_Component) {
 exports["default"] = MenuFeeds;
 
 
-},{"../utils/FormatCssClass.jsx":24,"react":36}],16:[function(require,module,exports){
+},{"../api/LoadFeeds.jsx":2,"../api/LoadRecipes.jsx":3,"../utils/Constants.jsx":23,"../utils/Converters.jsx":24,"../utils/FormatCssClass.jsx":26,"./FeedEditor.jsx":9,"react":38}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1723,7 +2078,7 @@ function (_Component) {
 exports["default"] = MenuRecipes;
 
 
-},{"../utils/FormatCssClass.jsx":24,"react":36}],17:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":26,"react":38}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1791,7 +2146,7 @@ function (_Component) {
 exports["default"] = MenuWeights;
 
 
-},{"../utils/FormatCssClass.jsx":24,"react":36}],18:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":26,"react":38}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1870,7 +2225,7 @@ function (_Component) {
 exports["default"] = SiteTitle;
 
 
-},{"react":36}],19:[function(require,module,exports){
+},{"react":38}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1956,7 +2311,7 @@ function (_Component) {
 exports["default"] = Weight;
 
 
-},{"../utils/FormatCssClass.jsx":24,"../utils/FormatWeight.jsx":26,"react":36}],20:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":26,"../utils/FormatWeight.jsx":28,"react":38}],22:[function(require,module,exports){
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -1970,13 +2325,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 _reactDom["default"].render(_react["default"].createElement(_App["default"], null), document.querySelector("#container"));
 
 
-},{"./components/App.jsx":5,"react":36,"react-dom":33}],21:[function(require,module,exports){
+},{"./components/App.jsx":6,"react":38,"react-dom":35}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.MillilitersPerOunce = exports.KilogramsPerOunce = void 0;
+exports.FeedHistoryDisplayDays = exports.MillilitersPerOunce = exports.KilogramsPerOunce = void 0;
 
 /*
     Constants
@@ -1985,9 +2340,11 @@ var KilogramsPerOunce = 0.0283495;
 exports.KilogramsPerOunce = KilogramsPerOunce;
 var MillilitersPerOunce = 29.5735;
 exports.MillilitersPerOunce = MillilitersPerOunce;
+var FeedHistoryDisplayDays = 3;
+exports.FeedHistoryDisplayDays = FeedHistoryDisplayDays;
 
 
-},{}],22:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2044,7 +2401,7 @@ function ConvertVolumeToCalories(volume, volumeUnit, recipeCaloriesPerOunce) {
 }
 
 
-},{"./Constants.jsx":21}],23:[function(require,module,exports){
+},{"./Constants.jsx":23}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2098,7 +2455,7 @@ function FormatAge(today, ageDate) {
 }
 
 
-},{"react":36}],24:[function(require,module,exports){
+},{"react":38}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2116,7 +2473,7 @@ function FormatCssClass(classes) {
 }
 
 
-},{}],25:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2191,7 +2548,7 @@ function FormatFeedVolume(units, calories, topCaloriesForDay, recipeCaloriesPerO
 }
 
 
-},{"./Constants.jsx":21,"./Converters.jsx":22,"react":36}],26:[function(require,module,exports){
+},{"./Constants.jsx":23,"./Converters.jsx":24,"react":38}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2222,7 +2579,7 @@ function FormatWeight(kilograms, returnKilograms) {
 }
 
 
-},{"react":36}],27:[function(require,module,exports){
+},{"react":38}],29:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -2314,7 +2671,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],28:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -2500,7 +2857,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],29:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -2606,7 +2963,7 @@ checkPropTypes.resetWarningCache = function() {
 module.exports = checkPropTypes;
 
 }).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":30,"_process":28}],30:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":32,"_process":30}],32:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -2620,7 +2977,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],31:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 (function (process){
 /** @license React v16.8.6
  * react-dom.development.js
@@ -23902,7 +24259,7 @@ module.exports = reactDom;
 }
 
 }).call(this,require('_process'))
-},{"_process":28,"object-assign":27,"prop-types/checkPropTypes":29,"react":36,"scheduler":41,"scheduler/tracing":42}],32:[function(require,module,exports){
+},{"_process":30,"object-assign":29,"prop-types/checkPropTypes":31,"react":38,"scheduler":43,"scheduler/tracing":44}],34:[function(require,module,exports){
 /** @license React v16.8.6
  * react-dom.production.min.js
  *
@@ -24173,7 +24530,7 @@ x("38"):void 0;return Si(a,b,c,!1,d)},unmountComponentAtNode:function(a){Qi(a)?v
 X;X=!0;try{ki(a)}finally{(X=b)||W||Yh(1073741823,!1)}},__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{Events:[Ia,Ja,Ka,Ba.injectEventPluginsByName,pa,Qa,function(a){ya(a,Pa)},Eb,Fb,Dd,Da]}};function Ui(a,b){Qi(a)?void 0:x("299","unstable_createRoot");return new Pi(a,!0,null!=b&&!0===b.hydrate)}
 (function(a){var b=a.findFiberByHostInstance;return Te(n({},a,{overrideProps:null,currentDispatcherRef:Tb.ReactCurrentDispatcher,findHostInstanceByFiber:function(a){a=hd(a);return null===a?null:a.stateNode},findFiberByHostInstance:function(a){return b?b(a):null}}))})({findFiberByHostInstance:Ha,bundleType:0,version:"16.8.6",rendererPackageName:"react-dom"});var Wi={default:Vi},Xi=Wi&&Vi||Wi;module.exports=Xi.default||Xi;
 
-},{"object-assign":27,"react":36,"scheduler":41}],33:[function(require,module,exports){
+},{"object-assign":29,"react":38,"scheduler":43}],35:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -24215,7 +24572,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react-dom.development.js":31,"./cjs/react-dom.production.min.js":32,"_process":28}],34:[function(require,module,exports){
+},{"./cjs/react-dom.development.js":33,"./cjs/react-dom.production.min.js":34,"_process":30}],36:[function(require,module,exports){
 (function (process){
 /** @license React v16.8.6
  * react.development.js
@@ -26120,7 +26477,7 @@ module.exports = react;
 }
 
 }).call(this,require('_process'))
-},{"_process":28,"object-assign":27,"prop-types/checkPropTypes":29}],35:[function(require,module,exports){
+},{"_process":30,"object-assign":29,"prop-types/checkPropTypes":31}],37:[function(require,module,exports){
 /** @license React v16.8.6
  * react.production.min.js
  *
@@ -26147,7 +26504,7 @@ b,d){return W().useImperativeHandle(a,b,d)},useDebugValue:function(){},useLayout
 b){void 0!==b.ref&&(h=b.ref,f=J.current);void 0!==b.key&&(g=""+b.key);var l=void 0;a.type&&a.type.defaultProps&&(l=a.type.defaultProps);for(c in b)K.call(b,c)&&!L.hasOwnProperty(c)&&(e[c]=void 0===b[c]&&void 0!==l?l[c]:b[c])}c=arguments.length-2;if(1===c)e.children=d;else if(1<c){l=Array(c);for(var m=0;m<c;m++)l[m]=arguments[m+2];e.children=l}return{$$typeof:p,type:a.type,key:g,ref:h,props:e,_owner:f}},createFactory:function(a){var b=M.bind(null,a);b.type=a;return b},isValidElement:N,version:"16.8.6",
 unstable_ConcurrentMode:x,unstable_Profiler:u,__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentDispatcher:I,ReactCurrentOwner:J,assign:k}},Y={default:X},Z=Y&&X||Y;module.exports=Z.default||Z;
 
-},{"object-assign":27}],36:[function(require,module,exports){
+},{"object-assign":29}],38:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -26158,7 +26515,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react.development.js":34,"./cjs/react.production.min.js":35,"_process":28}],37:[function(require,module,exports){
+},{"./cjs/react.development.js":36,"./cjs/react.production.min.js":37,"_process":30}],39:[function(require,module,exports){
 (function (process){
 /** @license React v0.13.6
  * scheduler-tracing.development.js
@@ -26585,7 +26942,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 }
 
 }).call(this,require('_process'))
-},{"_process":28}],38:[function(require,module,exports){
+},{"_process":30}],40:[function(require,module,exports){
 /** @license React v0.13.6
  * scheduler-tracing.production.min.js
  *
@@ -26597,7 +26954,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 
 'use strict';Object.defineProperty(exports,"__esModule",{value:!0});var b=0;exports.__interactionsRef=null;exports.__subscriberRef=null;exports.unstable_clear=function(a){return a()};exports.unstable_getCurrent=function(){return null};exports.unstable_getThreadID=function(){return++b};exports.unstable_trace=function(a,d,c){return c()};exports.unstable_wrap=function(a){return a};exports.unstable_subscribe=function(){};exports.unstable_unsubscribe=function(){};
 
-},{}],39:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 (function (process,global){
 /** @license React v0.13.6
  * scheduler.development.js
@@ -27300,7 +27657,7 @@ exports.unstable_getFirstCallbackNode = unstable_getFirstCallbackNode;
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":28}],40:[function(require,module,exports){
+},{"_process":30}],42:[function(require,module,exports){
 (function (global){
 /** @license React v0.13.6
  * scheduler.production.min.js
@@ -27325,7 +27682,7 @@ b=c.previous;b.next=c.previous=a;a.next=c;a.previous=b}return a};exports.unstabl
 exports.unstable_shouldYield=function(){return!e&&(null!==d&&d.expirationTime<l||w())};exports.unstable_continueExecution=function(){null!==d&&p()};exports.unstable_pauseExecution=function(){};exports.unstable_getFirstCallbackNode=function(){return d};
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],41:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -27336,7 +27693,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler.development.js":39,"./cjs/scheduler.production.min.js":40,"_process":28}],42:[function(require,module,exports){
+},{"./cjs/scheduler.development.js":41,"./cjs/scheduler.production.min.js":42,"_process":30}],44:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -27347,4 +27704,4 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler-tracing.development.js":37,"./cjs/scheduler-tracing.production.min.js":38,"_process":28}]},{},[20]);
+},{"./cjs/scheduler-tracing.development.js":39,"./cjs/scheduler-tracing.production.min.js":40,"_process":30}]},{},[22]);

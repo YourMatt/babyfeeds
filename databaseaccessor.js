@@ -6,39 +6,41 @@ exports.query = {
 
         exports.access.selectSingle({
                 sql:
-                "SELECT     b.Name " +
-                ",          b.BirthDate " +
-                ",          b.ExpectedDate " +
-                ",          r.RecipeId " +
-                ",          r.Name AS RecipeName " +
-                ",          r.CaloriesPerOunce AS RecipeCaloriesPerOunce " +
-                ", (        SELECT Kilograms FROM Weights WHERE BabyId = b.BabyId ORDER BY Date DESC LIMIT 1) AS WeightKilograms " +
-                ", (        SELECT DATE_FORMAT(MAX(Date), '%Y-%m-%d %H:%i') FROM Feeds WHERE BabyId = b.BabyId) AS LastFeedTime " +
-                ", (        SELECT Calories FROM Feeds WHERE BabyId = b.BabyId ORDER BY Date DESC LIMIT 1) AS LastFeedCalories " +
-                ", (        SELECT MAX(Calories) FROM Feeds WHERE BabyId = b.BabyId) AS MaxFeedCalories " +
-                "FROM       Babies b " +
-                "INNER JOIN Recipes r ON r.RecipeId = b.RecipeId " +
-                "WHERE      BabyId = ? ",
+                    "SELECT     b.Name " +
+                    ",          b.BirthDate " +
+                    ",          b.ExpectedDate " +
+                    ",          r.RecipeId " +
+                    ",          r.Name AS RecipeName " +
+                    ",          r.CaloriesPerOunce AS RecipeCaloriesPerOunce " +
+                    ", (        SELECT Kilograms FROM Weights WHERE BabyId = b.BabyId ORDER BY Date DESC LIMIT 1) AS WeightKilograms " +
+                    ", (        SELECT DATE_FORMAT(MAX(Date), '%Y-%m-%d %H:%i') FROM Feeds WHERE BabyId = b.BabyId) AS LastFeedTime " +
+                    ", (        SELECT Calories FROM Feeds WHERE BabyId = b.BabyId ORDER BY Date DESC LIMIT 1) AS LastFeedCalories " +
+                    ", (        SELECT MAX(Calories) FROM Feeds WHERE BabyId = b.BabyId) AS MaxFeedCalories " +
+                    "FROM       Babies b " +
+                    "INNER JOIN Recipes r ON r.RecipeId = b.RecipeId " +
+                    "WHERE      BabyId = ? ",
                 values: babyId
             },
-            callback);
+            callback
+        );
 
     },
 
     getFeedTotalsPerDay: (babyId, callback) => {
 
-        exports.access.selectMultiple ({
+        exports.access.selectMultiple({
                 sql:
-                "SELECT     DATE_FORMAT(Date, '%Y-%m-%d') AS Date " +
-                ",          GoalCalories " +
-                ",          TotalCalories " +
-                ",          ROUND(TotalCalories / GoalCalories * 100) AS Percent " +
-                "FROM       DailyTotals " +
-                "WHERE      BabyId = ? " +
-                "ORDER BY   Date ASC ",
+                    "SELECT     DATE_FORMAT(Date, '%Y-%m-%d') AS Date " +
+                    ",          GoalCalories " +
+                    ",          TotalCalories " +
+                    ",          ROUND(TotalCalories / GoalCalories * 100) AS Percent " +
+                    "FROM       DailyTotals " +
+                    "WHERE      BabyId = ? " +
+                    "ORDER BY   Date ASC ",
                 values: [babyId]
             },
-            callback);
+            callback
+        );
 
     },
 
@@ -46,14 +48,15 @@ exports.query = {
 
         exports.access.selectMultiple({
                 sql:
-                "SELECT     r.* " +
-                ", (        SELECT MAX(Date) FROM Feeds WHERE RecipeId = r.RecipeId) AS LastUsed " +
-                "FROM       Recipes r " +
-                "WHERE      r.AccountId = ? " +
-                "ORDER BY   r.Name ASC ",
+                    "SELECT     r.* " +
+                    ", (        SELECT MAX(Date) FROM Feeds WHERE RecipeId = r.RecipeId) AS LastUsed " +
+                    "FROM       Recipes r " +
+                    "WHERE      r.AccountId = ? " +
+                    "ORDER BY   r.Name ASC ",
                 values: accountId
             },
-            callback);
+            callback
+        );
 
     },
 
@@ -61,27 +64,72 @@ exports.query = {
 
         exports.access.selectSingle({
                 sql:
-                "SELECT * " +
-                "FROM   Recipes " +
-                "WHERE  RecipeId = ? ",
+                    "SELECT * " +
+                    "FROM   Recipes " +
+                    "WHERE  RecipeId = ? ",
                 values: recipeId
             },
-            callback);
+            callback
+        );
 
     },
 
-    getFeedsForDay: (day, callback) => {
+    getFeed: (feedId, callback) => {
 
-        exports.access.selectMultiple ({
+        exports.access.selectSingle({
                 sql:
-                "SELECT    DATE_FORMAT(Date, '%H:%i') AS Time " +
-                ",         Calories " +
-                "FROM      Feeds " +
-                "WHERE     DATE_FORMAT(Date, '%Y-%m-%d') = ? " +
-                "ORDER BY  Date",
-                values: day
+                    "SELECT FeedId " +
+                    ",      BabyId " +
+                    ",      DATE_FORMAT(Date, '%Y-%m-%d') AS Date " +
+                    ",      DATE_FORMAT(Date, '%H:%i') AS Time " +
+                    ",      RecipeId " +
+                    ",      Calories " +
+                    "FROM   Feeds " +
+                    "WHERE  FeedId = ? ",
+                values: feedId
             },
-            callback);
+            callback
+        );
+
+    },
+
+    getFeeds: (babyId, oldestDate, callback) => {
+
+        if (!oldestDate) oldestDate = "2018-01-01";
+
+        exports.access.selectMultiple({
+                sql:
+                    "SELECT    FeedId " +
+                    ",         BabyId " +
+                    ",         DATE_FORMAT(Date, '%Y-%m-%d') AS Date " +
+                    ",         DATE_FORMAT(Date, '%H:%i') AS Time " +
+                    ",         RecipeId " +
+                    ",         Calories " +
+                    "FROM      Feeds " +
+                    "WHERE     BabyId = ? " +
+                    "AND       Date >= ? " +
+                    "ORDER BY  Feeds.Date",
+                values: [babyId, oldestDate]
+            },
+            callback
+        );
+
+    },
+
+    getFeedsForDay: (babyId, day, callback) => {
+
+        exports.access.selectMultiple({
+                sql:
+                    "SELECT    DATE_FORMAT(Date, '%H:%i') AS Time " +
+                    ",         Calories " +
+                    "FROM      Feeds " +
+                    "WHERE     BabyId = ? " +
+                    "AND       DATE_FORMAT(Date, '%Y-%m-%d') = ? " +
+                    "ORDER BY  Date",
+                values: [babyId, day]
+            },
+            callback
+        );
 
     },
 
@@ -89,9 +137,9 @@ exports.query = {
 
         exports.access.insert({
                 sql:
-                "INSERT INTO Feeds " +
-                "(           BabyId, RecipeId, Date, Calories) " +
-                "VALUES (    ?, ?, ?, ?) ",
+                    "INSERT INTO Feeds " +
+                    "(           BabyId, RecipeId, Date, Calories) " +
+                    "VALUES (    ?, ?, ?, ?) ",
                 values: [babyId, recipeId, dateTime, calories]
             },
             (numInserted) => {
@@ -103,7 +151,51 @@ exports.query = {
                     callback
                 );
 
-            });
+            }
+        );
+
+    },
+
+    updateFeed: (feedId, dateTime, calories, recipeId, callback) => {
+
+        exports.query.getFeed(feedId, (feed) => {
+                if (!feed.FeedId) return callback(0);
+
+                exports.access.update({
+                        sql:
+                            "UPDATE Feeds " +
+                            "SET    RecipeId = ? " +
+                            ",      Date = ? " +
+                            ",      Calories = ? " +
+                            "WHERE  FeedId = ? ",
+                        values: [recipeId, dateTime, calories, feedId]
+                    },
+                    (numUpdated) => {
+
+                        // update the running total on the original date to exclude the originally recorded feed
+                        exports.query.refreshDailyTotalsForDay(
+                            feed.BabyId,
+                            feed.Date,
+                            () => {
+
+                                let newDate = dateTime.split(" ")[0];
+
+                                // return if the date did not change for the feed
+                                if (feed.Date === newDate) return callback();
+
+                                // update the running total for the new feed date
+                                exports.query.refreshDailyTotalsForDay(
+                                    feed.BabyId,
+                                    newDate,
+                                    callback
+                                );
+
+                            }
+                        );
+                    }
+                );
+            }
+        );
 
     },
 
@@ -111,33 +203,34 @@ exports.query = {
 
         // remove any existing daily totals
         exports.access.update({
-            sql:
-            "DELETE FROM DailyTotals " +
-            "WHERE       BabyId = ? " +
-            "AND         Date = ? ",
-            values: [babyId, date]
-        }, (numDeleted) => {
+                sql:
+                    "DELETE FROM DailyTotals " +
+                    "WHERE       BabyId = ? " +
+                    "AND         Date = ? ",
+                values: [babyId, date]
+            }, (numDeleted) => {
 
-            // calculate the new total for the day
-            exports.access.insert({
-                    sql:
-                    "INSERT INTO DailyTotals " +
-                    "(           BabyId, Date, GoalCalories, TotalCalories) " +
-                    "SELECT      f.BabyId " +
-                    ",           DATE_FORMAT(f.Date, '%Y-%m-%d') AS Date " +
-                    ", (         SELECT Kilograms FROM Weights WHERE Date <= DATE_FORMAT(f.Date, '%Y-%m-%d') ORDER BY Date DESC LIMIT 1) * " +
-                    "  (         SELECT CaloriesPerKilogram FROM Goals WHERE Date <= DATE_FORMAT(f.Date, '%Y-%m-%d') ORDER BY Date DESC LIMIT 1) AS GoalCaloriesForDay " +
-                    ",           SUM(f.Calories) AS TotalCalories " +
-                    "FROM        Feeds f " +
-                    "INNER JOIN  Recipes r ON r.RecipeId = f.RecipeId " +
-                    "WHERE       f.BabyId = ? " +
-                    "AND         f.Date >= ? AND f.Date < DATE_ADD(?, INTERVAL 1 DAY) " +
-                    "GROUP BY    DATE_FORMAT(f.Date, '%Y-%m-%d') ",
-                    values: [babyId, date, date]
-                },
-                callback);
+                // calculate the new total for the day
+                exports.access.insert({
+                        sql:
+                            "INSERT INTO DailyTotals " +
+                            "(           BabyId, Date, GoalCalories, TotalCalories) " +
+                            "SELECT      f.BabyId " +
+                            ",           DATE_FORMAT(f.Date, '%Y-%m-%d') AS Date " +
+                            ", (         SELECT Kilograms FROM Weights WHERE Date <= DATE_FORMAT(f.Date, '%Y-%m-%d') ORDER BY Date DESC LIMIT 1) * " +
+                            "  (         SELECT CaloriesPerKilogram FROM Goals WHERE Date <= DATE_FORMAT(f.Date, '%Y-%m-%d') ORDER BY Date DESC LIMIT 1) AS GoalCaloriesForDay " +
+                            ",           SUM(f.Calories) AS TotalCalories " +
+                            "FROM        Feeds f " +
+                            "INNER JOIN  Recipes r ON r.RecipeId = f.RecipeId " +
+                            "WHERE       f.BabyId = ? " +
+                            "AND         f.Date >= ? AND f.Date < DATE_ADD(?, INTERVAL 1 DAY) " +
+                            "GROUP BY    DATE_FORMAT(f.Date, '%Y-%m-%d') ",
+                        values: [babyId, date, date]
+                    },
+                    callback);
 
-        });
+            }
+        );
 
     },
 
@@ -145,12 +238,13 @@ exports.query = {
 
         exports.access.update({
                 sql:
-                "UPDATE Babies " +
-                "SET    RecipeId = ? " +
-                "WHERE  BabyId = ? ",
+                    "UPDATE Babies " +
+                    "SET    RecipeId = ? " +
+                    "WHERE  BabyId = ? ",
                 values: [recipeId, babyId]
             },
-            callback);
+            callback
+        );
 
     }
 
@@ -161,6 +255,8 @@ exports.access = {
     db: null,
 
     init: () => {
+
+        if (exports.access.db) return;
 
         // create the db connection
         exports.access.db = mysql.createConnection({
@@ -183,8 +279,12 @@ exports.access = {
 
     close: () => {
 
+        return; // TODO: Evaluate if can keep and call with res output
+
         // close the database connection
-        exports.access.db.end();
+        exports.access.db.end(() => {
+            exports.access.db = null;
+        });
 
     },
 
@@ -218,7 +318,6 @@ exports.access = {
             else callback(rows);
 
         });
-
 
     },
 

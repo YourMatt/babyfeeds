@@ -3,7 +3,7 @@ const database = require ("./databaseaccessor.js"),
 
 exports.process = function (req, res) {
 
-    const endpoint = req.url;
+    const endpoint = req.url.split("?")[0];
     const method = req.method;
     let processed = false;
 
@@ -18,7 +18,7 @@ exports.process = function (req, res) {
                         database.query.getFeedTotalsPerDay(process.env.SELECTED_BABY, (feedTotalsPerDay) => {
 
                             let today = moment().format("YYYY-MM-DD");
-                            database.query.getFeedsForDay(today, (feedsForDay) => {
+                            database.query.getFeedsForDay(process.env.SELECTED_BABY, today, (feedsForDay) => {
 
                                 res.json({
                                     caloriesFeedMax: babyData.MaxFeedCalories,
@@ -40,6 +40,16 @@ exports.process = function (req, res) {
                         });
                     }
                 );
+
+                processed = true;
+            }
+            break;
+
+        case "/api/load/feeds":
+            if (method === "GET") {
+                database.query.getFeeds(process.env.SELECTED_BABY, req.query.date, (feeds) => {
+                    res.json(feeds);
+                });
 
                 processed = true;
             }
@@ -74,6 +84,7 @@ exports.process = function (req, res) {
         case "/api/savefeed":
             if (method === "POST") {
 
+                let feedId = req.body.feedId;
                 let dateTime = req.body.dateTime;
                 let calories = req.body.calories;
                 let recipeId = req.body.recipeId;
@@ -82,16 +93,32 @@ exports.process = function (req, res) {
                     recipeId,
                     (recipe) => {
 
-                        database.query.insertFeed(
-                            process.env.SELECTED_BABY,
-                            dateTime,
-                            calories,
-                            recipeId,
-                            () => {
-                                database.query.updateBabyDefaultRecipe(process.env.SELECTED_BABY, recipeId, () => {
+                        // run an update if a feed ID was supplied
+                        if (feedId) {
+                            database.query.updateFeed(
+                                feedId,
+                                dateTime,
+                                calories,
+                                recipeId,
+                                () => {
                                     res.json({});
+                                }
+                            )
+                        }
+
+                        // insert a new feed if no feed ID was supplied
+                        else {
+                            database.query.insertFeed(
+                                process.env.SELECTED_BABY,
+                                dateTime,
+                                calories,
+                                recipeId,
+                                () => {
+                                    database.query.updateBabyDefaultRecipe(process.env.SELECTED_BABY, recipeId, () => {
+                                        res.json({});
+                                    });
                                 });
-                            });
+                        }
 
                     }
                 );

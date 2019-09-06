@@ -84,6 +84,7 @@ export default class App extends Component {
                         lastFeedTime={this.state.lastFeedTime}
                     />
                     <Menu
+
                     />
                 </div>
                 <div className={FormatCssClass("body")}>

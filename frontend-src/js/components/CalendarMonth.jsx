@@ -17,13 +17,14 @@ export default class CalendarMonth extends Component {
     // Renders the month.
     render() {
 
-        let monthName = moment(this.props.month).format("MMMM");
+        let monthObj = moment(this.props.month);
+        let monthName = monthObj.format("MMMM");
 
         // build the day controls
         let weeks = [];
         let days = [];
-        let firstDay = moment(this.props.month).format("d");
-        for (let i = 1; i <= 35; i++) { // always show 5 rows of 7 days
+        let firstDay = monthObj.format("d");
+        for (let i = 1; i <= 42; i++) { // always show 6 rows of 7 days
 
             // find the percentage to goal for the given day
             let day = i - firstDay;
@@ -39,7 +40,7 @@ export default class CalendarMonth extends Component {
             // build the day controls
             days.push(
                 <CalendarDay
-                    key={monthName + "-day-" + i}
+                    key={monthObj.format("YMM") + "-day-" + i}
                     percent={dayPercent}
                     dayIndex={i}
                 />
@@ -49,7 +50,7 @@ export default class CalendarMonth extends Component {
             if (i % 7 === 0) {
                 weeks.push(
                     <div
-                        key={monthName + "-week-" + i}
+                        key={monthObj.format("YMM") + "-week-" + i}
                         className={FormatCssClass("week")}
                     >
                         {days}
