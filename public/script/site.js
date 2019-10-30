@@ -185,6 +185,8 @@ var _FormatAge = _interopRequireDefault(require("../utils/FormatAge.jsx"));
 
 var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
 
+var _StateManager = _interopRequireDefault(require("../utils/StateManager.jsx"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
@@ -221,12 +223,13 @@ function (_Component) {
 
     _classCallCheck(this, Age);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Age).call(this, props, context)); // intialize the state
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Age).call(this, props, context));
+    _this.previousState = {};
 
-    _this.state = {
-      showActualAge: true // TODO: Pull from account settings
+    _StateManager["default"].Store.subscribe(function () {
+      if (_StateManager["default"].ValueChanged(_this.previousState, ["SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".BirthDate", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".ExpectedDate", "Account.Settings.DisplayAgeAsAdjusted"])) _this.forceUpdate();
+    }); // bind event handlers
 
-    }; // bind event handlers
 
     _this.changeAgeDisplay = _this.changeAgeDisplay.bind(_assertThisInitialized(_this));
     return _this;
@@ -237,19 +240,19 @@ function (_Component) {
     key: "render",
     value: function render() {
       var age = "";
-      var label = ""; // if showing the actual age, calculate the date from birth
+      var label = ""; // if showing the corrected age, calculate the date from when expected
 
-      if (this.state.showActualAge) {
-        age = (0, _FormatAge["default"])(this.props.dateToday, this.props.dateBirth);
-        label = "Actual Age";
-      } // if showing the corrected age, calculate the date from when expected
+      if (_StateManager["default"].State().Account.Settings.DisplayAgeAsAdjusted) {
+        age = (0, _FormatAge["default"])(_StateManager["default"].State().DateToday, _StateManager["default"].GetCurrentBabyDetails().ExpectedDate);
+        label = "Corrected Age";
+      } // if showing the actual age, calculate the date from birth
       else {
-          age = (0, _FormatAge["default"])(this.props.dateToday, this.props.dateExpected);
-          label = "Corrected Age";
+          age = (0, _FormatAge["default"])(_StateManager["default"].State().DateToday, _StateManager["default"].GetCurrentBabyDetails().BirthDate);
+          label = "Actual Age";
         } // if no difference between corrected and actual, then display a generic label
 
 
-      if (this.props.dateExpected === this.props.dateBirth) label = "Age"; // return jsx
+      if (_StateManager["default"].GetCurrentBabyDetails().BirthDate === _StateManager["default"].GetCurrentBabyDetails().ExpectedDate) label = "Age"; // return jsx
 
       return _react["default"].createElement("div", {
         onClick: this.changeAgeDisplay
@@ -261,9 +264,7 @@ function (_Component) {
   }, {
     key: "changeAgeDisplay",
     value: function changeAgeDisplay(e) {
-      this.setState({
-        showActualAge: !this.state.showActualAge
-      });
+      _StateManager["default"].UpdateValue("Account.Settings.DisplayAgeAsAdjusted", !_StateManager["default"].State().Account.Settings.DisplayAgeAsAdjusted);
     }
   }]);
 
@@ -273,7 +274,7 @@ function (_Component) {
 exports["default"] = Age;
 
 
-},{"../utils/FormatAge.jsx":28,"../utils/FormatCssClass.jsx":29,"react":79}],8:[function(require,module,exports){
+},{"../utils/FormatAge.jsx":28,"../utils/FormatCssClass.jsx":29,"../utils/StateManager.jsx":32,"react":79}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -407,11 +408,7 @@ function (_Component) {
         className: (0, _FormatCssClass["default"])("footer")
       }, _react["default"].createElement(_Weight["default"], {
         weightKilograms: this.state.weightKilograms
-      }), _react["default"].createElement(_Age["default"], {
-        dateToday: this.state.dateToday,
-        dateBirth: this.state.dateBirth,
-        dateExpected: this.state.dateExpected
-      })), this.state.modal, _react["default"].createElement(_Loading["default"], null));
+      }), _react["default"].createElement(_Age["default"], null)), this.state.modal, _react["default"].createElement(_Loading["default"], null));
     } // Loads all data from the server.
 
   }, {

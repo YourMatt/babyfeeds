@@ -103,11 +103,7 @@ export default class App extends Component {
                     <Weight
                         weightKilograms={this.state.weightKilograms}
                     />
-                    <Age
-                        dateToday={this.state.dateToday}
-                        dateBirth={this.state.dateBirth}
-                        dateExpected={this.state.dateExpected}
-                    />
+                    <Age/>
                 </div>
                 {this.state.modal}
                 <Loading/>

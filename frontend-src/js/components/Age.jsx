@@ -9,6 +9,7 @@ import React, {Component} from "react";
 // import utilities
 import FormatAge from "../utils/FormatAge.jsx";
 import FormatCssClass from "../utils/FormatCssClass.jsx";
+import StateManager from "../utils/StateManager.jsx";
 
 // export object
 export default class Age extends Component {
@@ -16,11 +17,17 @@ export default class Age extends Component {
     // Constructor.
     constructor(props, context) {
         super(props, context);
+        this.previousState = {};
 
-        // intialize the state
-        this.state = {
-            showActualAge: true // TODO: Pull from account settings
-        };
+        StateManager.Store.subscribe(() => {
+            if (StateManager.ValueChanged(this.previousState, [
+                    "SelectedBaby",
+                    "Babies.Baby" + StateManager.State().SelectedBaby + ".BirthDate",
+                    "Babies.Baby" + StateManager.State().SelectedBaby + ".ExpectedDate",
+                    "Account.Settings.DisplayAgeAsAdjusted"
+                ]
+            )) this.forceUpdate();
+        });
 
         // bind event handlers
         this.changeAgeDisplay = this.changeAgeDisplay.bind(this);
@@ -33,27 +40,25 @@ export default class Age extends Component {
         let age = "";
         let label = "";
 
-        // if showing the actual age, calculate the date from birth
-        if (this.state.showActualAge) {
-            age = FormatAge(this.props.dateToday, this.props.dateBirth);
-            label = "Actual Age";
-        }
-
         // if showing the corrected age, calculate the date from when expected
-        else {
-            age = FormatAge(this.props.dateToday, this.props.dateExpected);
+        if (StateManager.State().Account.Settings.DisplayAgeAsAdjusted) {
+            age = FormatAge(StateManager.State().DateToday, StateManager.GetCurrentBabyDetails().ExpectedDate);
             label = "Corrected Age";
         }
 
+        // if showing the actual age, calculate the date from birth
+        else {
+            age = FormatAge(StateManager.State().DateToday, StateManager.GetCurrentBabyDetails().BirthDate);
+            label = "Actual Age";
+        }
+
         // if no difference between corrected and actual, then display a generic label
-        if (this.props.dateExpected === this.props.dateBirth)
+        if (StateManager.GetCurrentBabyDetails().BirthDate === StateManager.GetCurrentBabyDetails().ExpectedDate)
             label = "Age";
 
         // return jsx
         return (
-            <div
-                onClick={this.changeAgeDisplay}
-            >
+            <div onClick={this.changeAgeDisplay}>
                 <div className={FormatCssClass("age")}>
                     <h6>{label}</h6>
                     <span>{age}</span>
@@ -66,9 +71,10 @@ export default class Age extends Component {
     // Changes the display between actual and corrected age.
     changeAgeDisplay(e) {
 
-        this.setState({
-            showActualAge: !this.state.showActualAge
-        });
+        StateManager.UpdateValue(
+            "Account.Settings.DisplayAgeAsAdjusted",
+            !StateManager.State().Account.Settings.DisplayAgeAsAdjusted
+        );
 
     }
 
