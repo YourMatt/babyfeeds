@@ -40,8 +40,6 @@ export default class MenuWeights extends Component {
     render() {
         this.previousState = StateManager.CopyState();
 
-        // console.log(StateManager.GetCurrentBabyDetails().Weights);
-
         // TODO: set open/close trigger
         // TODO: add WeightEditor for menu
 

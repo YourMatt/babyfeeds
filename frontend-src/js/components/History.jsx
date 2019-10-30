@@ -9,25 +9,47 @@ import CalendarMonth from "./CalendarMonth.jsx";
 
 // import utilities
 import FormatCssClass from "../utils/FormatCssClass.jsx";
+import StateManager from "../utils/StateManager.jsx";
 
 // export object
 export default class History extends Component {
 
+    // Constructor.
+    constructor(props, context) {
+        super(props, context);
+        this.previousState = {};
+
+        StateManager.Store.subscribe(() => {
+            if (StateManager.ValueChanged(this.previousState, [
+                    "SelectedBaby",
+                    "Babies.Baby" + StateManager.State().SelectedBaby + ".DailyTotals"
+                ]
+            )) this.forceUpdate();
+        });
+
+    };
+
     // Renders the history area.
     render() {
 
+        // find date span
+        let dateEnd = StateManager.State().DateToday;
+        let dateStart = StateManager.State().DateToday;
+        if (StateManager.GetCurrentBabyDetails().DailyTotals.length)
+            dateStart = StateManager.GetCurrentBabyDetails().DailyTotals[0].Date;
+
         // build calendar controls
         let calendars = [];
-        let checkMonthObj = moment(this.props.dateStart);
+        let checkMonthObj = moment(dateStart);
         let checkMonth = parseInt(checkMonthObj.format("YMM"));
-        let endMonth = parseInt(moment(this.props.dateEnd).format("YMM"));
+        let endMonth = parseInt(moment(dateEnd).format("YMM"));
         while (checkMonth <= endMonth) {
 
             calendars.push(
                 <CalendarMonth
                     key={checkMonth}
                     month={checkMonthObj.format("Y-MM")}
-                    data={this.props.data}
+                    data={StateManager.GetCurrentBabyDetails().DailyTotals}
                 />
             );
 

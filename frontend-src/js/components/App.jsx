@@ -97,11 +97,7 @@ export default class App extends Component {
                         fnDisplayModal={this.displayModal}
                         fnDismissModal={this.dismissModal}
                     />
-                    <History
-                        dateStart={historyStartDate}
-                        dateEnd={this.state.dateToday}
-                        data={this.state.feedTotalsPerDay}
-                    />
+                    <History/>
                 </div>
                 <div className={FormatCssClass("footer")}>
                     <Weight
@@ -130,10 +126,7 @@ export default class App extends Component {
             //StateManager.UpdateValue("Babies.Baby0.Weights", data.weights);
             StateManager.Store.dispatch({
                 type: "RESET_SERVER_DATA",
-                payload: {
-                    babyId: data.babyId,
-                    weights: data.weights
-                }
+                payload: data
             });
 
             this.setState({

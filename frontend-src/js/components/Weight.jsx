@@ -19,7 +19,6 @@ export default class Weight extends Component {
         this.previousState = {};
 
         StateManager.Store.subscribe(() => {
-            console.log("Hit weight render.");
             if (StateManager.ValueChanged(this.previousState, [
                 "Account.Settings.DisplayWeightAsMetric",
                 "SelectedBaby",

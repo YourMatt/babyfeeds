@@ -83,8 +83,18 @@ const reducer = (state, action) => {
             eval("newState." + action.item + " = action.payload.value");
             break;
         case "RESET_SERVER_DATA":
+            newState.DateToday = action.payload.dateToday;
             newState.SelectedBaby = action.payload.babyId;
             newState.Babies["Baby" + newState.SelectedBaby] = JSON.parse(JSON.stringify(newState.Babies.Baby0));
+            newState.Babies["Baby" + newState.SelectedBaby].BabyId = action.payload.babyId;
+            // newState.Babies["Baby" + newState.SelectedBaby].Name = action.payload.babyName; // TODO: Return from API
+            // newState.Babies["Baby" + newState.SelectedBaby].CaloriesSliderMax = CALC; // TODO: Calculate
+            newState.Babies["Baby" + newState.SelectedBaby].BirthDate = action.payload.dateBirth;
+            newState.Babies["Baby" + newState.SelectedBaby].ExpectedDate = action.payload.dateExpected;
+            newState.Babies["Baby" + newState.SelectedBaby].RecipeId = action.payload.recipeId;
+            newState.Babies["Baby" + newState.SelectedBaby].DailyTotals = action.payload.feedTotalsPerDay;
+            // newState.Babies["Baby" + newState.SelectedBaby].Feeds = // TODO: Return from API
+            // newState.Babies["Baby" + newState.SelectedBaby].Goals = // TODO: Return from API
             newState.Babies["Baby" + newState.SelectedBaby].Weights = action.payload.weights;
             break;
     }

@@ -403,11 +403,7 @@ function (_Component) {
         fnReloadData: this.reloadData,
         fnDisplayModal: this.displayModal,
         fnDismissModal: this.dismissModal
-      }), _react["default"].createElement(_History["default"], {
-        dateStart: historyStartDate,
-        dateEnd: this.state.dateToday,
-        data: this.state.feedTotalsPerDay
-      })), _react["default"].createElement("div", {
+      }), _react["default"].createElement(_History["default"], null)), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("footer")
       }, _react["default"].createElement(_Weight["default"], {
         weightKilograms: this.state.weightKilograms
@@ -430,10 +426,7 @@ function (_Component) {
 
         _StateManager["default"].Store.dispatch({
           type: "RESET_SERVER_DATA",
-          payload: {
-            babyId: data.babyId,
-            weights: data.weights
-          }
+          payload: data
         });
 
         _this2.setState({
@@ -1338,6 +1331,8 @@ var _CalendarMonth = _interopRequireDefault(require("./CalendarMonth.jsx"));
 
 var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
 
+var _StateManager = _interopRequireDefault(require("../utils/StateManager.jsx"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
@@ -1368,27 +1363,43 @@ var History =
 function (_Component) {
   _inherits(History, _Component);
 
-  function History() {
+  // Constructor.
+  function History(props, context) {
+    var _this;
+
     _classCallCheck(this, History);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(History).apply(this, arguments));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(History).call(this, props, context));
+    _this.previousState = {};
+
+    _StateManager["default"].Store.subscribe(function () {
+      if (_StateManager["default"].ValueChanged(_this.previousState, ["SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".DailyTotals"])) _this.forceUpdate();
+    });
+
+    return _this;
   }
 
   _createClass(History, [{
     key: "render",
     // Renders the history area.
     value: function render() {
-      // build calendar controls
+      // find date span
+      var dateEnd = _StateManager["default"].State().DateToday;
+
+      var dateStart = _StateManager["default"].State().DateToday;
+
+      if (_StateManager["default"].GetCurrentBabyDetails().DailyTotals.length) dateStart = _StateManager["default"].GetCurrentBabyDetails().DailyTotals[0].Date; // build calendar controls
+
       var calendars = [];
-      var checkMonthObj = moment(this.props.dateStart);
+      var checkMonthObj = moment(dateStart);
       var checkMonth = parseInt(checkMonthObj.format("YMM"));
-      var endMonth = parseInt(moment(this.props.dateEnd).format("YMM"));
+      var endMonth = parseInt(moment(dateEnd).format("YMM"));
 
       while (checkMonth <= endMonth) {
         calendars.push(_react["default"].createElement(_CalendarMonth["default"], {
           key: checkMonth,
           month: checkMonthObj.format("Y-MM"),
-          data: this.props.data
+          data: _StateManager["default"].GetCurrentBabyDetails().DailyTotals
         }));
         checkMonthObj.add(1, "months");
         checkMonth = parseInt(checkMonthObj.format("YMM"));
@@ -1426,7 +1437,7 @@ function (_Component) {
 exports["default"] = History;
 
 
-},{"../utils/FormatCssClass.jsx":29,"./CalendarMonth.jsx":10,"react":79}],14:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":29,"../utils/StateManager.jsx":32,"./CalendarMonth.jsx":10,"react":79}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2332,8 +2343,7 @@ function (_Component) {
     key: "render",
     // Renders the menu panel.
     value: function render() {
-      this.previousState = _StateManager["default"].CopyState(); // console.log(StateManager.GetCurrentBabyDetails().Weights);
-      // TODO: set open/close trigger
+      this.previousState = _StateManager["default"].CopyState(); // TODO: set open/close trigger
       // TODO: add WeightEditor for menu
 
       /*
@@ -2590,7 +2600,6 @@ function (_Component) {
     _this.previousState = {};
 
     _StateManager["default"].Store.subscribe(function () {
-      console.log("Hit weight render.");
       if (_StateManager["default"].ValueChanged(_this.previousState, ["Account.Settings.DisplayWeightAsMetric", "SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Weights"])) _this.forceUpdate();
     }); // bind event handlers
 
@@ -3016,8 +3025,18 @@ var reducer = function reducer(state, action) {
       break;
 
     case "RESET_SERVER_DATA":
+      newState.DateToday = action.payload.dateToday;
       newState.SelectedBaby = action.payload.babyId;
       newState.Babies["Baby" + newState.SelectedBaby] = JSON.parse(JSON.stringify(newState.Babies.Baby0));
+      newState.Babies["Baby" + newState.SelectedBaby].BabyId = action.payload.babyId; // newState.Babies["Baby" + newState.SelectedBaby].Name = action.payload.babyName; // TODO: Return from API
+      // newState.Babies["Baby" + newState.SelectedBaby].CaloriesSliderMax = CALC; // TODO: Calculate
+
+      newState.Babies["Baby" + newState.SelectedBaby].BirthDate = action.payload.dateBirth;
+      newState.Babies["Baby" + newState.SelectedBaby].ExpectedDate = action.payload.dateExpected;
+      newState.Babies["Baby" + newState.SelectedBaby].RecipeId = action.payload.recipeId;
+      newState.Babies["Baby" + newState.SelectedBaby].DailyTotals = action.payload.feedTotalsPerDay; // newState.Babies["Baby" + newState.SelectedBaby].Feeds = // TODO: Return from API
+      // newState.Babies["Baby" + newState.SelectedBaby].Goals = // TODO: Return from API
+
       newState.Babies["Baby" + newState.SelectedBaby].Weights = action.payload.weights;
       break;
   }
