@@ -25,7 +25,7 @@ export default class Menu extends Component {
 
         // intialize the state
         this.state = {
-            menuClosed: false, // change to true after testing
+            menuClosed: true,
             displayedPanel: "" // the name of the panel to display, if any
         };
 

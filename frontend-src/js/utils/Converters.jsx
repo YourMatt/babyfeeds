@@ -55,3 +55,15 @@ export function ConvertVolumeToCalories (volume, volumeUnit, recipeCaloriesPerOu
     return calories;
 
 }
+
+export function ConvertPoundsToKilograms (pounds) {
+
+    return pounds * 16 * 0.0283495;
+
+}
+
+export function ConvertKilogramsToPounds (kilograms) {
+
+    return kilograms / (0.0283495 * 16);
+
+}

@@ -48,7 +48,12 @@ exports.query = {
 
         exports.access.selectMultiple({
                 sql:
-                    "SELECT     r.* " +
+                    "SELECT     r.RecipeId " +
+                    ",          r.AccountId " +
+                    ",          r.Name " +
+                    ",          r.Notes " +
+                    ",          r.CaloriesPerOunce " +
+                    ",          r.Selectable " +
                     ", (        SELECT MAX(Date) FROM Feeds WHERE RecipeId = r.RecipeId) AS LastUsed " +
                     "FROM       Recipes r " +
                     "WHERE      r.AccountId = ? " +
@@ -64,7 +69,12 @@ exports.query = {
 
         exports.access.selectSingle({
                 sql:
-                    "SELECT * " +
+                    "SELECT RecipeId " +
+                    ",      AccountId " +
+                    ",      Name " +
+                    ",      Notes " +
+                    ",      CaloriesPerOunce " +
+                    ",      Selectable " +
                     "FROM   Recipes " +
                     "WHERE  RecipeId = ? ",
                 values: recipeId
@@ -230,6 +240,70 @@ exports.query = {
                     callback);
 
             }
+        );
+
+    },
+
+    getWeights: (babyId, callback) => {
+
+        exports.access.selectMultiple({
+                sql:
+                    "SELECT     DATE_FORMAT(Date, '%Y-%m-%d') AS Date " +
+                    ",          WeightId " +
+                    ",          Kilograms " +
+                    "FROM       Weights " +
+                    "WHERE      BabyId = ? " +
+                    "ORDER BY   Date ASC ",
+                values: [babyId]
+            },
+            callback
+        );
+
+    },
+
+    getLastWeight: (babyId, callback) => {
+
+        exports.access.selectSingle({
+                sql:
+                    "SELECT     DATE_FORMAT(Date, '%Y-%m-%d') AS Date " +
+                    ",          WeightId " +
+                    ",          Kilograms " +
+                    "FROM       Weights " +
+                    "WHERE      BabyId = ? " +
+                    "ORDER BY   Date DESC " +
+                    "LIMIT      1 ",
+                values: [babyId]
+            },
+            callback
+        );
+
+    },
+
+    insertWeight: (babyId, date, weight, callback) => {
+
+        exports.access.insert({
+                sql:
+                    "INSERT INTO Weights " +
+                    "(           BabyId, Date, Kilograms) " +
+                    "VALUES (    ?, ?, ?) ",
+                values: [babyId, date, weight]
+            },
+            callback
+        );
+
+    },
+
+    updateWeight: (weightId, date, weight, callback) => {
+
+        exports.access.update({
+                sql:
+                    "UPDATE Weights " +
+                    "SET    Kilograms = ? " +
+                    ",      Date = ? " +
+                    "WHERE  WeightId = ? ",
+                values: [weight, date, weightId]
+            },
+            callback
         );
 
     },

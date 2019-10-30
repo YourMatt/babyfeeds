@@ -59,7 +59,7 @@ export default class FeedRecorder extends Component {
         this.changeRecipeSelection = this.changeRecipeSelection.bind(this);
         this.submitFeed = this.submitFeed.bind(this);
 
-    };
+    }
 
     // Changes when updating component.
     componentDidUpdate() {

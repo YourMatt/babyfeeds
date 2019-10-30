@@ -12,11 +12,6 @@ export default class SiteTitle extends Component {
     constructor(props, context) {
         super(props, context);
 
-        // intialize the state
-        this.state = {
-            selectedBaby: {}
-        };
-
         // bind event handlers
         this.changeBaby = this.changeBaby.bind(this);
 
@@ -38,12 +33,6 @@ export default class SiteTitle extends Component {
 
     // Changes the selected baby.
     changeBaby(e) {
-
-        /*
-        this.setState({
-            selectedBaby: GET BABY
-        });
-        */
 
     }
 

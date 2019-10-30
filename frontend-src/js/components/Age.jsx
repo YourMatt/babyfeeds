@@ -25,7 +25,7 @@ export default class Age extends Component {
         // bind event handlers
         this.changeAgeDisplay = this.changeAgeDisplay.bind(this);
 
-    };
+    }
 
     // Renders the age block.
     render() {

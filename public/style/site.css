@@ -1075,30 +1075,40 @@
         left: 0px;
         transition: left 0.5s;
         transition-timing-function: ease; }
-      .menu-area .menu .menu-panel-edit-form h1 {
-        font-size: 2em;
-        margin: -2px 0px 0px;
-        padding: 0px 0px 2px 20px;
+    .menu-area .menu .panel-form h1 {
+      font-size: 2em;
+      margin: -2px 0px 0px;
+      padding: 0px 0px 2px 20px;
+      color: #000; }
+    .menu-area .menu .panel-form .content .form-fields {
+      margin: 0px 15px 5px;
+      border: 1px solid #000;
+      border-radius: 5px;
+      overflow: hidden; }
+      .menu-area .menu .panel-form .content .form-fields p {
+        margin: 0px;
+        padding: 5px;
+        font-family: sans-serif;
         color: #000; }
-      .menu-area .menu .menu-panel-edit-form .content .form-fields {
-        margin: 0px 15px 5px;
-        border: 1px solid #000;
-        border-radius: 5px;
-        overflow: hidden; }
-        .menu-area .menu .menu-panel-edit-form .content .form-fields .fields {
-          padding: 5px;
-          text-align: center; }
-          .menu-area .menu .menu-panel-edit-form .content .form-fields .fields input, .menu-area .menu .menu-panel-edit-form .content .form-fields .fields select {
-            border: none;
-            font-family: sans-serif;
-            font-size: 1.3em; }
-            .menu-area .menu .menu-panel-edit-form .content .form-fields .fields input#input-feed-volume, .menu-area .menu .menu-panel-edit-form .content .form-fields .fields select#input-feed-volume {
-              width: 80px;
-              text-align: right; }
-            .menu-area .menu .menu-panel-edit-form .content .form-fields .fields input#select-feed-recipe, .menu-area .menu .menu-panel-edit-form .content .form-fields .fields select#select-feed-recipe {
-              max-width: 300px; }
-      .menu-area .menu .menu-panel-edit-form .content .save {
-        font-size: 1.5em; }
+      .menu-area .menu .panel-form .content .form-fields .fields {
+        padding: 5px;
+        text-align: center;
+        color: #000; }
+        .menu-area .menu .panel-form .content .form-fields .fields input, .menu-area .menu .panel-form .content .form-fields .fields select {
+          border: none;
+          font-family: sans-serif;
+          font-size: 1.3em; }
+          .menu-area .menu .panel-form .content .form-fields .fields input#input-feed-volume, .menu-area .menu .panel-form .content .form-fields .fields select#input-feed-volume {
+            width: 80px;
+            text-align: right; }
+          .menu-area .menu .panel-form .content .form-fields .fields input#select-feed-recipe, .menu-area .menu .panel-form .content .form-fields .fields select#select-feed-recipe {
+            max-width: 300px; }
+          .menu-area .menu .panel-form .content .form-fields .fields input#input-weight, .menu-area .menu .panel-form .content .form-fields .fields select#input-weight {
+            margin: 0px 5px 0px -30px;
+            width: 70px;
+            text-align: right; }
+    .menu-area .menu .panel-form .content .save {
+      font-size: 1.5em; }
 
 .menu-feeds .feeds-day-block {
   margin: 0px 15px 5px;
@@ -1176,6 +1186,25 @@
     font-weight: 700;
     letter-spacing: -1px; }
 
+.menu-weight h2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 5px 2px;
+  color: #000;
+  background: #b2e1ff;
+  font-size: 1em;
+  text-align: center; }
+.menu-weight button {
+  margin: 15px;
+  background: #b2e1ff;
+  border: 1px solid #000;
+  border-radius: 5px;
+  color: #000;
+  font-size: 1em;
+  line-height: 1.5em;
+  cursor: pointer; }
+
 @keyframes submenu-slide-from-offscreen {
   0% {
     left: 355px; }
@@ -1215,7 +1244,7 @@ body {
   font-size: 3em;
   background: #000;
   color: #b2e1ff;
-  z-index: 200; }
+  z-index: 9999; }
 
 .footer {
   display: flex;

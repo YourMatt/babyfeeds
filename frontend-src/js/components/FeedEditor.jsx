@@ -51,7 +51,7 @@ export default class FeedEditor extends Component {
         let volume = ConvertCaloriesToVolume(this.props.feed.Calories, volumeUnit, recipeCaloriesPerOunce);
 
         return (
-            <div>
+            <div className={FormatCssClass("panel-form")}>
                 <h1>{title}</h1>
                 <form className={FormatCssClass("content")} onSubmit={this.submitFeed}>
                     <div className={FormatCssClass("form-fields")}>

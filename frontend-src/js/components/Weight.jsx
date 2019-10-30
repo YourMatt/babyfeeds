@@ -8,6 +8,7 @@ import React, {Component} from "react";
 // import utilities
 import FormatCssClass from "../utils/FormatCssClass.jsx";
 import FormatWeight from "../utils/FormatWeight.jsx";
+import StateManager from "../utils/StateManager.jsx";
 
 // export object
 export default class Weight extends Component {
@@ -15,11 +16,17 @@ export default class Weight extends Component {
     // Constructor.
     constructor(props, context) {
         super(props, context);
+        this.previousState = {};
 
-        // intialize the state
-        this.state = {
-            showMetric: false // TODO: Pull from account settings
-        };
+        StateManager.Store.subscribe(() => {
+            console.log("Hit weight render.");
+            if (StateManager.ValueChanged(this.previousState, [
+                "Account.Settings.DisplayWeightAsMetric",
+                "SelectedBaby",
+                "Babies.Baby" + StateManager.State().SelectedBaby + ".Weights"
+                ]
+            )) this.forceUpdate();
+        });
 
         // bind event handlers
         this.changeWeightDisplay = this.changeWeightDisplay.bind(this);
@@ -28,15 +35,14 @@ export default class Weight extends Component {
 
     // Renders the age block.
     render() {
+        this.previousState = StateManager.CopyState();
 
         // return jsx
         return (
-            <div
-                onClick={this.changeWeightDisplay}
-            >
+            <div onClick={this.changeWeightDisplay}>
                 <div className={FormatCssClass("weight")}>
                     <h6>Weight</h6>
-                    <span>{FormatWeight(this.props.weightKilograms, this.state.showMetric)}</span>
+                    <span>{FormatWeight(StateManager.GetCurrentBabyWeight(), StateManager.State().Account.Settings.DisplayWeightAsMetric)}</span>
                 </div>
             </div>
         );
@@ -46,9 +52,10 @@ export default class Weight extends Component {
     // Changes the display between actual and corrected age.
     changeWeightDisplay(e) {
 
-        this.setState({
-            showMetric: !this.state.showMetric
-        });
+        StateManager.UpdateValue(
+            "Account.Settings.DisplayWeightAsMetric",
+            !StateManager.State().Account.Settings.DisplayWeightAsMetric
+        );
 
     }
 

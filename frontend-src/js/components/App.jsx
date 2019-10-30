@@ -9,12 +9,14 @@ import Age from "./Age.jsx";
 import FeedRecorder from "./FeedRecorder.jsx";
 import History from "./History.jsx";
 import LastFeedTime from "./LastFeedTime.jsx";
+import Loading from "./Loading.jsx";
 import Menu from "./Menu.jsx";
 import SiteTitle from "./SiteTitle.jsx";
 import Weight from "./Weight.jsx"
 
 // import utilities
 import FormatCssClass from "../utils/FormatCssClass.jsx";
+import StateManager from "../utils/StateManager.jsx";
 
 // import api interactions
 import ApiLoad from "../api/Load.jsx";
@@ -25,6 +27,11 @@ export default class App extends Component {
     // Constructor.
     constructor(props, context) {
         super(props, context);
+
+        StateManager.Store.subscribe(() => {
+            // TODO: Rerender for specific state changes
+            // this.forceUpdate();
+        });
 
         // intialize the application state
         this.state = {
@@ -40,7 +47,7 @@ export default class App extends Component {
             recipeId: 0,
             recipeName: "",
             recipeCaloriesPerOunce: 0,
-            weightKilograms: 0,
+            // weightKilograms: 0,
 
             modal: "",
 
@@ -61,16 +68,6 @@ export default class App extends Component {
 
     // Renders the full application.
     render() {
-
-        // show loading if no service data
-        let loading = "";
-        if (!this.state.dateToday) {
-            loading = (
-                <div className={FormatCssClass("loading")}>
-                    Loading
-                </div>
-            );
-        }
 
         // set the date to start render of the calendar controls
         let historyStartDate = this.state.dateToday;
@@ -117,7 +114,7 @@ export default class App extends Component {
                     />
                 </div>
                 {this.state.modal}
-                {loading}
+                <Loading/>
             </div>
         );
 
@@ -127,6 +124,18 @@ export default class App extends Component {
     reloadData(callback) {
 
         ApiLoad(data => {
+
+            StateManager.UpdateValue("UI.IsLoading", false);
+            //StateManager.UpdateValue("Babies.Baby" + data.babyId + ".Weights");
+            //StateManager.UpdateValue("Babies.Baby0.Weights", data.weights);
+            StateManager.Store.dispatch({
+                type: "RESET_SERVER_DATA",
+                payload: {
+                    babyId: data.babyId,
+                    weights: data.weights
+                }
+            });
+
             this.setState({
                 caloriesFeedMax: data.caloriesFeedMax,
                 caloriesLastFeed: data.caloriesLastFeed,

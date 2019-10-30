@@ -128,6 +128,8 @@ $menu-width: 350px;
         transition: left 0.5s;
         transition-timing-function: ease;
       }
+    }
+    .panel-form {
       h1 {
         font-size: 2em;
         margin: -2px 0px 0px;
@@ -140,9 +142,16 @@ $menu-width: 350px;
           border: 1px solid $color-black;
           border-radius: 5px;
           overflow: hidden;
+          p {
+            margin: 0px;
+            padding: 5px;
+            font-family: $font-standard;
+            color: $color-black;
+          }
           .fields {
             padding: 5px;
             text-align: center;
+            color: $color-black;
             input, select {
               border: none;
               font-family: $font-standard;
@@ -153,6 +162,11 @@ $menu-width: 350px;
               }
               &#select-feed-recipe {
                 max-width: #{$menu-width - 50px};
+              }
+              &#input-weight {
+                margin: 0px 5px 0px -30px;
+                width: 70px;
+                text-align: right;
               }
             }
           }
@@ -259,6 +273,29 @@ $menu-width: 350px;
         }
       }
     }
+  }
+}
+
+.menu-weight {
+  h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 5px 2px;
+    color: $color-menu-headings;
+    background: $color-gradient-start;
+    font-size: 1em;
+    text-align: center;
+  }
+  button {
+    margin: 15px;
+    background: $color-gradient-start;
+    border: 1px solid $color-black;
+    border-radius: 5px;
+    color: $color-black;
+    font-size: 1em;
+    line-height: 1.5em;
+    cursor: pointer;
   }
 }
 
