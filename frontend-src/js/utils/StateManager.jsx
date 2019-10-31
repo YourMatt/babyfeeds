@@ -39,10 +39,17 @@ const storeModel = {
                 GoalCalories: 0,
                 TotalCalories: 0
             }],
+            LastFeedTime: "",
+            FeedsForToday: [{
+                Id: 0,
+                RecipeId: 0,
+                DateTime: "",
+                Calories: 0
+            }],
             Feeds: [{
                 Id: 0,
                 RecipeId: 0,
-                Date: "",
+                DateTime: "",
                 Calories: 0
             }],
             Goals: [{
@@ -65,9 +72,17 @@ const storeModel = {
         IsMenuEditFormOpen: false,
         SelectedMenuEditFormData: {},
         ResultsCondensed: true,
-        IsModalOpen: false,
-        SelectedModal: "",
-        SelectedModalData: {}
+        //IsModalOpen: false,
+        //SelectedModal: "",
+        FeedRecorder: {
+            SelectedHour: 0,
+            SelectedMinute: 0,
+            SelectedAmPm: "am",
+        },
+        SelectedModalData: {
+            AllowDismiss: false,
+            Content: ""
+        }
     }
 };
 
@@ -93,9 +108,14 @@ const reducer = (state, action) => {
             newState.Babies["Baby" + newState.SelectedBaby].ExpectedDate = action.payload.dateExpected;
             newState.Babies["Baby" + newState.SelectedBaby].RecipeId = action.payload.recipeId;
             newState.Babies["Baby" + newState.SelectedBaby].DailyTotals = action.payload.feedTotalsPerDay;
+            newState.Babies["Baby" + newState.SelectedBaby].LastFeedTime = action.payload.lastFeedTime;
+            newState.Babies["Baby" + newState.SelectedBaby].FeedsForToday = action.payload.feedsForToday;
             // newState.Babies["Baby" + newState.SelectedBaby].Feeds = // TODO: Return from API
             // newState.Babies["Baby" + newState.SelectedBaby].Goals = // TODO: Return from API
             newState.Babies["Baby" + newState.SelectedBaby].Weights = action.payload.weights;
+            newState.UI.FeedRecorder.SelectedHour = parseInt(moment().format("h"));
+            newState.UI.FeedRecorder.SelectedMinute = moment().minute();
+            newState.UI.FeedRecorder.SelectedAmPm = moment().format("a");
             break;
     }
 
@@ -176,6 +196,10 @@ class StateManager {
     }
     GetCurrentBabyWeightRecord() {
         return this.GetCurrentBabyDetails().Weights[this.GetCurrentBabyDetails().Weights.length - 1];
+    }
+
+    GetFeedRecorderData() {
+        return this.State().UI.FeedRecorder;
     }
 
 }

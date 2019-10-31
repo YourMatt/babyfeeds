@@ -8,6 +8,7 @@ import React, {Component} from "react";
 import {ConvertCaloriesToVolume, ConvertVolumeToCalories} from "../utils/Converters.jsx";
 import FormatCssClass from "../utils/FormatCssClass.jsx";
 import FormatFeedVolume from "../utils/FormatFeedVolume.jsx";
+import StateManager from "../utils/StateManager.jsx";
 
 // import api interactions
 import ApiLoadRecipes from "../api/LoadRecipes.jsx";
@@ -18,6 +19,7 @@ export default class FeedRecorder extends Component {
     // Constructor.
     constructor(props, context) {
         super(props, context);
+        this.previousState = {};
 
         // intialize the application state
         this.state = {
@@ -27,9 +29,6 @@ export default class FeedRecorder extends Component {
             selectedRecipeId: 0, // the selected recipe ID
             selectedRecipeName: "", // the selected recipe name
             selectedRecipeCaloriesPerOunce: 0, // the selected recipe calorie density
-            selectedHour: parseInt(moment().format("h")),
-            selectedMinute: moment().minute(),
-            selectedAmPm: moment().format("a"),
             units: "mls" // can be: cals, mls, ozs
         };
 
@@ -38,14 +37,23 @@ export default class FeedRecorder extends Component {
         document.addEventListener("visibilitychange", function() {
             let state = document.visibilityState || document.webkitVisibilityState;
             if (state === "visible") {
-                self.props.fnReloadData(() => {
-                    self.setState({
-                        selectedHour: parseInt(moment().format("h")),
-                        selectedMinute: moment().minute(),
-                        selectedAmPm: moment().format("a")
-                    })
-                });
+                self.props.fnReloadData(() => {});
             }
+        });
+
+        StateManager.Store.subscribe(() => {
+            if (StateManager.ValueChanged(this.previousState, [
+                    "Account.Settings.DisplayVolumeAsMetric",
+                    "SelectedBaby",
+                    "Babies.Baby" + StateManager.State().SelectedBaby + ".CaloriesSliderMax",
+                    "Babies.Baby" + StateManager.State().SelectedBaby + ".RecipeId",
+                    "Babies.Baby" + StateManager.State().SelectedBaby + ".FeedsForToday",
+                    "Babies.Baby" + StateManager.State().SelectedBaby + ".Goals",
+                    "Babies.Baby" + StateManager.State().SelectedBaby + ".Weights",
+                    "UI.IsSaving",
+                    "UI.FeedRecorder"
+                ]
+            )) this.forceUpdate();
         });
 
         this.updateVolume = this.updateVolume.bind(this);
@@ -61,6 +69,7 @@ export default class FeedRecorder extends Component {
 
     }
 
+    // TODO: REMOVE THIS METHOD
     // Changes when updating component.
     componentDidUpdate() {
 
@@ -88,7 +97,7 @@ export default class FeedRecorder extends Component {
 
         // find the total volume for the day
         let totalCalories = 0;
-        this.props.feedsForToday.forEach((value) => {
+        StateManager.GetCurrentBabyDetails().FeedsForToday.forEach((value) => {
             totalCalories += value.Calories;
         });
 
@@ -157,10 +166,10 @@ export default class FeedRecorder extends Component {
                             <button onClick={this.displayRecipeSelection}>{this.state.selectedRecipeName}</button>
                         </div>
                         <div className={FormatCssClass("time")}>
-                            <button onClick={this.displayHourSelection}>{this.state.selectedHour}</button>
+                            <button onClick={this.displayHourSelection}>{StateManager.GetFeedRecorderData().SelectedHour}</button>
                             :
-                            <button onClick={this.displayMinuteSelection}>{this.state.selectedMinute.toString().padStart(2, "0")}</button>
-                            <button className={FormatCssClass("small")} onClick={this.changeAmPmSelection}>{this.state.selectedAmPm}</button>
+                            <button onClick={this.displayMinuteSelection}>{StateManager.GetFeedRecorderData().SelectedMinute.toString().padStart(2, "0")}</button>
+                            <button className={FormatCssClass("small")} onClick={this.changeAmPmSelection}>{StateManager.GetFeedRecorderData().SelectedAmPm}</button>
                         </div>
                         <div className={FormatCssClass("volume-control")}>
                             <div className={FormatCssClass("volume")}>
@@ -229,7 +238,7 @@ export default class FeedRecorder extends Component {
         let options = [];
         for (let i = 1; i <= 12; i++) {
             let className = "";
-            if (i === this.state.selectedHour) className = "selected";
+            if (i === StateManager.GetFeedRecorderData().SelectedHour) className = "selected";
             options.push(
                 <button
                     key={"hour-" + i}
@@ -245,10 +254,13 @@ export default class FeedRecorder extends Component {
             </div>
         );
 
-        this.props.fnDisplayModal({
-            allowDismiss: true,
-            content: modalContent
-        });
+        StateManager.UpdateValue(
+            "UI.SelectedModalData",
+            {
+                AllowDismiss: true,
+                Content: modalContent
+            }
+        );
 
     }
 
@@ -259,7 +271,7 @@ export default class FeedRecorder extends Component {
         let options = [];
         for (let i = 0; i < 60; i += 5) {
             let className = "";
-            if (i <= this.state.selectedMinute && i > (this.state.selectedMinute - 5)) className = "selected";
+            if (i <= StateManager.GetFeedRecorderData().SelectedMinute && i > (StateManager.GetFeedRecorderData().SelectedMinute - 5)) className = "selected";
             options.push(
                 <button
                     key={"minute-" + i}
@@ -275,10 +287,13 @@ export default class FeedRecorder extends Component {
             </div>
         );
 
-        this.props.fnDisplayModal({
-            allowDismiss: true,
-            content: modalContent
-        });
+        StateManager.UpdateValue(
+            "UI.SelectedModalData",
+            {
+                AllowDismiss: true,
+                Content: modalContent
+            }
+        );
 
     }
 
@@ -314,10 +329,13 @@ export default class FeedRecorder extends Component {
                 </div>
             );
 
-            this.props.fnDisplayModal({
-                allowDismiss: true,
-                content: modalContent
-            });
+            StateManager.UpdateValue(
+                "UI.SelectedModalData",
+                {
+                    AllowDismiss: true,
+                    Content: modalContent
+                }
+            );
 
         });
 
@@ -327,10 +345,9 @@ export default class FeedRecorder extends Component {
     changeHourSelection(e) {
         e.preventDefault();
 
-        this.props.fnDismissModal();
-        this.setState({
-            selectedHour: parseInt(e.target.innerText)
-        });
+        //this.props.fnDismissModal();
+        StateManager.UpdateValue("UI.FeedRecorder.SelectedHour", parseInt(e.target.innerText));
+        StateManager.UpdateValue("UI.SelectedModalData.Content", "");
 
     }
 
@@ -338,10 +355,8 @@ export default class FeedRecorder extends Component {
     changeMinuteSelection(e) {
         e.preventDefault();
 
-        this.props.fnDismissModal();
-        this.setState({
-            selectedMinute: parseInt(e.target.innerText)
-        });
+        StateManager.UpdateValue("UI.FeedRecorder.SelectedMinute", parseInt(e.target.innerText));
+        StateManager.UpdateValue("UI.SelectedModalData.Content", "");
 
     }
 
@@ -349,9 +364,8 @@ export default class FeedRecorder extends Component {
     changeAmPmSelection(e) {
         e.preventDefault();
 
-        this.setState({
-            selectedAmPm: (this.state.selectedAmPm === "am") ? "pm" : "am"
-        });
+        StateManager.UpdateValue("UI.FeedRecorder.SelectedAmPm", (StateManager.GetFeedRecorderData().SelectedAmPm === "am") ? "pm" : "am");
+        StateManager.UpdateValue("UI.SelectedModalData.Content", "");
 
     }
 
@@ -411,12 +425,12 @@ export default class FeedRecorder extends Component {
         // find the date - if the time if more than 2 hours into the future, use yesterday, allowing for up to 22
         // hours to enter a past feed
         let date = moment().format("YYYY-MM-DD");
-        if (this.state.selectedHour - 2 > moment().hours())
+        if (StateManager.GetFeedRecorderData().SelectedHour - 2 > moment().hours())
             date = moment().subtract(1, "days").format("YYYY-MM-DD");
 
         // add the hours to the date
-        let hoursIn24Format = (this.state.selectedAmPm === "pm" && this.state.selectedHour !== 12) ? (this.state.selectedHour + 12) : this.state.selectedHour;
-        date += " " + hoursIn24Format + ":" + this.state.selectedMinute.toString().padStart(2, "0");
+        let hoursIn24Format = (StateManager.GetFeedRecorderData().SelectedAmPm === "pm" && StateManager.GetFeedRecorderData().SelectedHour !== 12) ? (StateManager.GetFeedRecorderData().SelectedHour + 12) : StateManager.GetFeedRecorderData().SelectedHour;
+        date += " " + hoursIn24Format + ":" + StateManager.GetFeedRecorderData().SelectedMinute.toString().padStart(2, "0");
 
         // save the feed data
         let self = this;
@@ -429,10 +443,10 @@ export default class FeedRecorder extends Component {
             // TODO: Handle non-success
 
             self.props.fnReloadData(() => {
+                StateManager.UpdateValue("UI.FeedRecorder.SelectedHour", parseInt(moment().format("h")));
+                StateManager.UpdateValue("UI.FeedRecorder.SelectedMinute", moment().minute());
+                StateManager.UpdateValue("UI.FeedRecorder.SelectedAmPm", moment().format("a"));
                 self.setState({
-                    selectedHour: parseInt(moment().format("h")),
-                    selectedMinute: moment().minute(),
-                    selectedAmPm: moment().format("a"),
                     isSaving: false
                 });
             });

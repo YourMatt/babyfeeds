@@ -25,7 +25,7 @@ function ApiLoad(callback) {
 }
 
 
-},{"react":79}],2:[function(require,module,exports){
+},{"react":80}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -50,7 +50,7 @@ function ApiLoadFeeds(callback) {
 }
 
 
-},{"react":79}],3:[function(require,module,exports){
+},{"react":80}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -75,7 +75,7 @@ function ApiLoadRecipes(callback) {
 }
 
 
-},{"react":79}],4:[function(require,module,exports){
+},{"react":80}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -100,7 +100,7 @@ function ApiLoadWeights(callback) {
 }
 
 
-},{"react":79}],5:[function(require,module,exports){
+},{"react":80}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -137,7 +137,7 @@ function ApiSaveFeed(saveData, callback) {
 }
 
 
-},{"react":79}],6:[function(require,module,exports){
+},{"react":80}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -171,7 +171,7 @@ function ApiSaveWeight(saveData, callback) {
 }
 
 
-},{"react":79}],7:[function(require,module,exports){
+},{"react":80}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -274,7 +274,7 @@ function (_Component) {
 exports["default"] = Age;
 
 
-},{"../utils/FormatAge.jsx":28,"../utils/FormatCssClass.jsx":29,"../utils/StateManager.jsx":32,"react":79}],8:[function(require,module,exports){
+},{"../utils/FormatAge.jsx":29,"../utils/FormatCssClass.jsx":30,"../utils/StateManager.jsx":33,"react":80}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -295,6 +295,8 @@ var _LastFeedTime = _interopRequireDefault(require("./LastFeedTime.jsx"));
 var _Loading = _interopRequireDefault(require("./Loading.jsx"));
 
 var _Menu = _interopRequireDefault(require("./Menu.jsx"));
+
+var _Modal = _interopRequireDefault(require("./Modal.jsx"));
 
 var _SiteTitle = _interopRequireDefault(require("./SiteTitle.jsx"));
 
@@ -342,12 +344,7 @@ function (_Component) {
 
     _classCallCheck(this, App);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(App).call(this, props, context));
-
-    _StateManager["default"].Store.subscribe(function () {// TODO: Rerender for specific state changes
-      // this.forceUpdate();
-    }); // intialize the application state
-
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(App).call(this, props, context)); // intialize the application state
 
     _this.state = {
       caloriesFeedMax: 0,
@@ -366,8 +363,6 @@ function (_Component) {
       modal: ""
     };
     _this.reloadData = _this.reloadData.bind(_assertThisInitialized(_this));
-    _this.displayModal = _this.displayModal.bind(_assertThisInitialized(_this));
-    _this.dismissModal = _this.dismissModal.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -381,17 +376,12 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      // set the date to start render of the calendar controls
-      var historyStartDate = this.state.dateToday;
-      if (this.state.feedTotalsPerDay.length) historyStartDate = this.state.feedTotalsPerDay[0].Date; // return jsx
-
+      // return jsx
       return _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("app")
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("header")
-      }, _react["default"].createElement(_LastFeedTime["default"], {
-        lastFeedTime: this.state.lastFeedTime
-      }), _react["default"].createElement(_Menu["default"], null)), _react["default"].createElement("div", {
+      }, _react["default"].createElement(_LastFeedTime["default"], null), _react["default"].createElement(_Menu["default"], null)), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("body")
       }, _react["default"].createElement(_FeedRecorder["default"], {
         feedsForToday: this.state.feedsForToday,
@@ -401,14 +391,10 @@ function (_Component) {
         recipeId: this.state.recipeId,
         recipeName: this.state.recipeName,
         recipeCaloriesPerOunce: this.state.recipeCaloriesPerOunce,
-        fnReloadData: this.reloadData,
-        fnDisplayModal: this.displayModal,
-        fnDismissModal: this.dismissModal
+        fnReloadData: this.reloadData
       }), _react["default"].createElement(_History["default"], null)), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("footer")
-      }, _react["default"].createElement(_Weight["default"], {
-        weightKilograms: this.state.weightKilograms
-      }), _react["default"].createElement(_Age["default"], null)), this.state.modal, _react["default"].createElement(_Loading["default"], null));
+      }, _react["default"].createElement(_Weight["default"], null), _react["default"].createElement(_Age["default"], null)), _react["default"].createElement(_Modal["default"], null), _react["default"].createElement(_Loading["default"], null));
     } // Loads all data from the server.
 
   }, {
@@ -444,34 +430,6 @@ function (_Component) {
 
         if (callback) callback();
       });
-    } // Display a modal window.
-
-  }, {
-    key: "displayModal",
-    value: function displayModal(data) {
-      // build the modal structure
-      var modalContent = _react["default"].createElement("div", {
-        className: (0, _FormatCssClass["default"])("modal")
-      }, _react["default"].createElement("div", {
-        className: (0, _FormatCssClass["default"])("screen"),
-        onClick: data.allowDismiss ? this.dismissModal : function () {}
-      }), _react["default"].createElement("div", {
-        className: (0, _FormatCssClass["default"])("content")
-      }, data.content)); // add the modal to the state for rendering
-
-
-      this.setState({
-        modal: modalContent
-      });
-    } // Removes the modal window.
-
-  }, {
-    key: "dismissModal",
-    value: function dismissModal() {
-      // remove the modal from state
-      this.setState({
-        modal: ""
-      });
     }
   }]);
 
@@ -481,7 +439,7 @@ function (_Component) {
 exports["default"] = App;
 
 
-},{"../api/Load.jsx":1,"../utils/FormatCssClass.jsx":29,"../utils/StateManager.jsx":32,"./Age.jsx":7,"./FeedRecorder.jsx":12,"./History.jsx":13,"./LastFeedTime.jsx":14,"./Loading.jsx":15,"./Menu.jsx":16,"./SiteTitle.jsx":23,"./Weight.jsx":24,"react":79}],9:[function(require,module,exports){
+},{"../api/Load.jsx":1,"../utils/FormatCssClass.jsx":30,"../utils/StateManager.jsx":33,"./Age.jsx":7,"./FeedRecorder.jsx":12,"./History.jsx":13,"./LastFeedTime.jsx":14,"./Loading.jsx":15,"./Menu.jsx":16,"./Modal.jsx":23,"./SiteTitle.jsx":24,"./Weight.jsx":25,"react":80}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -573,7 +531,7 @@ function (_Component) {
 exports["default"] = CalendarDay;
 
 
-},{"../utils/FormatCssClass.jsx":29,"react":79}],10:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":30,"react":80}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -684,7 +642,7 @@ function (_Component) {
 exports["default"] = CalendarMonth;
 
 
-},{"../utils/FormatCssClass.jsx":29,"./CalendarDay.jsx":9,"react":79}],11:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":30,"./CalendarDay.jsx":9,"react":80}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -854,7 +812,7 @@ function (_Component) {
 exports["default"] = FeedEditor;
 
 
-},{"../api/SaveFeed.jsx":5,"../utils/Converters.jsx":27,"../utils/FormatCssClass.jsx":29,"react":79}],12:[function(require,module,exports){
+},{"../api/SaveFeed.jsx":5,"../utils/Converters.jsx":28,"../utils/FormatCssClass.jsx":30,"react":80}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -869,6 +827,8 @@ var _Converters = require("../utils/Converters.jsx");
 var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
 
 var _FormatFeedVolume = _interopRequireDefault(require("../utils/FormatFeedVolume.jsx"));
+
+var _StateManager = _interopRequireDefault(require("../utils/StateManager.jsx"));
 
 var _LoadRecipes = _interopRequireDefault(require("../api/LoadRecipes.jsx"));
 
@@ -909,7 +869,8 @@ function (_Component) {
 
     _classCallCheck(this, FeedRecorder);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(FeedRecorder).call(this, props, context)); // intialize the application state
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(FeedRecorder).call(this, props, context));
+    _this.previousState = {}; // intialize the application state
 
     _this.state = {
       isSaving: false,
@@ -924,9 +885,6 @@ function (_Component) {
       // the selected recipe name
       selectedRecipeCaloriesPerOunce: 0,
       // the selected recipe calorie density
-      selectedHour: parseInt(moment().format("h")),
-      selectedMinute: moment().minute(),
-      selectedAmPm: moment().format("a"),
       units: "mls" // can be: cals, mls, ozs
 
     }; // reload the data after regaining focus
@@ -937,15 +895,14 @@ function (_Component) {
       var state = document.visibilityState || document.webkitVisibilityState;
 
       if (state === "visible") {
-        self.props.fnReloadData(function () {
-          self.setState({
-            selectedHour: parseInt(moment().format("h")),
-            selectedMinute: moment().minute(),
-            selectedAmPm: moment().format("a")
-          });
-        });
+        self.props.fnReloadData(function () {});
       }
     });
+
+    _StateManager["default"].Store.subscribe(function () {
+      if (_StateManager["default"].ValueChanged(_this.previousState, ["Account.Settings.DisplayVolumeAsMetric", "SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".CaloriesSliderMax", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".RecipeId", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".FeedsForToday", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Goals", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Weights", "UI.IsSaving", "UI.FeedRecorder"])) _this.forceUpdate();
+    });
+
     _this.updateVolume = _this.updateVolume.bind(_assertThisInitialized(_this));
     _this.displayHourSelection = _this.displayHourSelection.bind(_assertThisInitialized(_this));
     _this.displayMinuteSelection = _this.displayMinuteSelection.bind(_assertThisInitialized(_this));
@@ -957,7 +914,8 @@ function (_Component) {
     _this.changeRecipeSelection = _this.changeRecipeSelection.bind(_assertThisInitialized(_this));
     _this.submitFeed = _this.submitFeed.bind(_assertThisInitialized(_this));
     return _this;
-  } // Changes when updating component.
+  } // TODO: REMOVE THIS METHOD
+  // Changes when updating component.
 
 
   _createClass(FeedRecorder, [{
@@ -986,11 +944,13 @@ function (_Component) {
     value: function render() {
       // find the total volume for the day
       var totalCalories = 0;
-      this.props.feedsForToday.forEach(function (value) {
+
+      _StateManager["default"].GetCurrentBabyDetails().FeedsForToday.forEach(function (value) {
         totalCalories += value.Calories;
       }); // find the remaining amount
       //let remainingCalories = (totalCalories < this.props.caloriesGoal) ? (this.props.caloriesGoal - totalCalories) : 0;
       //let pluralRemainingCalories = (remainingCalories === 1) ? "" : "s";
+
 
       var caloriesCurrent = this.state.selectedCalories;
       var caloriesMax = this.props.caloriesFeedMax + 20; // TODO: Change to vary by percentage, ending in even numbers - maybe set a minimum based upon the baby's weight for new signups
@@ -1063,12 +1023,12 @@ function (_Component) {
         className: (0, _FormatCssClass["default"])("time")
       }, _react["default"].createElement("button", {
         onClick: this.displayHourSelection
-      }, this.state.selectedHour), ":", _react["default"].createElement("button", {
+      }, _StateManager["default"].GetFeedRecorderData().SelectedHour), ":", _react["default"].createElement("button", {
         onClick: this.displayMinuteSelection
-      }, this.state.selectedMinute.toString().padStart(2, "0")), _react["default"].createElement("button", {
+      }, _StateManager["default"].GetFeedRecorderData().SelectedMinute.toString().padStart(2, "0")), _react["default"].createElement("button", {
         className: (0, _FormatCssClass["default"])("small"),
         onClick: this.changeAmPmSelection
-      }, this.state.selectedAmPm)), _react["default"].createElement("div", {
+      }, _StateManager["default"].GetFeedRecorderData().SelectedAmPm)), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("volume-control")
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("volume")
@@ -1123,7 +1083,7 @@ function (_Component) {
 
       for (var i = 1; i <= 12; i++) {
         var className = "";
-        if (i === this.state.selectedHour) className = "selected";
+        if (i === _StateManager["default"].GetFeedRecorderData().SelectedHour) className = "selected";
         options.push(_react["default"].createElement("button", {
           key: "hour-" + i,
           className: (0, _FormatCssClass["default"])(className),
@@ -1135,9 +1095,9 @@ function (_Component) {
         className: (0, _FormatCssClass["default"])("options-hour")
       }, options);
 
-      this.props.fnDisplayModal({
-        allowDismiss: true,
-        content: modalContent
+      _StateManager["default"].UpdateValue("UI.SelectedModalData", {
+        AllowDismiss: true,
+        Content: modalContent
       });
     } // Display a modal allowing selection of a minute.
 
@@ -1149,7 +1109,7 @@ function (_Component) {
 
       for (var i = 0; i < 60; i += 5) {
         var className = "";
-        if (i <= this.state.selectedMinute && i > this.state.selectedMinute - 5) className = "selected";
+        if (i <= _StateManager["default"].GetFeedRecorderData().SelectedMinute && i > _StateManager["default"].GetFeedRecorderData().SelectedMinute - 5) className = "selected";
         options.push(_react["default"].createElement("button", {
           key: "minute-" + i,
           className: (0, _FormatCssClass["default"])(className),
@@ -1161,9 +1121,9 @@ function (_Component) {
         className: (0, _FormatCssClass["default"])("options-minute")
       }, options);
 
-      this.props.fnDisplayModal({
-        allowDismiss: true,
-        content: modalContent
+      _StateManager["default"].UpdateValue("UI.SelectedModalData", {
+        AllowDismiss: true,
+        Content: modalContent
       });
     } // Display a modal allowing selection of a recipe.
 
@@ -1198,9 +1158,9 @@ function (_Component) {
           className: (0, _FormatCssClass["default"])("options-recipe")
         }, options);
 
-        _this2.props.fnDisplayModal({
-          allowDismiss: true,
-          content: modalContent
+        _StateManager["default"].UpdateValue("UI.SelectedModalData", {
+          AllowDismiss: true,
+          Content: modalContent
         });
       });
     } // Updates the hours to the selection.
@@ -1208,30 +1168,31 @@ function (_Component) {
   }, {
     key: "changeHourSelection",
     value: function changeHourSelection(e) {
-      e.preventDefault();
-      this.props.fnDismissModal();
-      this.setState({
-        selectedHour: parseInt(e.target.innerText)
-      });
+      e.preventDefault(); //this.props.fnDismissModal();
+
+      _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedHour", parseInt(e.target.innerText));
+
+      _StateManager["default"].UpdateValue("UI.SelectedModalData.Content", "");
     } // Updates the minutes to the selection.
 
   }, {
     key: "changeMinuteSelection",
     value: function changeMinuteSelection(e) {
       e.preventDefault();
-      this.props.fnDismissModal();
-      this.setState({
-        selectedMinute: parseInt(e.target.innerText)
-      });
+
+      _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedMinute", parseInt(e.target.innerText));
+
+      _StateManager["default"].UpdateValue("UI.SelectedModalData.Content", "");
     } // Toggles the time between AM and PM.
 
   }, {
     key: "changeAmPmSelection",
     value: function changeAmPmSelection(e) {
       e.preventDefault();
-      this.setState({
-        selectedAmPm: this.state.selectedAmPm === "am" ? "pm" : "am"
-      });
+
+      _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedAmPm", _StateManager["default"].GetFeedRecorderData().SelectedAmPm === "am" ? "pm" : "am");
+
+      _StateManager["default"].UpdateValue("UI.SelectedModalData.Content", "");
     } // Cycles through units of: cals, mls, ozs.
 
   }, {
@@ -1284,10 +1245,10 @@ function (_Component) {
       // hours to enter a past feed
 
       var date = moment().format("YYYY-MM-DD");
-      if (this.state.selectedHour - 2 > moment().hours()) date = moment().subtract(1, "days").format("YYYY-MM-DD"); // add the hours to the date
+      if (_StateManager["default"].GetFeedRecorderData().SelectedHour - 2 > moment().hours()) date = moment().subtract(1, "days").format("YYYY-MM-DD"); // add the hours to the date
 
-      var hoursIn24Format = this.state.selectedAmPm === "pm" && this.state.selectedHour !== 12 ? this.state.selectedHour + 12 : this.state.selectedHour;
-      date += " " + hoursIn24Format + ":" + this.state.selectedMinute.toString().padStart(2, "0"); // save the feed data
+      var hoursIn24Format = _StateManager["default"].GetFeedRecorderData().SelectedAmPm === "pm" && _StateManager["default"].GetFeedRecorderData().SelectedHour !== 12 ? _StateManager["default"].GetFeedRecorderData().SelectedHour + 12 : _StateManager["default"].GetFeedRecorderData().SelectedHour;
+      date += " " + hoursIn24Format + ":" + _StateManager["default"].GetFeedRecorderData().SelectedMinute.toString().padStart(2, "0"); // save the feed data
 
       var self = this;
       (0, _SaveFeed["default"])({
@@ -1297,10 +1258,13 @@ function (_Component) {
       }, function (success) {
         // TODO: Handle non-success
         self.props.fnReloadData(function () {
+          _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedHour", parseInt(moment().format("h")));
+
+          _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedMinute", moment().minute());
+
+          _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedAmPm", moment().format("a"));
+
           self.setState({
-            selectedHour: parseInt(moment().format("h")),
-            selectedMinute: moment().minute(),
-            selectedAmPm: moment().format("a"),
             isSaving: false
           });
         });
@@ -1314,7 +1278,7 @@ function (_Component) {
 exports["default"] = FeedRecorder;
 
 
-},{"../api/LoadRecipes.jsx":3,"../api/SaveFeed.jsx":5,"../utils/Converters.jsx":27,"../utils/FormatCssClass.jsx":29,"../utils/FormatFeedVolume.jsx":30,"react":79}],13:[function(require,module,exports){
+},{"../api/LoadRecipes.jsx":3,"../api/SaveFeed.jsx":5,"../utils/Converters.jsx":28,"../utils/FormatCssClass.jsx":30,"../utils/FormatFeedVolume.jsx":31,"../utils/StateManager.jsx":33,"react":80}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1434,7 +1398,7 @@ function (_Component) {
 exports["default"] = History;
 
 
-},{"../utils/FormatCssClass.jsx":29,"../utils/StateManager.jsx":32,"./CalendarMonth.jsx":10,"react":79}],14:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":30,"../utils/StateManager.jsx":33,"./CalendarMonth.jsx":10,"react":80}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1445,6 +1409,8 @@ exports["default"] = void 0;
 var _react = _interopRequireWildcard(require("react"));
 
 var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
+
+var _StateManager = _interopRequireDefault(require("../utils/StateManager.jsx"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -1475,18 +1441,29 @@ var LastFeedTime =
 function (_Component) {
   _inherits(LastFeedTime, _Component);
 
-  function LastFeedTime() {
+  // Constructor.
+  function LastFeedTime(props, context) {
+    var _this;
+
     _classCallCheck(this, LastFeedTime);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(LastFeedTime).apply(this, arguments));
-  }
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(LastFeedTime).call(this, props, context));
+    _this.previousState = {};
+
+    _StateManager["default"].Store.subscribe(function () {
+      if (_StateManager["default"].ValueChanged(_this.previousState, ["SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".LastFeedTime"])) _this.forceUpdate();
+    });
+
+    return _this;
+  } // Renders the last feed time area.
+
 
   _createClass(LastFeedTime, [{
     key: "render",
     value: function render() {
       return _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("last-feed")
-      }, "Last Fed at ", this.props.lastFeedTime);
+      }, "Last Fed at ", _StateManager["default"].GetCurrentBabyDetails().LastFeedTime);
     }
   }]);
 
@@ -1496,7 +1473,7 @@ function (_Component) {
 exports["default"] = LastFeedTime;
 
 
-},{"../utils/FormatCssClass.jsx":29,"react":79}],15:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":30,"../utils/StateManager.jsx":33,"react":80}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1579,7 +1556,7 @@ function (_Component) {
 exports["default"] = Loading;
 
 
-},{"../utils/FormatCssClass.jsx":29,"../utils/StateManager.jsx":32,"react":79}],16:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":30,"../utils/StateManager.jsx":33,"react":80}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1755,7 +1732,7 @@ function (_Component) {
 exports["default"] = Menu;
 
 
-},{"../utils/FormatCssClass.jsx":29,"./MenuAbout.jsx":17,"./MenuAccount.jsx":18,"./MenuBabies.jsx":19,"./MenuFeeds.jsx":20,"./MenuRecipes.jsx":21,"./MenuWeights.jsx":22,"react":79}],17:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":30,"./MenuAbout.jsx":17,"./MenuAccount.jsx":18,"./MenuBabies.jsx":19,"./MenuFeeds.jsx":20,"./MenuRecipes.jsx":21,"./MenuWeights.jsx":22,"react":80}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1825,7 +1802,7 @@ function (_Component) {
 exports["default"] = MenuAbout;
 
 
-},{"../utils/FormatCssClass.jsx":29,"react":79}],18:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":30,"react":80}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1895,7 +1872,7 @@ function (_Component) {
 exports["default"] = MenuAccount;
 
 
-},{"../utils/FormatCssClass.jsx":29,"react":79}],19:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":30,"react":80}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1965,7 +1942,7 @@ function (_Component) {
 exports["default"] = MenuBabies;
 
 
-},{"../utils/FormatCssClass.jsx":29,"react":79}],20:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":30,"react":80}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2199,7 +2176,7 @@ function (_Component) {
 exports["default"] = MenuFeeds;
 
 
-},{"../api/LoadFeeds.jsx":2,"../api/LoadRecipes.jsx":3,"../utils/Constants.jsx":26,"../utils/Converters.jsx":27,"../utils/FormatCssClass.jsx":29,"./FeedEditor.jsx":11,"react":79}],21:[function(require,module,exports){
+},{"../api/LoadFeeds.jsx":2,"../api/LoadRecipes.jsx":3,"../utils/Constants.jsx":27,"../utils/Converters.jsx":28,"../utils/FormatCssClass.jsx":30,"./FeedEditor.jsx":11,"react":80}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2269,7 +2246,7 @@ function (_Component) {
 exports["default"] = MenuRecipes;
 
 
-},{"../utils/FormatCssClass.jsx":29,"react":79}],22:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":30,"react":80}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2470,7 +2447,98 @@ function (_Component) {
 exports["default"] = MenuWeights;
 
 
-},{"../api/LoadWeights.jsx":4,"../api/SaveWeight.jsx":6,"../utils/Converters.jsx":27,"../utils/FormatCssClass.jsx":29,"../utils/StateManager.jsx":32,"react":79}],23:[function(require,module,exports){
+},{"../api/LoadWeights.jsx":4,"../api/SaveWeight.jsx":6,"../utils/Converters.jsx":28,"../utils/FormatCssClass.jsx":30,"../utils/StateManager.jsx":33,"react":80}],23:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
+
+var _StateManager = _interopRequireDefault(require("../utils/StateManager.jsx"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; if (obj != null) { var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+// export object
+var Modal =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(Modal, _Component);
+
+  // Constructor.
+  function Modal(props, context) {
+    var _this;
+
+    _classCallCheck(this, Modal);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Modal).call(this, props, context));
+    _this.previousState = {};
+
+    _StateManager["default"].Store.subscribe(function () {
+      if (_StateManager["default"].ValueChanged(_this.previousState, ["UI.SelectedModalData"])) _this.forceUpdate();
+    }); // bind event handlers
+
+
+    _this.dismissModal = _this.dismissModal.bind(_assertThisInitialized(_this));
+    return _this;
+  } // Renders the modal window.
+
+
+  _createClass(Modal, [{
+    key: "render",
+    value: function render() {
+      if (!_StateManager["default"].State().UI.SelectedModalData.Content) return null;
+      return _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("modal")
+      }, _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("screen"),
+        onClick: _StateManager["default"].State().UI.SelectedModalData.AllowDismiss ? this.dismissModal : function () {}
+      }), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("content")
+      }, _StateManager["default"].State().UI.SelectedModalData.Content));
+    } // Removes the modal window.
+
+  }, {
+    key: "dismissModal",
+    value: function dismissModal() {
+      // remove the modal from state
+      _StateManager["default"].UpdateValue("UI.SelectedModalData.Content", "");
+    }
+  }]);
+
+  return Modal;
+}(_react.Component);
+
+exports["default"] = Modal;
+
+
+},{"../utils/FormatCssClass.jsx":30,"../utils/StateManager.jsx":33,"react":80}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2541,7 +2609,7 @@ function (_Component) {
 exports["default"] = SiteTitle;
 
 
-},{"react":79}],24:[function(require,module,exports){
+},{"react":80}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2631,7 +2699,7 @@ function (_Component) {
 exports["default"] = Weight;
 
 
-},{"../utils/FormatCssClass.jsx":29,"../utils/FormatWeight.jsx":31,"../utils/StateManager.jsx":32,"react":79}],25:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":30,"../utils/FormatWeight.jsx":32,"../utils/StateManager.jsx":33,"react":80}],26:[function(require,module,exports){
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -2649,7 +2717,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 _reactDom["default"].render(_react["default"].createElement(_App["default"], null), document.querySelector("#container"));
 
 
-},{"./components/App.jsx":8,"./utils/StateManager.jsx":32,"react":79,"react-dom":48,"react-redux":66}],26:[function(require,module,exports){
+},{"./components/App.jsx":8,"./utils/StateManager.jsx":33,"react":80,"react-dom":49,"react-redux":67}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2668,7 +2736,7 @@ var FeedHistoryDisplayDays = 3;
 exports.FeedHistoryDisplayDays = FeedHistoryDisplayDays;
 
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2737,7 +2805,7 @@ function ConvertKilogramsToPounds(kilograms) {
 }
 
 
-},{"./Constants.jsx":26}],28:[function(require,module,exports){
+},{"./Constants.jsx":27}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2791,7 +2859,7 @@ function FormatAge(today, ageDate) {
 }
 
 
-},{"react":79}],29:[function(require,module,exports){
+},{"react":80}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2809,7 +2877,7 @@ function FormatCssClass(classes) {
 }
 
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2886,7 +2954,7 @@ function FormatFeedVolume(units, calories, topCaloriesForDay, recipeCaloriesPerO
 }
 
 
-},{"./Constants.jsx":26,"./Converters.jsx":27,"react":79}],31:[function(require,module,exports){
+},{"./Constants.jsx":27,"./Converters.jsx":28,"react":80}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2917,7 +2985,7 @@ function FormatWeight(kilograms, returnKilograms) {
 }
 
 
-},{"react":79}],32:[function(require,module,exports){
+},{"react":80}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2979,10 +3047,17 @@ var storeModel = {
         GoalCalories: 0,
         TotalCalories: 0
       }],
+      LastFeedTime: "",
+      FeedsForToday: [{
+        Id: 0,
+        RecipeId: 0,
+        DateTime: "",
+        Calories: 0
+      }],
       Feeds: [{
         Id: 0,
         RecipeId: 0,
-        Date: "",
+        DateTime: "",
         Calories: 0
       }],
       Goals: [{
@@ -3005,9 +3080,17 @@ var storeModel = {
     IsMenuEditFormOpen: false,
     SelectedMenuEditFormData: {},
     ResultsCondensed: true,
-    IsModalOpen: false,
-    SelectedModal: "",
-    SelectedModalData: {}
+    //IsModalOpen: false,
+    //SelectedModal: "",
+    FeedRecorder: {
+      SelectedHour: 0,
+      SelectedMinute: 0,
+      SelectedAmPm: "am"
+    },
+    SelectedModalData: {
+      AllowDismiss: false,
+      Content: ""
+    }
   }
 }; // define the reducer
 
@@ -3031,10 +3114,15 @@ var reducer = function reducer(state, action) {
       newState.Babies["Baby" + newState.SelectedBaby].BirthDate = action.payload.dateBirth;
       newState.Babies["Baby" + newState.SelectedBaby].ExpectedDate = action.payload.dateExpected;
       newState.Babies["Baby" + newState.SelectedBaby].RecipeId = action.payload.recipeId;
-      newState.Babies["Baby" + newState.SelectedBaby].DailyTotals = action.payload.feedTotalsPerDay; // newState.Babies["Baby" + newState.SelectedBaby].Feeds = // TODO: Return from API
+      newState.Babies["Baby" + newState.SelectedBaby].DailyTotals = action.payload.feedTotalsPerDay;
+      newState.Babies["Baby" + newState.SelectedBaby].LastFeedTime = action.payload.lastFeedTime;
+      newState.Babies["Baby" + newState.SelectedBaby].FeedsForToday = action.payload.feedsForToday; // newState.Babies["Baby" + newState.SelectedBaby].Feeds = // TODO: Return from API
       // newState.Babies["Baby" + newState.SelectedBaby].Goals = // TODO: Return from API
 
       newState.Babies["Baby" + newState.SelectedBaby].Weights = action.payload.weights;
+      newState.UI.FeedRecorder.SelectedHour = parseInt(moment().format("h"));
+      newState.UI.FeedRecorder.SelectedMinute = moment().minute();
+      newState.UI.FeedRecorder.SelectedAmPm = moment().format("a");
       break;
   }
 
@@ -3124,6 +3212,11 @@ function () {
     value: function GetCurrentBabyWeightRecord() {
       return this.GetCurrentBabyDetails().Weights[this.GetCurrentBabyDetails().Weights.length - 1];
     }
+  }, {
+    key: "GetFeedRecorderData",
+    value: function GetFeedRecorderData() {
+      return this.State().UI.FeedRecorder;
+    }
   }]);
 
   return StateManager;
@@ -3134,7 +3227,7 @@ var _default = StateManager = new StateManager();
 exports["default"] = _default;
 
 
-},{"react":79,"redux":80}],33:[function(require,module,exports){
+},{"react":80,"redux":81}],34:[function(require,module,exports){
 function _extends() {
   module.exports = _extends = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
@@ -3154,7 +3247,7 @@ function _extends() {
 }
 
 module.exports = _extends;
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 function _interopRequireDefault(obj) {
   return obj && obj.__esModule ? obj : {
     "default": obj
@@ -3162,7 +3255,7 @@ function _interopRequireDefault(obj) {
 }
 
 module.exports = _interopRequireDefault;
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 function _getRequireWildcardCache() {
   if (typeof WeakMap !== "function") return null;
   var cache = new WeakMap();
@@ -3213,7 +3306,7 @@ function _interopRequireWildcard(obj) {
 }
 
 module.exports = _interopRequireWildcard;
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 function _objectWithoutPropertiesLoose(source, excluded) {
   if (source == null) return {};
   var target = {};
@@ -3230,7 +3323,7 @@ function _objectWithoutPropertiesLoose(source, excluded) {
 }
 
 module.exports = _objectWithoutPropertiesLoose;
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 'use strict';
 
 /**
@@ -3335,7 +3428,7 @@ function hoistNonReactStatics(targetComponent, sourceComponent, blacklist) {
 
 module.exports = hoistNonReactStatics;
 
-},{"react-is":51}],38:[function(require,module,exports){
+},{"react-is":52}],39:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -3388,7 +3481,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 
 }).call(this,require('_process'))
-},{"_process":40}],39:[function(require,module,exports){
+},{"_process":41}],40:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -3480,7 +3573,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -3666,7 +3759,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -3772,7 +3865,7 @@ checkPropTypes.resetWarningCache = function() {
 module.exports = checkPropTypes;
 
 }).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":45,"_process":40}],42:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":46,"_process":41}],43:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -3838,7 +3931,7 @@ module.exports = function() {
   return ReactPropTypes;
 };
 
-},{"./lib/ReactPropTypesSecret":45}],43:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":46}],44:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -4433,7 +4526,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 };
 
 }).call(this,require('_process'))
-},{"./checkPropTypes":41,"./lib/ReactPropTypesSecret":45,"_process":40,"object-assign":39,"react-is":51}],44:[function(require,module,exports){
+},{"./checkPropTypes":42,"./lib/ReactPropTypesSecret":46,"_process":41,"object-assign":40,"react-is":52}],45:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -4456,7 +4549,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./factoryWithThrowingShims":42,"./factoryWithTypeCheckers":43,"_process":40,"react-is":51}],45:[function(require,module,exports){
+},{"./factoryWithThrowingShims":43,"./factoryWithTypeCheckers":44,"_process":41,"react-is":52}],46:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -4470,7 +4563,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 (function (process){
 /** @license React v16.11.0
  * react-dom.development.js
@@ -32201,7 +32294,7 @@ module.exports = reactDom;
 }
 
 }).call(this,require('_process'))
-},{"_process":40,"object-assign":39,"prop-types/checkPropTypes":41,"react":79,"scheduler":85,"scheduler/tracing":86}],47:[function(require,module,exports){
+},{"_process":41,"object-assign":40,"prop-types/checkPropTypes":42,"react":80,"scheduler":86,"scheduler/tracing":87}],48:[function(require,module,exports){
 /** @license React v16.11.0
  * react-dom.production.min.js
  *
@@ -32493,7 +32586,7 @@ xe,ye,Ca.injectEventPluginsByName,fa,Sc,function(a){ya(a,Rc)},cb,db,Pd,Ba,Sj,{cu
 (function(a){var b=a.findFiberByHostInstance;return ok(n({},a,{overrideHookState:null,overrideProps:null,setSuspenseHandler:null,scheduleUpdate:null,currentDispatcherRef:Ea.ReactCurrentDispatcher,findHostInstanceByFiber:function(a){a=ic(a);return null===a?null:a.stateNode},findFiberByHostInstance:function(a){return b?b(a):null},findHostInstancesForRefresh:null,scheduleRefresh:null,scheduleRoot:null,setRefreshHandler:null,getCurrentFiber:null}))})({findFiberByHostInstance:Fc,bundleType:0,version:"16.11.0",
 rendererPackageName:"react-dom"});var Dk={default:Ck},Ek=Dk&&Ck||Dk;module.exports=Ek.default||Ek;
 
-},{"object-assign":39,"react":79,"scheduler":85}],48:[function(require,module,exports){
+},{"object-assign":40,"react":80,"scheduler":86}],49:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -32535,7 +32628,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react-dom.development.js":46,"./cjs/react-dom.production.min.js":47,"_process":40}],49:[function(require,module,exports){
+},{"./cjs/react-dom.development.js":47,"./cjs/react-dom.production.min.js":48,"_process":41}],50:[function(require,module,exports){
 (function (process){
 /** @license React v16.8.6
  * react-is.development.js
@@ -32766,7 +32859,7 @@ exports.isSuspense = isSuspense;
 }
 
 }).call(this,require('_process'))
-},{"_process":40}],50:[function(require,module,exports){
+},{"_process":41}],51:[function(require,module,exports){
 /** @license React v16.8.6
  * react-is.production.min.js
  *
@@ -32783,7 +32876,7 @@ exports.Fragment=e;exports.Lazy=r;exports.Memo=q;exports.Portal=d;exports.Profil
 exports.isContextProvider=function(a){return t(a)===h};exports.isElement=function(a){return"object"===typeof a&&null!==a&&a.$$typeof===c};exports.isForwardRef=function(a){return t(a)===n};exports.isFragment=function(a){return t(a)===e};exports.isLazy=function(a){return t(a)===r};exports.isMemo=function(a){return t(a)===q};exports.isPortal=function(a){return t(a)===d};exports.isProfiler=function(a){return t(a)===g};exports.isStrictMode=function(a){return t(a)===f};
 exports.isSuspense=function(a){return t(a)===p};
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -32794,7 +32887,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react-is.development.js":49,"./cjs/react-is.production.min.js":50,"_process":40}],52:[function(require,module,exports){
+},{"./cjs/react-is.development.js":50,"./cjs/react-is.production.min.js":51,"_process":41}],53:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -32809,7 +32902,7 @@ var ReactReduxContext = _react["default"].createContext(null);
 exports.ReactReduxContext = ReactReduxContext;
 var _default = ReactReduxContext;
 exports["default"] = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":34,"react":79}],53:[function(require,module,exports){
+},{"@babel/runtime/helpers/interopRequireDefault":35,"react":80}],54:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -32872,7 +32965,7 @@ Provider.propTypes = {
 };
 var _default = Provider;
 exports["default"] = _default;
-},{"../utils/Subscription":67,"./Context":52,"@babel/runtime/helpers/interopRequireDefault":34,"@babel/runtime/helpers/interopRequireWildcard":35,"prop-types":44,"react":79}],54:[function(require,module,exports){
+},{"../utils/Subscription":68,"./Context":53,"@babel/runtime/helpers/interopRequireDefault":35,"@babel/runtime/helpers/interopRequireWildcard":36,"prop-types":45,"react":80}],55:[function(require,module,exports){
 (function (process){
 "use strict";
 
@@ -33237,7 +33330,7 @@ _ref) {
   };
 }
 }).call(this,require('_process'))
-},{"../utils/Subscription":67,"./Context":52,"@babel/runtime/helpers/extends":33,"@babel/runtime/helpers/interopRequireDefault":34,"@babel/runtime/helpers/interopRequireWildcard":35,"@babel/runtime/helpers/objectWithoutPropertiesLoose":36,"_process":40,"hoist-non-react-statics":37,"invariant":38,"react":79,"react-is":76}],55:[function(require,module,exports){
+},{"../utils/Subscription":68,"./Context":53,"@babel/runtime/helpers/extends":34,"@babel/runtime/helpers/interopRequireDefault":35,"@babel/runtime/helpers/interopRequireWildcard":36,"@babel/runtime/helpers/objectWithoutPropertiesLoose":37,"_process":41,"hoist-non-react-statics":38,"invariant":39,"react":80,"react-is":77}],56:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -33353,7 +33446,7 @@ function createConnect(_temp) {
 var _default = createConnect();
 
 exports["default"] = _default;
-},{"../components/connectAdvanced":54,"../utils/shallowEqual":71,"./mapDispatchToProps":56,"./mapStateToProps":57,"./mergeProps":58,"./selectorFactory":59,"@babel/runtime/helpers/extends":33,"@babel/runtime/helpers/interopRequireDefault":34,"@babel/runtime/helpers/objectWithoutPropertiesLoose":36}],56:[function(require,module,exports){
+},{"../components/connectAdvanced":55,"../utils/shallowEqual":72,"./mapDispatchToProps":57,"./mapStateToProps":58,"./mergeProps":59,"./selectorFactory":60,"@babel/runtime/helpers/extends":34,"@babel/runtime/helpers/interopRequireDefault":35,"@babel/runtime/helpers/objectWithoutPropertiesLoose":37}],57:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -33386,7 +33479,7 @@ function whenMapDispatchToPropsIsObject(mapDispatchToProps) {
 
 var _default = [whenMapDispatchToPropsIsFunction, whenMapDispatchToPropsIsMissing, whenMapDispatchToPropsIsObject];
 exports["default"] = _default;
-},{"./wrapMapToProps":61,"redux":80}],57:[function(require,module,exports){
+},{"./wrapMapToProps":62,"redux":81}],58:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -33408,7 +33501,7 @@ function whenMapStateToPropsIsMissing(mapStateToProps) {
 
 var _default = [whenMapStateToPropsIsFunction, whenMapStateToPropsIsMissing];
 exports["default"] = _default;
-},{"./wrapMapToProps":61}],58:[function(require,module,exports){
+},{"./wrapMapToProps":62}],59:[function(require,module,exports){
 (function (process){
 "use strict";
 
@@ -33465,7 +33558,7 @@ function whenMergePropsIsOmitted(mergeProps) {
 var _default = [whenMergePropsIsFunction, whenMergePropsIsOmitted];
 exports["default"] = _default;
 }).call(this,require('_process'))
-},{"../utils/verifyPlainObject":72,"@babel/runtime/helpers/extends":33,"@babel/runtime/helpers/interopRequireDefault":34,"_process":40}],59:[function(require,module,exports){
+},{"../utils/verifyPlainObject":73,"@babel/runtime/helpers/extends":34,"@babel/runtime/helpers/interopRequireDefault":35,"_process":41}],60:[function(require,module,exports){
 (function (process){
 "use strict";
 
@@ -33567,7 +33660,7 @@ function finalPropsSelectorFactory(dispatch, _ref2) {
   return selectorFactory(mapStateToProps, mapDispatchToProps, mergeProps, dispatch, options);
 }
 }).call(this,require('_process'))
-},{"./verifySubselectors":60,"@babel/runtime/helpers/interopRequireDefault":34,"@babel/runtime/helpers/objectWithoutPropertiesLoose":36,"_process":40}],60:[function(require,module,exports){
+},{"./verifySubselectors":61,"@babel/runtime/helpers/interopRequireDefault":35,"@babel/runtime/helpers/objectWithoutPropertiesLoose":37,"_process":41}],61:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -33592,7 +33685,7 @@ function verifySubselectors(mapStateToProps, mapDispatchToProps, mergeProps, dis
   verify(mapDispatchToProps, 'mapDispatchToProps', displayName);
   verify(mergeProps, 'mergeProps', displayName);
 }
-},{"../utils/warning":73,"@babel/runtime/helpers/interopRequireDefault":34}],61:[function(require,module,exports){
+},{"../utils/warning":74,"@babel/runtime/helpers/interopRequireDefault":35}],62:[function(require,module,exports){
 (function (process){
 "use strict";
 
@@ -33671,7 +33764,7 @@ function wrapMapToPropsFunc(mapToProps, methodName) {
   };
 }
 }).call(this,require('_process'))
-},{"../utils/verifyPlainObject":72,"@babel/runtime/helpers/interopRequireDefault":34,"_process":40}],62:[function(require,module,exports){
+},{"../utils/verifyPlainObject":73,"@babel/runtime/helpers/interopRequireDefault":35,"_process":41}],63:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -33724,7 +33817,7 @@ function createDispatchHook(context) {
 
 var useDispatch = createDispatchHook();
 exports.useDispatch = useDispatch;
-},{"../components/Context":52,"./useStore":65}],63:[function(require,module,exports){
+},{"../components/Context":53,"./useStore":66}],64:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -33759,7 +33852,7 @@ function useReduxContext() {
   (0, _invariant["default"])(contextValue, 'could not find react-redux context value; please ensure the component is wrapped in a <Provider>');
   return contextValue;
 }
-},{"../components/Context":52,"@babel/runtime/helpers/interopRequireDefault":34,"invariant":38,"react":79}],64:[function(require,module,exports){
+},{"../components/Context":53,"@babel/runtime/helpers/interopRequireDefault":35,"invariant":39,"react":80}],65:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -33914,7 +34007,7 @@ function createSelectorHook(context) {
 
 var useSelector = createSelectorHook();
 exports.useSelector = useSelector;
-},{"../components/Context":52,"../utils/Subscription":67,"./useReduxContext":63,"@babel/runtime/helpers/interopRequireDefault":34,"invariant":38,"react":79}],65:[function(require,module,exports){
+},{"../components/Context":53,"../utils/Subscription":68,"./useReduxContext":64,"@babel/runtime/helpers/interopRequireDefault":35,"invariant":39,"react":80}],66:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -33967,7 +34060,7 @@ function createStoreHook(context) {
 
 var useStore = createStoreHook();
 exports.useStore = useStore;
-},{"../components/Context":52,"./useReduxContext":63,"react":79}],66:[function(require,module,exports){
+},{"../components/Context":53,"./useReduxContext":64,"react":80}],67:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -34015,7 +34108,7 @@ var _shallowEqual = _interopRequireDefault(require("./utils/shallowEqual"));
 
 exports.shallowEqual = _shallowEqual["default"];
 (0, _batch.setBatch)(_reactBatchedUpdates.unstable_batchedUpdates);
-},{"./components/Context":52,"./components/Provider":53,"./components/connectAdvanced":54,"./connect/connect":55,"./hooks/useDispatch":62,"./hooks/useSelector":64,"./hooks/useStore":65,"./utils/batch":68,"./utils/reactBatchedUpdates":70,"./utils/shallowEqual":71,"@babel/runtime/helpers/interopRequireDefault":34}],67:[function(require,module,exports){
+},{"./components/Context":53,"./components/Provider":54,"./components/connectAdvanced":55,"./connect/connect":56,"./hooks/useDispatch":63,"./hooks/useSelector":65,"./hooks/useStore":66,"./utils/batch":69,"./utils/reactBatchedUpdates":71,"./utils/shallowEqual":72,"@babel/runtime/helpers/interopRequireDefault":35}],68:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -34119,7 +34212,7 @@ function () {
 }();
 
 exports["default"] = Subscription;
-},{"./batch":68}],68:[function(require,module,exports){
+},{"./batch":69}],69:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -34144,7 +34237,7 @@ var getBatch = function getBatch() {
 };
 
 exports.getBatch = getBatch;
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -34166,7 +34259,7 @@ function isPlainObject(obj) {
 
   return proto === baseProto;
 }
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -34175,7 +34268,7 @@ exports.unstable_batchedUpdates = void 0;
 var _reactDom = require("react-dom");
 
 exports.unstable_batchedUpdates = _reactDom.unstable_batchedUpdates;
-},{"react-dom":48}],71:[function(require,module,exports){
+},{"react-dom":49}],72:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -34209,7 +34302,7 @@ function shallowEqual(objA, objB) {
 
   return true;
 }
-},{}],72:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -34226,7 +34319,7 @@ function verifyPlainObject(value, displayName, methodName) {
     (0, _warning["default"])(methodName + "() in " + displayName + " must return a plain object. Instead received " + value + ".");
   }
 }
-},{"./isPlainObject":69,"./warning":73,"@babel/runtime/helpers/interopRequireDefault":34}],73:[function(require,module,exports){
+},{"./isPlainObject":70,"./warning":74,"@babel/runtime/helpers/interopRequireDefault":35}],74:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -34256,7 +34349,7 @@ function warning(message) {
   /* eslint-enable no-empty */
 
 }
-},{}],74:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 (function (process){
 /** @license React v16.9.0
  * react-is.development.js
@@ -34492,7 +34585,7 @@ exports.isSuspense = isSuspense;
 }
 
 }).call(this,require('_process'))
-},{"_process":40}],75:[function(require,module,exports){
+},{"_process":41}],76:[function(require,module,exports){
 /** @license React v16.9.0
  * react-is.production.min.js
  *
@@ -34509,9 +34602,9 @@ exports.ConcurrentMode=m;exports.ContextConsumer=k;exports.ContextProvider=h;exp
 exports.isValidElementType=function(a){return"string"===typeof a||"function"===typeof a||a===e||a===m||a===g||a===f||a===p||a===q||"object"===typeof a&&null!==a&&(a.$$typeof===t||a.$$typeof===r||a.$$typeof===h||a.$$typeof===k||a.$$typeof===n||a.$$typeof===v||a.$$typeof===w)};exports.isAsyncMode=function(a){return y(a)||x(a)===l};exports.isConcurrentMode=y;exports.isContextConsumer=function(a){return x(a)===k};exports.isContextProvider=function(a){return x(a)===h};
 exports.isElement=function(a){return"object"===typeof a&&null!==a&&a.$$typeof===c};exports.isForwardRef=function(a){return x(a)===n};exports.isFragment=function(a){return x(a)===e};exports.isLazy=function(a){return x(a)===t};exports.isMemo=function(a){return x(a)===r};exports.isPortal=function(a){return x(a)===d};exports.isProfiler=function(a){return x(a)===g};exports.isStrictMode=function(a){return x(a)===f};exports.isSuspense=function(a){return x(a)===p};
 
-},{}],76:[function(require,module,exports){
-arguments[4][51][0].apply(exports,arguments)
-},{"./cjs/react-is.development.js":74,"./cjs/react-is.production.min.js":75,"_process":40,"dup":51}],77:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
+arguments[4][52][0].apply(exports,arguments)
+},{"./cjs/react-is.development.js":75,"./cjs/react-is.production.min.js":76,"_process":41,"dup":52}],78:[function(require,module,exports){
 (function (process){
 /** @license React v16.11.0
  * react.development.js
@@ -36833,7 +36926,7 @@ module.exports = react;
 }
 
 }).call(this,require('_process'))
-},{"_process":40,"object-assign":39,"prop-types/checkPropTypes":41}],78:[function(require,module,exports){
+},{"_process":41,"object-assign":40,"prop-types/checkPropTypes":42}],79:[function(require,module,exports){
 /** @license React v16.11.0
  * react.production.min.js
  *
@@ -36860,7 +36953,7 @@ b,c){return W().useImperativeHandle(a,b,c)},useDebugValue:function(){},useLayout
 if(null!=b){void 0!==b.ref&&(g=b.ref,l=J.current);void 0!==b.key&&(d=""+b.key);if(a.type&&a.type.defaultProps)var f=a.type.defaultProps;for(k in b)K.call(b,k)&&!L.hasOwnProperty(k)&&(e[k]=void 0===b[k]&&void 0!==f?f[k]:b[k])}var k=arguments.length-2;if(1===k)e.children=c;else if(1<k){f=Array(k);for(var m=0;m<k;m++)f[m]=arguments[m+2];e.children=f}return{$$typeof:p,type:a.type,key:d,ref:g,props:e,_owner:l}},createFactory:function(a){var b=M.bind(null,a);b.type=a;return b},isValidElement:N,version:"16.11.0",
 __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentDispatcher:I,ReactCurrentBatchConfig:{suspense:null},ReactCurrentOwner:J,IsSomeRendererActing:{current:!1},assign:h}},Y={default:X},Z=Y&&X||Y;module.exports=Z.default||Z;
 
-},{"object-assign":39}],79:[function(require,module,exports){
+},{"object-assign":40}],80:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -36871,7 +36964,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react.development.js":77,"./cjs/react.production.min.js":78,"_process":40}],80:[function(require,module,exports){
+},{"./cjs/react.development.js":78,"./cjs/react.production.min.js":79,"_process":41}],81:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -37547,7 +37640,7 @@ exports.compose = compose;
 exports.createStore = createStore;
 
 }).call(this,require('_process'))
-},{"_process":40,"symbol-observable":87}],81:[function(require,module,exports){
+},{"_process":41,"symbol-observable":88}],82:[function(require,module,exports){
 (function (process){
 /** @license React v0.17.0
  * scheduler-tracing.development.js
@@ -37972,7 +38065,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 }
 
 }).call(this,require('_process'))
-},{"_process":40}],82:[function(require,module,exports){
+},{"_process":41}],83:[function(require,module,exports){
 /** @license React v0.17.0
  * scheduler-tracing.production.min.js
  *
@@ -37984,7 +38077,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 
 'use strict';Object.defineProperty(exports,"__esModule",{value:!0});var b=0;exports.__interactionsRef=null;exports.__subscriberRef=null;exports.unstable_clear=function(a){return a()};exports.unstable_getCurrent=function(){return null};exports.unstable_getThreadID=function(){return++b};exports.unstable_trace=function(a,d,c){return c()};exports.unstable_wrap=function(a){return a};exports.unstable_subscribe=function(){};exports.unstable_unsubscribe=function(){};
 
-},{}],83:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 (function (process){
 /** @license React v0.17.0
  * scheduler.development.js
@@ -39013,7 +39106,7 @@ exports.unstable_Profiling = unstable_Profiling;
 }
 
 }).call(this,require('_process'))
-},{"_process":40}],84:[function(require,module,exports){
+},{"_process":41}],85:[function(require,module,exports){
 /** @license React v0.17.0
  * scheduler.production.min.js
  *
@@ -39037,7 +39130,7 @@ exports.unstable_scheduleCallback=function(a,b,c){var d=exports.unstable_now();i
 exports.unstable_wrapCallback=function(a){var b=S;return function(){var c=S;S=b;try{return a.apply(this,arguments)}finally{S=c}}};exports.unstable_getCurrentPriorityLevel=function(){return S};exports.unstable_shouldYield=function(){var a=exports.unstable_now();W(a);var b=M(O);return b!==R&&null!==R&&null!==b&&null!==b.callback&&b.startTime<=a&&b.expirationTime<R.expirationTime||k()};exports.unstable_requestPaint=aa;exports.unstable_continueExecution=function(){U||T||(U=!0,f(Y))};
 exports.unstable_pauseExecution=function(){};exports.unstable_getFirstCallbackNode=function(){return M(O)};exports.unstable_Profiling=null;
 
-},{}],85:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -39048,7 +39141,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler.development.js":83,"./cjs/scheduler.production.min.js":84,"_process":40}],86:[function(require,module,exports){
+},{"./cjs/scheduler.development.js":84,"./cjs/scheduler.production.min.js":85,"_process":41}],87:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -39059,7 +39152,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler-tracing.development.js":81,"./cjs/scheduler-tracing.production.min.js":82,"_process":40}],87:[function(require,module,exports){
+},{"./cjs/scheduler-tracing.development.js":82,"./cjs/scheduler-tracing.production.min.js":83,"_process":41}],88:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -39091,7 +39184,7 @@ if (typeof self !== 'undefined') {
 var result = (0, _ponyfill2['default'])(root);
 exports['default'] = result;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./ponyfill.js":88}],88:[function(require,module,exports){
+},{"./ponyfill.js":89}],89:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -39115,4 +39208,4 @@ function symbolObservablePonyfill(root) {
 
 	return result;
 };
-},{}]},{},[25]);
+},{}]},{},[26]);
