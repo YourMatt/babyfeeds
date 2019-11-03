@@ -403,14 +403,12 @@ function (_Component) {
       var _this2 = this;
 
       (0, _Load["default"])(function (data) {
-        _StateManager["default"].UpdateValue("UI.IsLoading", false); //StateManager.UpdateValue("Babies.Baby" + data.babyId + ".Weights");
-        //StateManager.UpdateValue("Babies.Baby0.Weights", data.weights);
-
-
         _StateManager["default"].Store.dispatch({
           type: "RESET_SERVER_DATA",
           payload: data
         });
+
+        _StateManager["default"].UpdateValue("UI.IsLoading", false);
 
         _this2.setState({
           caloriesFeedMax: data.caloriesFeedMax,
@@ -873,19 +871,13 @@ function (_Component) {
     _this.previousState = {}; // intialize the application state
 
     _this.state = {
-      isSaving: false,
-      // true during a save operation
-      selectedVolume: 0,
-      // the displayed feed volume in the selected unit
       selectedCalories: 0,
       // the current calorie content of the selected volume - could be refactored out to be derived only when needed
       selectedRecipeId: 0,
       // the selected recipe ID
       selectedRecipeName: "",
       // the selected recipe name
-      selectedRecipeCaloriesPerOunce: 0,
-      // the selected recipe calorie density
-      units: "mls" // can be: cals, mls, ozs
+      selectedRecipeCaloriesPerOunce: 0 // the selected recipe calorie density
 
     }; // reload the data after regaining focus
 
@@ -933,9 +925,10 @@ function (_Component) {
 
       if (!this.state.selectedCalories && this.props.caloriesLastFeed) {
         this.setState({
-          selectedCalories: this.props.caloriesLastFeed,
-          selectedVolume: (0, _Converters.ConvertCaloriesToVolume)(this.props.caloriesLastFeed, this.state.units, this.props.recipeCaloriesPerOunce)
+          selectedCalories: this.props.caloriesLastFeed
         });
+
+        _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedVolume", (0, _Converters.ConvertCaloriesToVolume)(this.props.caloriesLastFeed, _StateManager["default"].State().UI.FeedRecorder.SelectedVolumeUnit, this.props.recipeCaloriesPerOunce));
       }
     } // Renders the feed recorder.
 
@@ -956,8 +949,8 @@ function (_Component) {
       var caloriesMax = this.props.caloriesFeedMax + 20; // TODO: Change to vary by percentage, ending in even numbers - maybe set a minimum based upon the baby's weight for new signups
       // convert volume to the current unit
 
-      var remainingVolumeData = (0, _FormatFeedVolume["default"])(this.state.units, totalCalories < this.props.caloriesGoal ? this.props.caloriesGoal - totalCalories : 0, 0, this.state.selectedRecipeCaloriesPerOunce);
-      var sliderVolumeData = (0, _FormatFeedVolume["default"])(this.state.units, this.state.selectedCalories, this.props.caloriesFeedMax, this.state.selectedRecipeCaloriesPerOunce); // return jsx
+      var remainingVolumeData = (0, _FormatFeedVolume["default"])(_StateManager["default"].State().UI.FeedRecorder.SelectedVolumeUnit, totalCalories < this.props.caloriesGoal ? this.props.caloriesGoal - totalCalories : 0, 0, this.state.selectedRecipeCaloriesPerOunce);
+      var sliderVolumeData = (0, _FormatFeedVolume["default"])(_StateManager["default"].State().UI.FeedRecorder.SelectedVolumeUnit, this.state.selectedCalories, this.props.caloriesFeedMax, this.state.selectedRecipeCaloriesPerOunce); // return jsx
 
       return _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("feed-recorder")
@@ -1032,20 +1025,20 @@ function (_Component) {
         className: (0, _FormatCssClass["default"])("volume-control")
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("volume")
-      }, this.state.selectedVolume, _react["default"].createElement("small", null, sliderVolumeData.unitLabel)), _react["default"].createElement("div", {
+      }, _StateManager["default"].State().UI.FeedRecorder.SelectedVolume, _react["default"].createElement("small", null, sliderVolumeData.unitLabel)), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("slider")
       }, _react["default"].createElement("input", {
         type: "range",
         min: sliderVolumeData.sliderMin,
         max: sliderVolumeData.sliderMax,
-        value: this.state.selectedVolume,
+        value: _StateManager["default"].State().UI.FeedRecorder.SelectedVolume,
         step: sliderVolumeData.sliderIncrement,
         onChange: this.updateVolume
       }))), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("button")
       }, _react["default"].createElement("button", {
         type: "submit",
-        disabled: this.state.isSaving
+        disabled: _StateManager["default"].State().UI.IsSaving
       }, "Save")))));
     } // Creates the SVG blocks that represent each feed for the date.
 
@@ -1201,12 +1194,11 @@ function (_Component) {
       e.preventDefault();
       var units = ["mls", "ozs"]; // can use "cals", but leaving out because less practical
 
-      var newUnit = units[(units.indexOf(this.state.units) + 1) % units.length]; // find the next unit in the list, or the first if already using the final element
+      var newUnit = units[(units.indexOf(this.state.units) + 1) % units.length];
 
-      this.setState({
-        units: newUnit,
-        selectedVolume: (0, _Converters.ConvertCaloriesToVolume)(this.state.selectedCalories, newUnit, this.props.recipeCaloriesPerOunce)
-      });
+      _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedVolumeUnit", newUnit);
+
+      _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedVolume", (0, _Converters.ConvertCaloriesToVolume)(this.state.selectedCalories, newUnit, this.props.recipeCaloriesPerOunce));
     } // Updates the recipe to the selection.
 
   }, {
@@ -1226,9 +1218,11 @@ function (_Component) {
     key: "updateVolume",
     value: function updateVolume(e) {
       this.setState({
-        selectedVolume: e.target.value,
-        selectedCalories: (0, _Converters.ConvertVolumeToCalories)(e.target.value, this.state.units, this.state.selectedRecipeCaloriesPerOunce)
+        //selectedVolume: e.target.value,
+        selectedCalories: (0, _Converters.ConvertVolumeToCalories)(e.target.value, _StateManager["default"].State().UI.FeedRecorder.SelectedVolumeUnit, this.state.selectedRecipeCaloriesPerOunce)
       });
+
+      _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedVolume", e.target.value);
     } // Saves the current selections.
 
   }, {
@@ -1237,12 +1231,11 @@ function (_Component) {
       e.preventDefault(); // validate provided data
       // TODO: Validate time and show feedback if error
 
-      if (!this.state.selectedCalories) return; // set state to saving to disable the form
+      if (!this.state.selectedCalories) return;
 
-      this.setState({
-        isSaving: true
-      }); // find the date - if the time if more than 2 hours into the future, use yesterday, allowing for up to 22
+      _StateManager["default"].UpdateValue("UI.IsSaving", true); // find the date - if the time if more than 2 hours into the future, use yesterday, allowing for up to 22
       // hours to enter a past feed
+
 
       var date = moment().format("YYYY-MM-DD");
       if (_StateManager["default"].GetFeedRecorderData().SelectedHour - 2 > moment().hours()) date = moment().subtract(1, "days").format("YYYY-MM-DD"); // add the hours to the date
@@ -1264,9 +1257,7 @@ function (_Component) {
 
           _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedAmPm", moment().format("a"));
 
-          self.setState({
-            isSaving: false
-          });
+          _StateManager["default"].UpdateValue("UI.IsSaving", false);
         });
       });
     }
@@ -3080,12 +3071,14 @@ var storeModel = {
     IsMenuEditFormOpen: false,
     SelectedMenuEditFormData: {},
     ResultsCondensed: true,
-    //IsModalOpen: false,
-    //SelectedModal: "",
     FeedRecorder: {
       SelectedHour: 0,
       SelectedMinute: 0,
-      SelectedAmPm: "am"
+      SelectedAmPm: "am",
+      // can be: am, pm
+      SelectedVolume: 0,
+      SelectedVolumeUnit: "mls" // can be: cals, mls, ozs
+
     },
     SelectedModalData: {
       AllowDismiss: false,

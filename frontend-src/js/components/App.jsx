@@ -99,13 +99,11 @@ export default class App extends Component {
 
         ApiLoad(data => {
 
-            StateManager.UpdateValue("UI.IsLoading", false);
-            //StateManager.UpdateValue("Babies.Baby" + data.babyId + ".Weights");
-            //StateManager.UpdateValue("Babies.Baby0.Weights", data.weights);
             StateManager.Store.dispatch({
                 type: "RESET_SERVER_DATA",
                 payload: data
             });
+            StateManager.UpdateValue("UI.IsLoading", false);
 
             this.setState({
                 caloriesFeedMax: data.caloriesFeedMax,

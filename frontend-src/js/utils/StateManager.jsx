@@ -72,12 +72,12 @@ const storeModel = {
         IsMenuEditFormOpen: false,
         SelectedMenuEditFormData: {},
         ResultsCondensed: true,
-        //IsModalOpen: false,
-        //SelectedModal: "",
         FeedRecorder: {
             SelectedHour: 0,
             SelectedMinute: 0,
-            SelectedAmPm: "am",
+            SelectedAmPm: "am", // can be: am, pm
+            SelectedVolume: 0,
+            SelectedVolumeUnit: "mls" // can be: cals, mls, ozs
         },
         SelectedModalData: {
             AllowDismiss: false,
