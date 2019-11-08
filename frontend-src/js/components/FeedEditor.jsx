@@ -115,7 +115,7 @@ export default class FeedEditor extends Component {
             calories: feed.Calories,
             recipeId: feed.RecipeId
         }, success => {
-            console.log("saved!");
+            // TODO: Set saving to false and return to feed list
         });
 
     }

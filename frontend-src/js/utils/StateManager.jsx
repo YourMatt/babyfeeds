@@ -20,10 +20,12 @@ const storeModel = {
             DisplayWeightAsMetric: false
         },
         Recipes: [{ // placeholder to be replaced after loading
-            Id: 0,
+            RecipeId: 0,
             Name: "",
             Notes: "",
-            CaloriesPerOunce: 0
+            CaloriesPerOunce: 0,
+            LastUsed: "",
+            Selectable: false
         }]
     },
     Babies: {
@@ -69,8 +71,23 @@ const storeModel = {
         IsSaving: false,
         IsMenuOpen: false,
         SelectedMenuPanel: "",
+
+        // TODO: Delete this block
         IsMenuEditFormOpen: false,
-        SelectedMenuEditFormData: {},
+        SelectedMenuEditFormData: {
+            IsOpen: false,
+            Data: {} //
+        },
+
+        EditingRecipe: {
+            RecipeId: 0, // set to -1 for NEW
+            Name: "",
+            Notes: "",
+            CaloriesPerOunce: 0,
+            LastUsed: "",
+            Selectable: false
+        },
+
         ResultsCondensed: true,
         FeedRecorder: {
             SelectedHour: 0,
@@ -100,6 +117,7 @@ const reducer = (state, action) => {
         case "RESET_SERVER_DATA":
             newState.DateToday = action.payload.dateToday;
             newState.SelectedBaby = action.payload.babyId;
+            newState.Account.Recipes = action.payload.recipes;
             newState.Babies["Baby" + newState.SelectedBaby] = JSON.parse(JSON.stringify(newState.Babies.Baby0));
             newState.Babies["Baby" + newState.SelectedBaby].BabyId = action.payload.babyId;
             // newState.Babies["Baby" + newState.SelectedBaby].Name = action.payload.babyName; // TODO: Return from API
@@ -146,6 +164,20 @@ class StateManager {
                 value: newValue
             }
         });
+    }
+
+    ResetEditingRecipe() {
+        this.UpdateValue(
+            "UI.EditingRecipe",
+            {
+                RecipeId: 0, // set to -1 for NEW
+                Name: "",
+                Notes: "",
+                CaloriesPerOunce: 0,
+                LastUsed: "",
+                Selectable: false
+            }
+        )
     }
 
     ValueChanged(oldState, path) {

@@ -25,7 +25,7 @@ function ApiLoad(callback) {
 }
 
 
-},{"react":80}],2:[function(require,module,exports){
+},{"react":82}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -50,7 +50,7 @@ function ApiLoadFeeds(callback) {
 }
 
 
-},{"react":80}],3:[function(require,module,exports){
+},{"react":82}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -75,7 +75,7 @@ function ApiLoadRecipes(callback) {
 }
 
 
-},{"react":80}],4:[function(require,module,exports){
+},{"react":82}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -100,7 +100,7 @@ function ApiLoadWeights(callback) {
 }
 
 
-},{"react":80}],5:[function(require,module,exports){
+},{"react":82}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -137,7 +137,45 @@ function ApiSaveFeed(saveData, callback) {
 }
 
 
-},{"react":80}],6:[function(require,module,exports){
+},{"react":82}],6:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = ApiSaveRecipe;
+
+var _react = _interopRequireDefault(require("react"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+/*
+    ApiSaveRecipe
+ */
+// Saves a new or existing recipe against the API.
+function ApiSaveRecipe(saveData, callback) {
+  fetch("/api/saverecipe", {
+    method: "POST",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      recipeId: saveData.recipeId > 0 ? saveData.recipeId : 0,
+      name: saveData.name,
+      notes: saveData.notes,
+      caloriesPerOunce: saveData.caloriesPerOunce,
+      selectable: saveData.selectable ? 1 : 0
+    })
+  }).then(function (results) {
+    return results.json();
+  }).then(function (data) {
+    callback(true);
+  });
+}
+
+
+},{"react":82}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -171,7 +209,7 @@ function ApiSaveWeight(saveData, callback) {
 }
 
 
-},{"react":80}],7:[function(require,module,exports){
+},{"react":82}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -274,7 +312,7 @@ function (_Component) {
 exports["default"] = Age;
 
 
-},{"../utils/FormatAge.jsx":29,"../utils/FormatCssClass.jsx":30,"../utils/StateManager.jsx":33,"react":80}],8:[function(require,module,exports){
+},{"../utils/FormatAge.jsx":31,"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"react":82}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -350,7 +388,7 @@ function (_Component) {
       caloriesFeedMax: 0,
       caloriesLastFeed: 0,
       caloriesGoal: 0,
-      dateToday: "",
+      //dateToday: "",
       dateBirth: "",
       dateExpected: "",
       feedsForToday: [],
@@ -414,7 +452,7 @@ function (_Component) {
           caloriesFeedMax: data.caloriesFeedMax,
           caloriesLastFeed: data.caloriesLastFeed,
           caloriesGoal: data.caloriesGoal,
-          dateToday: data.dateToday,
+          //dateToday: data.dateToday,
           dateBirth: data.dateBirth,
           dateExpected: data.dateExpected,
           feedsForToday: data.feedsForToday,
@@ -437,7 +475,7 @@ function (_Component) {
 exports["default"] = App;
 
 
-},{"../api/Load.jsx":1,"../utils/FormatCssClass.jsx":30,"../utils/StateManager.jsx":33,"./Age.jsx":7,"./FeedRecorder.jsx":12,"./History.jsx":13,"./LastFeedTime.jsx":14,"./Loading.jsx":15,"./Menu.jsx":16,"./Modal.jsx":23,"./SiteTitle.jsx":24,"./Weight.jsx":25,"react":80}],9:[function(require,module,exports){
+},{"../api/Load.jsx":1,"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"./Age.jsx":8,"./FeedRecorder.jsx":13,"./History.jsx":14,"./LastFeedTime.jsx":15,"./Loading.jsx":16,"./Menu.jsx":17,"./Modal.jsx":24,"./SiteTitle.jsx":26,"./Weight.jsx":27,"react":82}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -529,7 +567,7 @@ function (_Component) {
 exports["default"] = CalendarDay;
 
 
-},{"../utils/FormatCssClass.jsx":30,"react":80}],10:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":32,"react":82}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -640,7 +678,7 @@ function (_Component) {
 exports["default"] = CalendarMonth;
 
 
-},{"../utils/FormatCssClass.jsx":30,"./CalendarDay.jsx":9,"react":80}],11:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":32,"./CalendarDay.jsx":10,"react":82}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -798,8 +836,7 @@ function (_Component) {
         dateTime: feed.Date + " " + feed.Time,
         calories: feed.Calories,
         recipeId: feed.RecipeId
-      }, function (success) {
-        console.log("saved!");
+      }, function (success) {// TODO: Set saving to false and return to feed list
       });
     }
   }]);
@@ -810,7 +847,7 @@ function (_Component) {
 exports["default"] = FeedEditor;
 
 
-},{"../api/SaveFeed.jsx":5,"../utils/Converters.jsx":28,"../utils/FormatCssClass.jsx":30,"react":80}],12:[function(require,module,exports){
+},{"../api/SaveFeed.jsx":5,"../utils/Converters.jsx":30,"../utils/FormatCssClass.jsx":32,"react":82}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -904,6 +941,7 @@ function (_Component) {
     _this.changeAmPmSelection = _this.changeAmPmSelection.bind(_assertThisInitialized(_this));
     _this.changeUnitSelection = _this.changeUnitSelection.bind(_assertThisInitialized(_this));
     _this.changeRecipeSelection = _this.changeRecipeSelection.bind(_assertThisInitialized(_this));
+    _this.addRecipe = _this.addRecipe.bind(_assertThisInitialized(_this));
     _this.submitFeed = _this.submitFeed.bind(_assertThisInitialized(_this));
     return _this;
   } // TODO: REMOVE THIS METHOD
@@ -1129,23 +1167,31 @@ function (_Component) {
       (0, _LoadRecipes["default"])(function (recipes) {
         var options = [];
         recipes.forEach(function (recipe) {
+          if (!recipe.Selectable) return; // skip any inactive recipes
+
           var lastUsedDate = "Never Used";
 
-          if (recipe.lastUsed) {
-            lastUsedDate = "Last Used " + moment(recipe.lastUsed).format("MMM Do, YYYY");
+          if (recipe.LastUsed) {
+            lastUsedDate = "Last Used " + moment(recipe.LastUsed).format("MMM Do, YYYY");
           }
 
           var className = "";
-          if (recipe.recipeId === _this2.state.selectedRecipeId) className = "selected";
+          if (recipe.RecipeId === _this2.state.selectedRecipeId) className = "selected";
           options.push(_react["default"].createElement("button", {
-            key: "recipe-" + recipe.recipeId,
+            key: "recipe-" + recipe.RecipeId,
             className: (0, _FormatCssClass["default"])(className),
-            "data-recipe-id": recipe.recipeId,
-            "data-recipe-name": recipe.name,
-            "data-recipe-calories-per-ounce": recipe.caloriesPerOunce,
+            "data-recipe-id": recipe.RecipeId,
+            "data-recipe-name": recipe.Name,
+            "data-recipe-calories-per-ounce": recipe.CaloriesPerOunce,
             onClick: _this2.changeRecipeSelection
-          }, recipe.name, _react["default"].createElement("small", null, lastUsedDate)));
+          }, recipe.Name, _react["default"].createElement("small", null, lastUsedDate)));
         });
+        options.push(_react["default"].createElement("div", {
+          className: (0, _FormatCssClass["default"])("recipe-add-area"),
+          key: "recipe-add"
+        }, _react["default"].createElement("button", {
+          onClick: _this2.addRecipe
+        }, "Add New Recipe")));
 
         var modalContent = _react["default"].createElement("div", {
           className: (0, _FormatCssClass["default"])("options-recipe")
@@ -1212,6 +1258,18 @@ function (_Component) {
         selectedRecipeName: buttonData.recipeName,
         selectedRecipeCaloriesPerOunce: buttonData.recipeCaloriesPerOunce
       });
+    } // opens menu to add a new recipe
+
+  }, {
+    key: "addRecipe",
+    value: function addRecipe(e) {
+      e.preventDefault();
+
+      _StateManager["default"].UpdateValue("UI.EditingRecipe.RecipeId", -1);
+
+      _StateManager["default"].UpdateValue("UI.SelectedMenuPanel", "recipes");
+
+      _StateManager["default"].UpdateValue("UI.IsMenuOpen", true);
     } // Change the current selection of the feed volume.
 
   }, {
@@ -1269,7 +1327,7 @@ function (_Component) {
 exports["default"] = FeedRecorder;
 
 
-},{"../api/LoadRecipes.jsx":3,"../api/SaveFeed.jsx":5,"../utils/Converters.jsx":28,"../utils/FormatCssClass.jsx":30,"../utils/FormatFeedVolume.jsx":31,"../utils/StateManager.jsx":33,"react":80}],13:[function(require,module,exports){
+},{"../api/LoadRecipes.jsx":3,"../api/SaveFeed.jsx":5,"../utils/Converters.jsx":30,"../utils/FormatCssClass.jsx":32,"../utils/FormatFeedVolume.jsx":33,"../utils/StateManager.jsx":35,"react":82}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1389,7 +1447,7 @@ function (_Component) {
 exports["default"] = History;
 
 
-},{"../utils/FormatCssClass.jsx":30,"../utils/StateManager.jsx":33,"./CalendarMonth.jsx":10,"react":80}],14:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"./CalendarMonth.jsx":11,"react":82}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1464,7 +1522,7 @@ function (_Component) {
 exports["default"] = LastFeedTime;
 
 
-},{"../utils/FormatCssClass.jsx":30,"../utils/StateManager.jsx":33,"react":80}],15:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"react":82}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1547,7 +1605,7 @@ function (_Component) {
 exports["default"] = Loading;
 
 
-},{"../utils/FormatCssClass.jsx":30,"../utils/StateManager.jsx":33,"react":80}],16:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"react":82}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1570,6 +1628,8 @@ var _MenuAccount = _interopRequireDefault(require("./MenuAccount.jsx"));
 var _MenuAbout = _interopRequireDefault(require("./MenuAbout.jsx"));
 
 var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
+
+var _StateManager = _interopRequireDefault(require("../utils/StateManager.jsx"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -1607,13 +1667,13 @@ function (_Component) {
 
     _classCallCheck(this, Menu);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Menu).call(this, props, context)); // intialize the state
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Menu).call(this, props, context));
+    _this.previousState = {};
 
-    _this.state = {
-      menuClosed: true,
-      displayedPanel: "" // the name of the panel to display, if any
+    _StateManager["default"].Store.subscribe(function () {
+      if (_StateManager["default"].ValueChanged(_this.previousState, ["UI.IsMenuOpen", "UI.IsSubMenuOpen"])) _this.forceUpdate();
+    }); // bind event handlers
 
-    }; // bind event handlers
 
     _this.changeOpenCloseStatus = _this.changeOpenCloseStatus.bind(_assertThisInitialized(_this));
     _this.openPanel = _this.openPanel.bind(_assertThisInitialized(_this));
@@ -1627,7 +1687,7 @@ function (_Component) {
       // load the menu selection
       var displayPanelContents = "";
 
-      switch (this.state.displayedPanel) {
+      switch (_StateManager["default"].State().UI.SelectedMenuPanel) {
         case "babies":
           displayPanelContents = _react["default"].createElement(_MenuBabies["default"], null);
           break;
@@ -1651,15 +1711,20 @@ function (_Component) {
         case "about":
           displayPanelContents = _react["default"].createElement(_MenuAbout["default"], null);
           break;
-      } // return jsx
+      } // set the hamburger close style
 
+
+      var hamburgerCloseStyle = "hamburger--squeeze"; // standard close X for top-level menu
+
+      if (_StateManager["default"].State().UI.SelectedMenuPanel) hamburgerCloseStyle = "hamburger--arrow"; // return with arrow for sub-menus
+      // return jsx
 
       return _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("menu-area")
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("menu-open-close")
       }, _react["default"].createElement("button", {
-        className: (0, _FormatCssClass["default"])(["hamburger", "hamburger--squeeze", this.state.menuClosed ? "" : "is-active"]),
+        className: (0, _FormatCssClass["default"])(["hamburger", hamburgerCloseStyle, _StateManager["default"].State().UI.IsMenuOpen ? "is-active" : ""]),
         type: "button",
         onClick: this.changeOpenCloseStatus
       }, _react["default"].createElement("span", {
@@ -1667,7 +1732,7 @@ function (_Component) {
       }, _react["default"].createElement("span", {
         className: (0, _FormatCssClass["default"])("hamburger-inner")
       })))), _react["default"].createElement("div", {
-        className: (0, _FormatCssClass["default"])(["menu", this.state.menuClosed ? "" : "open"])
+        className: (0, _FormatCssClass["default"])(["menu", _StateManager["default"].State().UI.IsMenuOpen ? "open" : ""])
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("menu-panel-main")
       }, _react["default"].createElement("h1", null, "Menu"), _react["default"].createElement("ul", null, _react["default"].createElement("li", null, _react["default"].createElement("button", {
@@ -1700,20 +1765,30 @@ function (_Component) {
   }, {
     key: "changeOpenCloseStatus",
     value: function changeOpenCloseStatus(e) {
-      var newClosedStatus = !this.state.menuClosed;
-      this.setState({
-        menuClosed: newClosedStatus,
-        displayedPanel: newClosedStatus ? "" : this.state.displayedPanel // hide sub-panels if changing to closed
+      // open the menu if not already open
+      if (!_StateManager["default"].State().UI.IsMenuOpen) {
+        return _StateManager["default"].UpdateValue("UI.IsMenuOpen", true);
+      } // go back if a menu panel is selected
 
-      });
+
+      if (_StateManager["default"].State().UI.SelectedMenuPanel) {
+        // return to recipes if on the recipe add/edit screen
+        if (_StateManager["default"].State().UI.EditingRecipe.RecipeId !== 0) {
+          return _StateManager["default"].UpdateValue("UI.EditingRecipe.RecipeId", 0);
+        } // return to the base menu if not on any add/edit screens
+        else {
+            return _StateManager["default"].UpdateValue("UI.SelectedMenuPanel", "");
+          }
+      } // close the menu if on the base options panels
+      else {
+          _StateManager["default"].UpdateValue("UI.IsMenuOpen", false);
+        }
     } // Handles panel selection.
 
   }, {
     key: "openPanel",
     value: function openPanel(e) {
-      this.setState({
-        displayedPanel: e.target.dataset.panel
-      });
+      _StateManager["default"].UpdateValue("UI.SelectedMenuPanel", e.target.dataset.panel);
     }
   }]);
 
@@ -1723,7 +1798,7 @@ function (_Component) {
 exports["default"] = Menu;
 
 
-},{"../utils/FormatCssClass.jsx":30,"./MenuAbout.jsx":17,"./MenuAccount.jsx":18,"./MenuBabies.jsx":19,"./MenuFeeds.jsx":20,"./MenuRecipes.jsx":21,"./MenuWeights.jsx":22,"react":80}],17:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"./MenuAbout.jsx":18,"./MenuAccount.jsx":19,"./MenuBabies.jsx":20,"./MenuFeeds.jsx":21,"./MenuRecipes.jsx":22,"./MenuWeights.jsx":23,"react":82}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1793,7 +1868,7 @@ function (_Component) {
 exports["default"] = MenuAbout;
 
 
-},{"../utils/FormatCssClass.jsx":30,"react":80}],18:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":32,"react":82}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1863,7 +1938,7 @@ function (_Component) {
 exports["default"] = MenuAccount;
 
 
-},{"../utils/FormatCssClass.jsx":30,"react":80}],19:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":32,"react":82}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1933,7 +2008,7 @@ function (_Component) {
 exports["default"] = MenuBabies;
 
 
-},{"../utils/FormatCssClass.jsx":30,"react":80}],20:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":32,"react":82}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2167,7 +2242,7 @@ function (_Component) {
 exports["default"] = MenuFeeds;
 
 
-},{"../api/LoadFeeds.jsx":2,"../api/LoadRecipes.jsx":3,"../utils/Constants.jsx":27,"../utils/Converters.jsx":28,"../utils/FormatCssClass.jsx":30,"./FeedEditor.jsx":11,"react":80}],21:[function(require,module,exports){
+},{"../api/LoadFeeds.jsx":2,"../api/LoadRecipes.jsx":3,"../utils/Constants.jsx":29,"../utils/Converters.jsx":30,"../utils/FormatCssClass.jsx":32,"./FeedEditor.jsx":12,"react":82}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2179,6 +2254,10 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
 
+var _StateManager = _interopRequireDefault(require("../utils/StateManager.jsx"));
+
+var _RecipeEditor = _interopRequireDefault(require("./RecipeEditor.jsx"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
@@ -2186,6 +2265,12 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; if (obj != null) { var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -2195,9 +2280,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -2215,9 +2300,15 @@ function (_Component) {
 
     _classCallCheck(this, MenuRecipes);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuRecipes).call(this, props, context)); // intialize the state
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuRecipes).call(this, props, context));
+    _this.previousState = {};
 
-    _this.state = {};
+    _StateManager["default"].Store.subscribe(function () {
+      if (_StateManager["default"].ValueChanged(_this.previousState, ["Account.Recipes", "UI.EditingRecipe"])) _this.forceUpdate();
+    });
+
+    _this.addRecipe = _this.addRecipe.bind(_assertThisInitialized(_this));
+    _this.editRecipe = _this.editRecipe.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -2225,9 +2316,118 @@ function (_Component) {
     key: "render",
     // Renders the menu panel.
     value: function render() {
+      var content = "";
+
+      if (_StateManager["default"].State().Account.Recipes.length) {
+        var blocks = [];
+        var activeRecipes = [];
+        var inactiveRecipes = [];
+
+        _StateManager["default"].State().Account.Recipes.forEach(function (recipe) {
+          if (recipe.Selectable) {
+            activeRecipes.push(recipe);
+          } else {
+            inactiveRecipes.push(recipe);
+          }
+        });
+
+        if (activeRecipes) {
+          blocks.push(_react["default"].createElement("div", {
+            className: (0, _FormatCssClass["default"])("recipes-block"),
+            key: "recipes-active"
+          }, _react["default"].createElement("div", {
+            className: (0, _FormatCssClass["default"])("recipes-block-contents")
+          }, _react["default"].createElement("h2", null, "Active Recipes"), this.renderRecipeBlocks(activeRecipes))));
+        }
+
+        if (inactiveRecipes) {
+          blocks.push(_react["default"].createElement("div", {
+            className: (0, _FormatCssClass["default"])("recipes-block"),
+            key: "recipes-inactive"
+          }, _react["default"].createElement("div", {
+            className: (0, _FormatCssClass["default"])("recipes-block-contents")
+          }, _react["default"].createElement("h2", null, "Inactive Recipes"), this.renderRecipeBlocks(inactiveRecipes))));
+        }
+
+        content = blocks;
+      } else content = _react["default"].createElement("p", null, "No Recipes Defined");
+
       return _react["default"].createElement("div", {
-        className: (0, _FormatCssClass["default"])("menu-panel-sub open")
-      }, _react["default"].createElement("h1", null, "Recipes"), _react["default"].createElement("p", null, "Recipes panel."));
+        className: (0, _FormatCssClass["default"])(["menu-panel-sub", "menu-recipes"])
+      }, _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])(["menu-panel-edit-form", _StateManager["default"].State().UI.EditingRecipe.RecipeId !== 0 ? "open" : "closed"])
+      }, _react["default"].createElement(_RecipeEditor["default"], null)), _react["default"].createElement("h1", null, "Recipes"), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("content")
+      }, _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("data")
+      }, _react["default"].createElement("button", {
+        key: "button-recipe-add",
+        onClick: this.addRecipe
+      }, "Add New Recipe"), content), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("graph")
+      }, "[GRAPH]")));
+    }
+  }, {
+    key: "renderRecipeBlocks",
+    value: function renderRecipeBlocks(recipes) {
+      var _this2 = this;
+
+      var recipeBlocks = [];
+      recipes.forEach(function (recipe) {
+        var lastUsedCell = null;
+
+        if (recipe.LastUsed) {
+          lastUsedCell = _react["default"].createElement("span", {
+            className: (0, _FormatCssClass["default"])("cell-last-used")
+          }, _react["default"].createElement("h6", null, "Last Used"), _react["default"].createElement("strong", null, moment(recipe.LastUsed).format("MMM Do")));
+        } else {
+          lastUsedCell = _react["default"].createElement("span", {
+            className: (0, _FormatCssClass["default"])("cell-last-used")
+          }, _react["default"].createElement("h6", null, "Never Used"));
+        }
+
+        recipeBlocks.push(_react["default"].createElement("div", {
+          className: (0, _FormatCssClass["default"])(["row", recipeBlocks.length % 2 ? "even" : "odd"]),
+          onClick: _this2.editRecipe,
+          "data-recipe-id": recipe.RecipeId,
+          key: "recipe-" + recipe.RecipeId
+        }, _react["default"].createElement("span", {
+          className: (0, _FormatCssClass["default"])("cell-name")
+        }, _react["default"].createElement("strong", null, recipe.Name)), lastUsedCell, _react["default"].createElement("button", {
+          className: (0, _FormatCssClass["default"])("btn-edit")
+        }, "^")));
+      });
+      return recipeBlocks;
+    }
+  }, {
+    key: "addRecipe",
+    value: function addRecipe(e) {
+      e.preventDefault();
+
+      _StateManager["default"].UpdateValue("UI.EditingRecipe", {
+        RecipeId: -1,
+        Name: "",
+        Notes: "",
+        CaloriesPerOunce: 0,
+        LastUsed: "",
+        Selectable: true
+      });
+    }
+  }, {
+    key: "editRecipe",
+    value: function editRecipe(e) {
+      e.preventDefault();
+      var recipeId = parseInt(e.currentTarget.dataset.recipeId);
+      var editRecipe = {};
+
+      _StateManager["default"].State().Account.Recipes.forEach(function (recipe) {
+        if (recipe.RecipeId === recipeId) {
+          editRecipe = _objectSpread({}, recipe);
+          return false;
+        }
+      });
+
+      _StateManager["default"].UpdateValue("UI.EditingRecipe", editRecipe);
     }
   }]);
 
@@ -2237,7 +2437,7 @@ function (_Component) {
 exports["default"] = MenuRecipes;
 
 
-},{"../utils/FormatCssClass.jsx":30,"react":80}],22:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"./RecipeEditor.jsx":25,"react":82}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2438,7 +2638,7 @@ function (_Component) {
 exports["default"] = MenuWeights;
 
 
-},{"../api/LoadWeights.jsx":4,"../api/SaveWeight.jsx":6,"../utils/Converters.jsx":28,"../utils/FormatCssClass.jsx":30,"../utils/StateManager.jsx":33,"react":80}],23:[function(require,module,exports){
+},{"../api/LoadWeights.jsx":4,"../api/SaveWeight.jsx":7,"../utils/Converters.jsx":30,"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"react":82}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2529,7 +2729,213 @@ function (_Component) {
 exports["default"] = Modal;
 
 
-},{"../utils/FormatCssClass.jsx":30,"../utils/StateManager.jsx":33,"react":80}],24:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"react":82}],25:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
+
+var _StateManager = _interopRequireDefault(require("../utils/StateManager.jsx"));
+
+var _Constants = require("../utils/Constants.jsx");
+
+var _LoadRecipes = _interopRequireDefault(require("../api/LoadRecipes.jsx"));
+
+var _SaveRecipe = _interopRequireDefault(require("../api/SaveRecipe.jsx"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; if (obj != null) { var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+// export object
+var RecipeEditor =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(RecipeEditor, _Component);
+
+  // Constructor.
+  function RecipeEditor(props, context) {
+    var _this;
+
+    _classCallCheck(this, RecipeEditor);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(RecipeEditor).call(this, props, context));
+    _this.previousState = {};
+
+    _StateManager["default"].Store.subscribe(function () {
+      if (_StateManager["default"].ValueChanged(_this.previousState, ["UI.EditingRecipe"])) _this.forceUpdate();
+    });
+
+    _this.submitRecipe = _this.submitRecipe.bind(_assertThisInitialized(_this));
+    _this.changeActiveStatus = _this.changeActiveStatus.bind(_assertThisInitialized(_this));
+    _this.setCalorieTypeToVariable = _this.setCalorieTypeToVariable.bind(_assertThisInitialized(_this));
+    _this.setCalorieTypeToVolume = _this.setCalorieTypeToVolume.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(RecipeEditor, [{
+    key: "render",
+    // Renders the menu panel.
+    value: function render() {
+      var recipe = _StateManager["default"].State().UI.EditingRecipe;
+
+      if (recipe.RecipeId === 0) return null;
+      var title = recipe.RecipeId !== -1 ? "Edit Recipe" : "Add Recipe"; // set content for the control to toggle active status if editing
+
+      var activationControl = null;
+
+      if (recipe.RecipeId > 0) {
+        if (_StateManager["default"].State().UI.EditingRecipe.Selectable) {
+          activationControl = _react["default"].createElement("div", {
+            className: (0, _FormatCssClass["default"])("activation-control")
+          }, _react["default"].createElement("hr", null), _react["default"].createElement("p", null, "Deactivating a recipe will make it no longer selectable when adding recipes, but all historical data will be retained. You can reactivate a recipe at any time."), _react["default"].createElement("button", {
+            type: "button",
+            className: (0, _FormatCssClass["default"])("deactivate"),
+            disabled: _StateManager["default"].State().UI.IsSaving,
+            onClick: this.changeActiveStatus
+          }, "Deactivate"));
+        } else {
+          activationControl = _react["default"].createElement("div", {
+            className: (0, _FormatCssClass["default"])("activation-control")
+          }, _react["default"].createElement("hr", null), _react["default"].createElement("p", null, "Activating a recipe will make it selectable when adding recipes. You can deactivate the recipe again at any time."), _react["default"].createElement("button", {
+            type: "button",
+            className: (0, _FormatCssClass["default"])("activate"),
+            disabled: _StateManager["default"].State().UI.IsSaving,
+            onClick: this.changeActiveStatus
+          }, "Activate"));
+        }
+      }
+
+      return _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("panel-form")
+      }, _react["default"].createElement("h1", null, title), _react["default"].createElement("form", {
+        className: (0, _FormatCssClass["default"])("content"),
+        onSubmit: this.submitRecipe
+      }, _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("form-fields")
+      }, _react["default"].createElement("h2", null, "Name"), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("fields")
+      }, _react["default"].createElement("input", {
+        id: "input-recipe-name",
+        name: "inputRecipeName",
+        defaultValue: recipe.Name,
+        maxLength: "50",
+        required: true
+      })), _react["default"].createElement("h2", null, "Calories"), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])(["fields", "calorie-options"])
+      }, _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])(["calorie-option-selection", recipe.CaloriesPerOunce > 0 ? "" : "selected"]),
+        onClick: this.setCalorieTypeToVariable
+      }, _react["default"].createElement("h6", null, "Variable"), _react["default"].createElement("p", null, "When entering a new feed, you will need to enter the number of calories when this recipe is selected.")), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("calorie-option-label-or")
+      }, "or"), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])(["calorie-option-selection", recipe.CaloriesPerOunce > 0 ? "selected" : ""]),
+        onClick: this.setCalorieTypeToVolume
+      }, _react["default"].createElement("h6", null, "By Volume"), _react["default"].createElement("p", null, "Set the calorie density to select ", _StateManager["default"].State().Account.Settings.DisplayVolumeAsMetric ? "MLs" : "OZs", " when entering a new feed."), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("calorie-option-selection-fields")
+      }, _react["default"].createElement("input", {
+        id: "input-recipe-calories-per-ounce",
+        name: "inputRecipeCalories",
+        value: recipe.CaloriesPerOunce,
+        type: "number",
+        min: recipe.CaloriesPerOunce > 0 ? "1" : "0",
+        max: recipe.CaloriesPerOunce > 0 ? "99" : "0",
+        onChange: function onChange(e) {
+          _StateManager["default"].UpdateValue("UI.EditingRecipe.CaloriesPerOunce", parseInt(e.target.value));
+        }
+      }), "cal", recipe.CaloriesPerOunce === 1 ? "" : "s", "/oz"))), _react["default"].createElement("h2", null, "Notes"), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("fields")
+      }, _react["default"].createElement("textarea", {
+        id: "input-recipe-notes",
+        name: "inputRecipeNotes",
+        defaultValue: recipe.Notes,
+        maxLength: "2000"
+      }))), _react["default"].createElement("button", {
+        type: "submit",
+        className: (0, _FormatCssClass["default"])("save"),
+        disabled: _StateManager["default"].State().UI.IsSaving
+      }, "Save"), activationControl));
+    }
+  }, {
+    key: "submitRecipe",
+    value: function submitRecipe(e) {
+      e.preventDefault();
+
+      _StateManager["default"].UpdateValue("UI.IsSaving", true);
+
+      (0, _SaveRecipe["default"])({
+        recipeId: _StateManager["default"].State().UI.EditingRecipe.RecipeId,
+        name: e.target.inputRecipeName.value,
+        caloriesPerOunce: parseInt(e.target.inputRecipeCalories.value),
+        notes: e.target.inputRecipeNotes.value,
+        selectable: _StateManager["default"].State().UI.EditingRecipe.Selectable
+      }, function (success) {
+        (0, _LoadRecipes["default"])(function (recipes) {
+          _StateManager["default"].UpdateValue("Account.Recipes", recipes);
+
+          _StateManager["default"].ResetEditingRecipe();
+
+          _StateManager["default"].UpdateValue("UI.IsSaving", false);
+        });
+      });
+    }
+  }, {
+    key: "changeActiveStatus",
+    value: function changeActiveStatus(e) {
+      e.preventDefault();
+      console.log("changing active status");
+    }
+  }, {
+    key: "setCalorieTypeToVariable",
+    value: function setCalorieTypeToVariable(e) {
+      e.preventDefault();
+      if (_StateManager["default"].State().UI.EditingRecipe.CaloriesPerOunce === 0) return;
+
+      _StateManager["default"].UpdateValue("UI.EditingRecipe.CaloriesPerOunce", 0);
+    }
+  }, {
+    key: "setCalorieTypeToVolume",
+    value: function setCalorieTypeToVolume(e) {
+      e.preventDefault();
+      if (_StateManager["default"].State().UI.EditingRecipe.CaloriesPerOunce > 0) return;
+
+      _StateManager["default"].UpdateValue("UI.EditingRecipe.CaloriesPerOunce", _Constants.DefaultRecipeCaloriesPerOunce);
+    }
+  }]);
+
+  return RecipeEditor;
+}(_react.Component);
+
+exports["default"] = RecipeEditor;
+
+
+},{"../api/LoadRecipes.jsx":3,"../api/SaveRecipe.jsx":6,"../utils/Constants.jsx":29,"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"react":82}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2600,7 +3006,7 @@ function (_Component) {
 exports["default"] = SiteTitle;
 
 
-},{"react":80}],25:[function(require,module,exports){
+},{"react":82}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2690,7 +3096,7 @@ function (_Component) {
 exports["default"] = Weight;
 
 
-},{"../utils/FormatCssClass.jsx":30,"../utils/FormatWeight.jsx":32,"../utils/StateManager.jsx":33,"react":80}],26:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":32,"../utils/FormatWeight.jsx":34,"../utils/StateManager.jsx":35,"react":82}],28:[function(require,module,exports){
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -2708,13 +3114,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 _reactDom["default"].render(_react["default"].createElement(_App["default"], null), document.querySelector("#container"));
 
 
-},{"./components/App.jsx":8,"./utils/StateManager.jsx":33,"react":80,"react-dom":49,"react-redux":67}],27:[function(require,module,exports){
+},{"./components/App.jsx":9,"./utils/StateManager.jsx":35,"react":82,"react-dom":51,"react-redux":69}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.FeedHistoryDisplayDays = exports.MillilitersPerOunce = exports.KilogramsPerOunce = void 0;
+exports.DefaultRecipeCaloriesPerOunce = exports.FeedHistoryDisplayDays = exports.MillilitersPerOunce = exports.KilogramsPerOunce = void 0;
 
 /*
     Constants
@@ -2725,9 +3131,11 @@ var MillilitersPerOunce = 29.5735;
 exports.MillilitersPerOunce = MillilitersPerOunce;
 var FeedHistoryDisplayDays = 3;
 exports.FeedHistoryDisplayDays = FeedHistoryDisplayDays;
+var DefaultRecipeCaloriesPerOunce = 28;
+exports.DefaultRecipeCaloriesPerOunce = DefaultRecipeCaloriesPerOunce;
 
 
-},{}],28:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2796,7 +3204,7 @@ function ConvertKilogramsToPounds(kilograms) {
 }
 
 
-},{"./Constants.jsx":27}],29:[function(require,module,exports){
+},{"./Constants.jsx":29}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2850,7 +3258,7 @@ function FormatAge(today, ageDate) {
 }
 
 
-},{"react":80}],30:[function(require,module,exports){
+},{"react":82}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2868,7 +3276,7 @@ function FormatCssClass(classes) {
 }
 
 
-},{}],31:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2945,7 +3353,7 @@ function FormatFeedVolume(units, calories, topCaloriesForDay, recipeCaloriesPerO
 }
 
 
-},{"./Constants.jsx":27,"./Converters.jsx":28,"react":80}],32:[function(require,module,exports){
+},{"./Constants.jsx":29,"./Converters.jsx":30,"react":82}],34:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2976,7 +3384,7 @@ function FormatWeight(kilograms, returnKilograms) {
 }
 
 
-},{"react":80}],33:[function(require,module,exports){
+},{"react":82}],35:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3018,10 +3426,12 @@ var storeModel = {
     },
     Recipes: [{
       // placeholder to be replaced after loading
-      Id: 0,
+      RecipeId: 0,
       Name: "",
       Notes: "",
-      CaloriesPerOunce: 0
+      CaloriesPerOunce: 0,
+      LastUsed: "",
+      Selectable: false
     }]
   },
   Babies: {
@@ -3068,8 +3478,22 @@ var storeModel = {
     IsSaving: false,
     IsMenuOpen: false,
     SelectedMenuPanel: "",
+    // TODO: Delete this block
     IsMenuEditFormOpen: false,
-    SelectedMenuEditFormData: {},
+    SelectedMenuEditFormData: {
+      IsOpen: false,
+      Data: {} //
+
+    },
+    EditingRecipe: {
+      RecipeId: 0,
+      // set to -1 for NEW
+      Name: "",
+      Notes: "",
+      CaloriesPerOunce: 0,
+      LastUsed: "",
+      Selectable: false
+    },
     ResultsCondensed: true,
     FeedRecorder: {
       SelectedHour: 0,
@@ -3100,6 +3524,7 @@ var reducer = function reducer(state, action) {
     case "RESET_SERVER_DATA":
       newState.DateToday = action.payload.dateToday;
       newState.SelectedBaby = action.payload.babyId;
+      newState.Account.Recipes = action.payload.recipes;
       newState.Babies["Baby" + newState.SelectedBaby] = JSON.parse(JSON.stringify(newState.Babies.Baby0));
       newState.Babies["Baby" + newState.SelectedBaby].BabyId = action.payload.babyId; // newState.Babies["Baby" + newState.SelectedBaby].Name = action.payload.babyName; // TODO: Return from API
       // newState.Babies["Baby" + newState.SelectedBaby].CaloriesSliderMax = CALC; // TODO: Calculate
@@ -3151,6 +3576,19 @@ function () {
         payload: {
           value: newValue
         }
+      });
+    }
+  }, {
+    key: "ResetEditingRecipe",
+    value: function ResetEditingRecipe() {
+      this.UpdateValue("UI.EditingRecipe", {
+        RecipeId: 0,
+        // set to -1 for NEW
+        Name: "",
+        Notes: "",
+        CaloriesPerOunce: 0,
+        LastUsed: "",
+        Selectable: false
       });
     }
   }, {
@@ -3220,7 +3658,7 @@ var _default = StateManager = new StateManager();
 exports["default"] = _default;
 
 
-},{"react":80,"redux":81}],34:[function(require,module,exports){
+},{"react":82,"redux":83}],36:[function(require,module,exports){
 function _extends() {
   module.exports = _extends = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
@@ -3240,7 +3678,7 @@ function _extends() {
 }
 
 module.exports = _extends;
-},{}],35:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 function _interopRequireDefault(obj) {
   return obj && obj.__esModule ? obj : {
     "default": obj
@@ -3248,7 +3686,7 @@ function _interopRequireDefault(obj) {
 }
 
 module.exports = _interopRequireDefault;
-},{}],36:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 function _getRequireWildcardCache() {
   if (typeof WeakMap !== "function") return null;
   var cache = new WeakMap();
@@ -3299,7 +3737,7 @@ function _interopRequireWildcard(obj) {
 }
 
 module.exports = _interopRequireWildcard;
-},{}],37:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 function _objectWithoutPropertiesLoose(source, excluded) {
   if (source == null) return {};
   var target = {};
@@ -3316,7 +3754,7 @@ function _objectWithoutPropertiesLoose(source, excluded) {
 }
 
 module.exports = _objectWithoutPropertiesLoose;
-},{}],38:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 'use strict';
 
 /**
@@ -3421,7 +3859,7 @@ function hoistNonReactStatics(targetComponent, sourceComponent, blacklist) {
 
 module.exports = hoistNonReactStatics;
 
-},{"react-is":52}],39:[function(require,module,exports){
+},{"react-is":54}],41:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -3474,7 +3912,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 
 }).call(this,require('_process'))
-},{"_process":41}],40:[function(require,module,exports){
+},{"_process":43}],42:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -3566,7 +4004,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],41:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -3752,7 +4190,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],42:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -3858,7 +4296,7 @@ checkPropTypes.resetWarningCache = function() {
 module.exports = checkPropTypes;
 
 }).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":46,"_process":41}],43:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":48,"_process":43}],45:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -3924,7 +4362,7 @@ module.exports = function() {
   return ReactPropTypes;
 };
 
-},{"./lib/ReactPropTypesSecret":46}],44:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":48}],46:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -4519,7 +4957,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 };
 
 }).call(this,require('_process'))
-},{"./checkPropTypes":42,"./lib/ReactPropTypesSecret":46,"_process":41,"object-assign":40,"react-is":52}],45:[function(require,module,exports){
+},{"./checkPropTypes":44,"./lib/ReactPropTypesSecret":48,"_process":43,"object-assign":42,"react-is":54}],47:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -4542,7 +4980,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./factoryWithThrowingShims":43,"./factoryWithTypeCheckers":44,"_process":41,"react-is":52}],46:[function(require,module,exports){
+},{"./factoryWithThrowingShims":45,"./factoryWithTypeCheckers":46,"_process":43,"react-is":54}],48:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -4556,7 +4994,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],47:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 (function (process){
 /** @license React v16.11.0
  * react-dom.development.js
@@ -32287,7 +32725,7 @@ module.exports = reactDom;
 }
 
 }).call(this,require('_process'))
-},{"_process":41,"object-assign":40,"prop-types/checkPropTypes":42,"react":80,"scheduler":86,"scheduler/tracing":87}],48:[function(require,module,exports){
+},{"_process":43,"object-assign":42,"prop-types/checkPropTypes":44,"react":82,"scheduler":88,"scheduler/tracing":89}],50:[function(require,module,exports){
 /** @license React v16.11.0
  * react-dom.production.min.js
  *
@@ -32579,7 +33017,7 @@ xe,ye,Ca.injectEventPluginsByName,fa,Sc,function(a){ya(a,Rc)},cb,db,Pd,Ba,Sj,{cu
 (function(a){var b=a.findFiberByHostInstance;return ok(n({},a,{overrideHookState:null,overrideProps:null,setSuspenseHandler:null,scheduleUpdate:null,currentDispatcherRef:Ea.ReactCurrentDispatcher,findHostInstanceByFiber:function(a){a=ic(a);return null===a?null:a.stateNode},findFiberByHostInstance:function(a){return b?b(a):null},findHostInstancesForRefresh:null,scheduleRefresh:null,scheduleRoot:null,setRefreshHandler:null,getCurrentFiber:null}))})({findFiberByHostInstance:Fc,bundleType:0,version:"16.11.0",
 rendererPackageName:"react-dom"});var Dk={default:Ck},Ek=Dk&&Ck||Dk;module.exports=Ek.default||Ek;
 
-},{"object-assign":40,"react":80,"scheduler":86}],49:[function(require,module,exports){
+},{"object-assign":42,"react":82,"scheduler":88}],51:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -32621,7 +33059,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react-dom.development.js":47,"./cjs/react-dom.production.min.js":48,"_process":41}],50:[function(require,module,exports){
+},{"./cjs/react-dom.development.js":49,"./cjs/react-dom.production.min.js":50,"_process":43}],52:[function(require,module,exports){
 (function (process){
 /** @license React v16.8.6
  * react-is.development.js
@@ -32852,7 +33290,7 @@ exports.isSuspense = isSuspense;
 }
 
 }).call(this,require('_process'))
-},{"_process":41}],51:[function(require,module,exports){
+},{"_process":43}],53:[function(require,module,exports){
 /** @license React v16.8.6
  * react-is.production.min.js
  *
@@ -32869,7 +33307,7 @@ exports.Fragment=e;exports.Lazy=r;exports.Memo=q;exports.Portal=d;exports.Profil
 exports.isContextProvider=function(a){return t(a)===h};exports.isElement=function(a){return"object"===typeof a&&null!==a&&a.$$typeof===c};exports.isForwardRef=function(a){return t(a)===n};exports.isFragment=function(a){return t(a)===e};exports.isLazy=function(a){return t(a)===r};exports.isMemo=function(a){return t(a)===q};exports.isPortal=function(a){return t(a)===d};exports.isProfiler=function(a){return t(a)===g};exports.isStrictMode=function(a){return t(a)===f};
 exports.isSuspense=function(a){return t(a)===p};
 
-},{}],52:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -32880,7 +33318,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react-is.development.js":50,"./cjs/react-is.production.min.js":51,"_process":41}],53:[function(require,module,exports){
+},{"./cjs/react-is.development.js":52,"./cjs/react-is.production.min.js":53,"_process":43}],55:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -32895,7 +33333,7 @@ var ReactReduxContext = _react["default"].createContext(null);
 exports.ReactReduxContext = ReactReduxContext;
 var _default = ReactReduxContext;
 exports["default"] = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":35,"react":80}],54:[function(require,module,exports){
+},{"@babel/runtime/helpers/interopRequireDefault":37,"react":82}],56:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -32958,7 +33396,7 @@ Provider.propTypes = {
 };
 var _default = Provider;
 exports["default"] = _default;
-},{"../utils/Subscription":68,"./Context":53,"@babel/runtime/helpers/interopRequireDefault":35,"@babel/runtime/helpers/interopRequireWildcard":36,"prop-types":45,"react":80}],55:[function(require,module,exports){
+},{"../utils/Subscription":70,"./Context":55,"@babel/runtime/helpers/interopRequireDefault":37,"@babel/runtime/helpers/interopRequireWildcard":38,"prop-types":47,"react":82}],57:[function(require,module,exports){
 (function (process){
 "use strict";
 
@@ -33323,7 +33761,7 @@ _ref) {
   };
 }
 }).call(this,require('_process'))
-},{"../utils/Subscription":68,"./Context":53,"@babel/runtime/helpers/extends":34,"@babel/runtime/helpers/interopRequireDefault":35,"@babel/runtime/helpers/interopRequireWildcard":36,"@babel/runtime/helpers/objectWithoutPropertiesLoose":37,"_process":41,"hoist-non-react-statics":38,"invariant":39,"react":80,"react-is":77}],56:[function(require,module,exports){
+},{"../utils/Subscription":70,"./Context":55,"@babel/runtime/helpers/extends":36,"@babel/runtime/helpers/interopRequireDefault":37,"@babel/runtime/helpers/interopRequireWildcard":38,"@babel/runtime/helpers/objectWithoutPropertiesLoose":39,"_process":43,"hoist-non-react-statics":40,"invariant":41,"react":82,"react-is":79}],58:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -33439,7 +33877,7 @@ function createConnect(_temp) {
 var _default = createConnect();
 
 exports["default"] = _default;
-},{"../components/connectAdvanced":55,"../utils/shallowEqual":72,"./mapDispatchToProps":57,"./mapStateToProps":58,"./mergeProps":59,"./selectorFactory":60,"@babel/runtime/helpers/extends":34,"@babel/runtime/helpers/interopRequireDefault":35,"@babel/runtime/helpers/objectWithoutPropertiesLoose":37}],57:[function(require,module,exports){
+},{"../components/connectAdvanced":57,"../utils/shallowEqual":74,"./mapDispatchToProps":59,"./mapStateToProps":60,"./mergeProps":61,"./selectorFactory":62,"@babel/runtime/helpers/extends":36,"@babel/runtime/helpers/interopRequireDefault":37,"@babel/runtime/helpers/objectWithoutPropertiesLoose":39}],59:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -33472,7 +33910,7 @@ function whenMapDispatchToPropsIsObject(mapDispatchToProps) {
 
 var _default = [whenMapDispatchToPropsIsFunction, whenMapDispatchToPropsIsMissing, whenMapDispatchToPropsIsObject];
 exports["default"] = _default;
-},{"./wrapMapToProps":62,"redux":81}],58:[function(require,module,exports){
+},{"./wrapMapToProps":64,"redux":83}],60:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -33494,7 +33932,7 @@ function whenMapStateToPropsIsMissing(mapStateToProps) {
 
 var _default = [whenMapStateToPropsIsFunction, whenMapStateToPropsIsMissing];
 exports["default"] = _default;
-},{"./wrapMapToProps":62}],59:[function(require,module,exports){
+},{"./wrapMapToProps":64}],61:[function(require,module,exports){
 (function (process){
 "use strict";
 
@@ -33551,7 +33989,7 @@ function whenMergePropsIsOmitted(mergeProps) {
 var _default = [whenMergePropsIsFunction, whenMergePropsIsOmitted];
 exports["default"] = _default;
 }).call(this,require('_process'))
-},{"../utils/verifyPlainObject":73,"@babel/runtime/helpers/extends":34,"@babel/runtime/helpers/interopRequireDefault":35,"_process":41}],60:[function(require,module,exports){
+},{"../utils/verifyPlainObject":75,"@babel/runtime/helpers/extends":36,"@babel/runtime/helpers/interopRequireDefault":37,"_process":43}],62:[function(require,module,exports){
 (function (process){
 "use strict";
 
@@ -33653,7 +34091,7 @@ function finalPropsSelectorFactory(dispatch, _ref2) {
   return selectorFactory(mapStateToProps, mapDispatchToProps, mergeProps, dispatch, options);
 }
 }).call(this,require('_process'))
-},{"./verifySubselectors":61,"@babel/runtime/helpers/interopRequireDefault":35,"@babel/runtime/helpers/objectWithoutPropertiesLoose":37,"_process":41}],61:[function(require,module,exports){
+},{"./verifySubselectors":63,"@babel/runtime/helpers/interopRequireDefault":37,"@babel/runtime/helpers/objectWithoutPropertiesLoose":39,"_process":43}],63:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -33678,7 +34116,7 @@ function verifySubselectors(mapStateToProps, mapDispatchToProps, mergeProps, dis
   verify(mapDispatchToProps, 'mapDispatchToProps', displayName);
   verify(mergeProps, 'mergeProps', displayName);
 }
-},{"../utils/warning":74,"@babel/runtime/helpers/interopRequireDefault":35}],62:[function(require,module,exports){
+},{"../utils/warning":76,"@babel/runtime/helpers/interopRequireDefault":37}],64:[function(require,module,exports){
 (function (process){
 "use strict";
 
@@ -33757,7 +34195,7 @@ function wrapMapToPropsFunc(mapToProps, methodName) {
   };
 }
 }).call(this,require('_process'))
-},{"../utils/verifyPlainObject":73,"@babel/runtime/helpers/interopRequireDefault":35,"_process":41}],63:[function(require,module,exports){
+},{"../utils/verifyPlainObject":75,"@babel/runtime/helpers/interopRequireDefault":37,"_process":43}],65:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -33810,7 +34248,7 @@ function createDispatchHook(context) {
 
 var useDispatch = createDispatchHook();
 exports.useDispatch = useDispatch;
-},{"../components/Context":53,"./useStore":66}],64:[function(require,module,exports){
+},{"../components/Context":55,"./useStore":68}],66:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -33845,7 +34283,7 @@ function useReduxContext() {
   (0, _invariant["default"])(contextValue, 'could not find react-redux context value; please ensure the component is wrapped in a <Provider>');
   return contextValue;
 }
-},{"../components/Context":53,"@babel/runtime/helpers/interopRequireDefault":35,"invariant":39,"react":80}],65:[function(require,module,exports){
+},{"../components/Context":55,"@babel/runtime/helpers/interopRequireDefault":37,"invariant":41,"react":82}],67:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -34000,7 +34438,7 @@ function createSelectorHook(context) {
 
 var useSelector = createSelectorHook();
 exports.useSelector = useSelector;
-},{"../components/Context":53,"../utils/Subscription":68,"./useReduxContext":64,"@babel/runtime/helpers/interopRequireDefault":35,"invariant":39,"react":80}],66:[function(require,module,exports){
+},{"../components/Context":55,"../utils/Subscription":70,"./useReduxContext":66,"@babel/runtime/helpers/interopRequireDefault":37,"invariant":41,"react":82}],68:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -34053,7 +34491,7 @@ function createStoreHook(context) {
 
 var useStore = createStoreHook();
 exports.useStore = useStore;
-},{"../components/Context":53,"./useReduxContext":64,"react":80}],67:[function(require,module,exports){
+},{"../components/Context":55,"./useReduxContext":66,"react":82}],69:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -34101,7 +34539,7 @@ var _shallowEqual = _interopRequireDefault(require("./utils/shallowEqual"));
 
 exports.shallowEqual = _shallowEqual["default"];
 (0, _batch.setBatch)(_reactBatchedUpdates.unstable_batchedUpdates);
-},{"./components/Context":53,"./components/Provider":54,"./components/connectAdvanced":55,"./connect/connect":56,"./hooks/useDispatch":63,"./hooks/useSelector":65,"./hooks/useStore":66,"./utils/batch":69,"./utils/reactBatchedUpdates":71,"./utils/shallowEqual":72,"@babel/runtime/helpers/interopRequireDefault":35}],68:[function(require,module,exports){
+},{"./components/Context":55,"./components/Provider":56,"./components/connectAdvanced":57,"./connect/connect":58,"./hooks/useDispatch":65,"./hooks/useSelector":67,"./hooks/useStore":68,"./utils/batch":71,"./utils/reactBatchedUpdates":73,"./utils/shallowEqual":74,"@babel/runtime/helpers/interopRequireDefault":37}],70:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -34205,7 +34643,7 @@ function () {
 }();
 
 exports["default"] = Subscription;
-},{"./batch":69}],69:[function(require,module,exports){
+},{"./batch":71}],71:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -34230,7 +34668,7 @@ var getBatch = function getBatch() {
 };
 
 exports.getBatch = getBatch;
-},{}],70:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -34252,7 +34690,7 @@ function isPlainObject(obj) {
 
   return proto === baseProto;
 }
-},{}],71:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -34261,7 +34699,7 @@ exports.unstable_batchedUpdates = void 0;
 var _reactDom = require("react-dom");
 
 exports.unstable_batchedUpdates = _reactDom.unstable_batchedUpdates;
-},{"react-dom":49}],72:[function(require,module,exports){
+},{"react-dom":51}],74:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -34295,7 +34733,7 @@ function shallowEqual(objA, objB) {
 
   return true;
 }
-},{}],73:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -34312,7 +34750,7 @@ function verifyPlainObject(value, displayName, methodName) {
     (0, _warning["default"])(methodName + "() in " + displayName + " must return a plain object. Instead received " + value + ".");
   }
 }
-},{"./isPlainObject":70,"./warning":74,"@babel/runtime/helpers/interopRequireDefault":35}],74:[function(require,module,exports){
+},{"./isPlainObject":72,"./warning":76,"@babel/runtime/helpers/interopRequireDefault":37}],76:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -34342,7 +34780,7 @@ function warning(message) {
   /* eslint-enable no-empty */
 
 }
-},{}],75:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 (function (process){
 /** @license React v16.9.0
  * react-is.development.js
@@ -34578,7 +35016,7 @@ exports.isSuspense = isSuspense;
 }
 
 }).call(this,require('_process'))
-},{"_process":41}],76:[function(require,module,exports){
+},{"_process":43}],78:[function(require,module,exports){
 /** @license React v16.9.0
  * react-is.production.min.js
  *
@@ -34595,9 +35033,9 @@ exports.ConcurrentMode=m;exports.ContextConsumer=k;exports.ContextProvider=h;exp
 exports.isValidElementType=function(a){return"string"===typeof a||"function"===typeof a||a===e||a===m||a===g||a===f||a===p||a===q||"object"===typeof a&&null!==a&&(a.$$typeof===t||a.$$typeof===r||a.$$typeof===h||a.$$typeof===k||a.$$typeof===n||a.$$typeof===v||a.$$typeof===w)};exports.isAsyncMode=function(a){return y(a)||x(a)===l};exports.isConcurrentMode=y;exports.isContextConsumer=function(a){return x(a)===k};exports.isContextProvider=function(a){return x(a)===h};
 exports.isElement=function(a){return"object"===typeof a&&null!==a&&a.$$typeof===c};exports.isForwardRef=function(a){return x(a)===n};exports.isFragment=function(a){return x(a)===e};exports.isLazy=function(a){return x(a)===t};exports.isMemo=function(a){return x(a)===r};exports.isPortal=function(a){return x(a)===d};exports.isProfiler=function(a){return x(a)===g};exports.isStrictMode=function(a){return x(a)===f};exports.isSuspense=function(a){return x(a)===p};
 
-},{}],77:[function(require,module,exports){
-arguments[4][52][0].apply(exports,arguments)
-},{"./cjs/react-is.development.js":75,"./cjs/react-is.production.min.js":76,"_process":41,"dup":52}],78:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
+arguments[4][54][0].apply(exports,arguments)
+},{"./cjs/react-is.development.js":77,"./cjs/react-is.production.min.js":78,"_process":43,"dup":54}],80:[function(require,module,exports){
 (function (process){
 /** @license React v16.11.0
  * react.development.js
@@ -36919,7 +37357,7 @@ module.exports = react;
 }
 
 }).call(this,require('_process'))
-},{"_process":41,"object-assign":40,"prop-types/checkPropTypes":42}],79:[function(require,module,exports){
+},{"_process":43,"object-assign":42,"prop-types/checkPropTypes":44}],81:[function(require,module,exports){
 /** @license React v16.11.0
  * react.production.min.js
  *
@@ -36946,7 +37384,7 @@ b,c){return W().useImperativeHandle(a,b,c)},useDebugValue:function(){},useLayout
 if(null!=b){void 0!==b.ref&&(g=b.ref,l=J.current);void 0!==b.key&&(d=""+b.key);if(a.type&&a.type.defaultProps)var f=a.type.defaultProps;for(k in b)K.call(b,k)&&!L.hasOwnProperty(k)&&(e[k]=void 0===b[k]&&void 0!==f?f[k]:b[k])}var k=arguments.length-2;if(1===k)e.children=c;else if(1<k){f=Array(k);for(var m=0;m<k;m++)f[m]=arguments[m+2];e.children=f}return{$$typeof:p,type:a.type,key:d,ref:g,props:e,_owner:l}},createFactory:function(a){var b=M.bind(null,a);b.type=a;return b},isValidElement:N,version:"16.11.0",
 __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentDispatcher:I,ReactCurrentBatchConfig:{suspense:null},ReactCurrentOwner:J,IsSomeRendererActing:{current:!1},assign:h}},Y={default:X},Z=Y&&X||Y;module.exports=Z.default||Z;
 
-},{"object-assign":40}],80:[function(require,module,exports){
+},{"object-assign":42}],82:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -36957,7 +37395,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react.development.js":78,"./cjs/react.production.min.js":79,"_process":41}],81:[function(require,module,exports){
+},{"./cjs/react.development.js":80,"./cjs/react.production.min.js":81,"_process":43}],83:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -37633,7 +38071,7 @@ exports.compose = compose;
 exports.createStore = createStore;
 
 }).call(this,require('_process'))
-},{"_process":41,"symbol-observable":88}],82:[function(require,module,exports){
+},{"_process":43,"symbol-observable":90}],84:[function(require,module,exports){
 (function (process){
 /** @license React v0.17.0
  * scheduler-tracing.development.js
@@ -38058,7 +38496,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 }
 
 }).call(this,require('_process'))
-},{"_process":41}],83:[function(require,module,exports){
+},{"_process":43}],85:[function(require,module,exports){
 /** @license React v0.17.0
  * scheduler-tracing.production.min.js
  *
@@ -38070,7 +38508,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 
 'use strict';Object.defineProperty(exports,"__esModule",{value:!0});var b=0;exports.__interactionsRef=null;exports.__subscriberRef=null;exports.unstable_clear=function(a){return a()};exports.unstable_getCurrent=function(){return null};exports.unstable_getThreadID=function(){return++b};exports.unstable_trace=function(a,d,c){return c()};exports.unstable_wrap=function(a){return a};exports.unstable_subscribe=function(){};exports.unstable_unsubscribe=function(){};
 
-},{}],84:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 (function (process){
 /** @license React v0.17.0
  * scheduler.development.js
@@ -39099,7 +39537,7 @@ exports.unstable_Profiling = unstable_Profiling;
 }
 
 }).call(this,require('_process'))
-},{"_process":41}],85:[function(require,module,exports){
+},{"_process":43}],87:[function(require,module,exports){
 /** @license React v0.17.0
  * scheduler.production.min.js
  *
@@ -39123,7 +39561,7 @@ exports.unstable_scheduleCallback=function(a,b,c){var d=exports.unstable_now();i
 exports.unstable_wrapCallback=function(a){var b=S;return function(){var c=S;S=b;try{return a.apply(this,arguments)}finally{S=c}}};exports.unstable_getCurrentPriorityLevel=function(){return S};exports.unstable_shouldYield=function(){var a=exports.unstable_now();W(a);var b=M(O);return b!==R&&null!==R&&null!==b&&null!==b.callback&&b.startTime<=a&&b.expirationTime<R.expirationTime||k()};exports.unstable_requestPaint=aa;exports.unstable_continueExecution=function(){U||T||(U=!0,f(Y))};
 exports.unstable_pauseExecution=function(){};exports.unstable_getFirstCallbackNode=function(){return M(O)};exports.unstable_Profiling=null;
 
-},{}],86:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -39134,7 +39572,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler.development.js":84,"./cjs/scheduler.production.min.js":85,"_process":41}],87:[function(require,module,exports){
+},{"./cjs/scheduler.development.js":86,"./cjs/scheduler.production.min.js":87,"_process":43}],89:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -39145,7 +39583,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler-tracing.development.js":82,"./cjs/scheduler-tracing.production.min.js":83,"_process":41}],88:[function(require,module,exports){
+},{"./cjs/scheduler-tracing.development.js":84,"./cjs/scheduler-tracing.production.min.js":85,"_process":43}],90:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -39177,7 +39615,7 @@ if (typeof self !== 'undefined') {
 var result = (0, _ponyfill2['default'])(root);
 exports['default'] = result;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./ponyfill.js":89}],89:[function(require,module,exports){
+},{"./ponyfill.js":91}],91:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -39201,4 +39639,4 @@ function symbolObservablePonyfill(root) {
 
 	return result;
 };
-},{}]},{},[26]);
+},{}]},{},[28]);

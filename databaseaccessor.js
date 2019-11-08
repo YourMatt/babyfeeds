@@ -84,6 +84,47 @@ exports.query = {
 
     },
 
+    insertRecipe: (accountId, name, notes, caloriesPerOunce, selectable, callback) => {
+
+        exports.access.insert({
+                sql:
+                    "INSERT INTO Recipes " +
+                    "(           AccountId, Name, Notes, CaloriesPerOunce, Selectable) " +
+                    "VALUES (    ?, ?, ?, ?, ?) ",
+                values: [accountId, name, notes, caloriesPerOunce, selectable]
+            },
+            (numInserted) => {
+
+                // TODO: Change the default recipe on the account
+
+                callback(numInserted);
+
+            }
+        );
+
+    },
+
+    updateRecipe: (recipeId, name, notes, caloriesPerOunce, selectable, callback) => {
+
+        exports.query.getRecipe(recipeId, (recipe) => {
+            if (!recipe.RecipeId) return callback(0);
+
+            exports.access.update({
+                    sql:
+                        "UPDATE Recipes " +
+                        "SET    Name = ? " +
+                        ",      Notes = ? " +
+                        ",      CaloriesPerOunce = ? " +
+                        ",      Selectable = ? " +
+                        "WHERE  RecipeId = ? ",
+                    values: [name, notes, caloriesPerOunce, selectable, recipeId]
+                },
+                callback
+            );
+        });
+
+    },
+
     getFeed: (feedId, callback) => {
 
         exports.access.selectSingle({

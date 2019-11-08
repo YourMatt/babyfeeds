@@ -1091,22 +1091,89 @@
         font-family: sans-serif;
         color: #000; }
       .menu-area .menu .panel-form .content .form-fields .fields {
-        padding: 5px;
+        margin: 10px;
         text-align: center;
         color: #000; }
-        .menu-area .menu .panel-form .content .form-fields .fields input, .menu-area .menu .panel-form .content .form-fields .fields select {
-          border: none;
+        .menu-area .menu .panel-form .content .form-fields .fields input, .menu-area .menu .panel-form .content .form-fields .fields select, .menu-area .menu .panel-form .content .form-fields .fields textarea {
+          padding: 0.2em 5px;
+          width: calc(100% - 15px);
+          background: #e5f5ff;
+          border: 1px dashed #66b6fc;
+          border-radius: 5px;
           font-family: sans-serif;
           font-size: 1.3em; }
-          .menu-area .menu .panel-form .content .form-fields .fields input#input-feed-volume, .menu-area .menu .panel-form .content .form-fields .fields select#input-feed-volume {
+          .menu-area .menu .panel-form .content .form-fields .fields input#input-feed-volume, .menu-area .menu .panel-form .content .form-fields .fields select#input-feed-volume, .menu-area .menu .panel-form .content .form-fields .fields textarea#input-feed-volume {
             width: 80px;
             text-align: right; }
-          .menu-area .menu .panel-form .content .form-fields .fields input#select-feed-recipe, .menu-area .menu .panel-form .content .form-fields .fields select#select-feed-recipe {
+          .menu-area .menu .panel-form .content .form-fields .fields input#select-feed-recipe, .menu-area .menu .panel-form .content .form-fields .fields select#select-feed-recipe, .menu-area .menu .panel-form .content .form-fields .fields textarea#select-feed-recipe {
             max-width: 300px; }
-          .menu-area .menu .panel-form .content .form-fields .fields input#input-weight, .menu-area .menu .panel-form .content .form-fields .fields select#input-weight {
+          .menu-area .menu .panel-form .content .form-fields .fields input#input-weight, .menu-area .menu .panel-form .content .form-fields .fields select#input-weight, .menu-area .menu .panel-form .content .form-fields .fields textarea#input-weight {
             margin: 0px 5px 0px -30px;
             width: 70px;
             text-align: right; }
+          .menu-area .menu .panel-form .content .form-fields .fields input#input-recipe-notes, .menu-area .menu .panel-form .content .form-fields .fields select#input-recipe-notes, .menu-area .menu .panel-form .content .form-fields .fields textarea#input-recipe-notes {
+            height: 180px;
+            font-size: 0.8em; }
+          .menu-area .menu .panel-form .content .form-fields .fields input#input-recipe-calories-per-ounce, .menu-area .menu .panel-form .content .form-fields .fields select#input-recipe-calories-per-ounce, .menu-area .menu .panel-form .content .form-fields .fields textarea#input-recipe-calories-per-ounce {
+            width: 50px;
+            margin-right: 5px;
+            padding: 0px;
+            text-align: right;
+            font-size: 2em;
+            line-height: 1em; }
+        .menu-area .menu .panel-form .content .form-fields .fields.calorie-options {
+          display: flex;
+          justify-content: space-between; }
+          .menu-area .menu .panel-form .content .form-fields .fields.calorie-options .calorie-option-selection {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            width: 45%;
+            border: 1px solid #000;
+            border-radius: 5px;
+            font-size: 0.9em;
+            cursor: pointer; }
+            .menu-area .menu .panel-form .content .form-fields .fields.calorie-options .calorie-option-selection:hover {
+              background: #e5f5ff; }
+            .menu-area .menu .panel-form .content .form-fields .fields.calorie-options .calorie-option-selection.selected {
+              background: #b2e1ff; }
+              .menu-area .menu .panel-form .content .form-fields .fields.calorie-options .calorie-option-selection.selected:hover {
+                background: #b2e1ff; }
+            .menu-area .menu .panel-form .content .form-fields .fields.calorie-options .calorie-option-selection h6 {
+              font-size: 0.9em; }
+            .menu-area .menu .panel-form .content .form-fields .fields.calorie-options .calorie-option-selection p {
+              font-size: 0.75em;
+              line-height: 1.2em; }
+            .menu-area .menu .panel-form .content .form-fields .fields.calorie-options .calorie-option-selection .calorie-option-selection-fields {
+              display: flex;
+              align-items: center;
+              margin-bottom: 7px;
+              font-size: 0.75em; }
+          .menu-area .menu .panel-form .content .form-fields .fields.calorie-options .calorie-option-label-or {
+            display: flex;
+            align-items: center;
+            margin: 5px; }
+    .menu-area .menu .panel-form .content .activation-control {
+      margin: 0px 15px; }
+      .menu-area .menu .panel-form .content .activation-control hr {
+        margin-top: 5px;
+        height: 1px;
+        border: none;
+        background: #000; }
+      .menu-area .menu .panel-form .content .activation-control p {
+        margin-top: 15px;
+        color: #000;
+        font-family: sans-serif;
+        font-size: 0.8em; }
+      .menu-area .menu .panel-form .content .activation-control button {
+        display: block;
+        margin: 0px;
+        width: 100%; }
+        .menu-area .menu .panel-form .content .activation-control button.deactivate {
+          background-color: #f00; }
+        .menu-area .menu .panel-form .content .activation-control button.activate {
+          background-color: #0f0; }
     .menu-area .menu .panel-form .content .save {
       font-size: 1.5em; }
 
@@ -1204,6 +1271,81 @@
   font-size: 1em;
   line-height: 1.5em;
   cursor: pointer; }
+
+.menu-recipes .recipes-block {
+  margin: 0px 15px 5px;
+  border: 1px solid #000;
+  border-radius: 5px; }
+  .menu-recipes .recipes-block .recipes-block-contents {
+    border-radius: 5px;
+    overflow: hidden; }
+.menu-recipes h2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 5px 2px;
+  color: #000;
+  background: #b2e1ff;
+  font-size: 1em;
+  text-align: center; }
+.menu-recipes button {
+  margin: 15px;
+  background: #b2e1ff;
+  border: 1px solid #000;
+  border-radius: 5px;
+  color: #000;
+  font-size: 1em;
+  line-height: 1.5em;
+  cursor: pointer; }
+  .menu-recipes button.btn-add {
+    display: block;
+    width: 20px;
+    height: 20px;
+    margin: 0px;
+    padding: 0px;
+    background: none;
+    border: 1px solid #000;
+    border-radius: 10px;
+    font-family: sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 14px;
+    text-align: center; }
+  .menu-recipes button.btn-edit {
+    margin: 0px;
+    padding: 10px 13px;
+    background: none;
+    border: none;
+    font-family: sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 18px;
+    transform: rotate(90deg); }
+.menu-recipes .content .data .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: sans-serif;
+  color: #000;
+  cursor: pointer; }
+  .menu-recipes .content .data .row.odd {
+    background: #eff9ff; }
+  .menu-recipes .content .data .row.even {
+    background: #f9fdff; }
+  .menu-recipes .content .data .row .cell-name {
+    margin: 0.5em 0 0.5em 5px;
+    width: 52%;
+    font-size: 1em;
+    line-height: 1em;
+    text-align: left; }
+  .menu-recipes .content .data .row .cell-last-used {
+    width: 30%;
+    font-size: 1em;
+    text-align: center; }
+    .menu-recipes .content .data .row .cell-last-used h6 {
+      font-size: 0.75em; }
+  .menu-recipes .content .data .row strong {
+    font-weight: 700; }
 
 @keyframes submenu-slide-from-offscreen {
   0% {
@@ -1423,5 +1565,16 @@ body {
       display: block;
       padding-top: 0.4em;
       font-family: sans-serif; }
+  .options-recipe .recipe-add-area {
+    padding: 5px; }
+    .options-recipe .recipe-add-area button {
+      padding-bottom: 0.6em;
+      background: #b2e1ff;
+      border: 1px solid #000;
+      border-radius: 5px;
+      color: #000;
+      font-size: 1em;
+      line-height: 1em;
+      cursor: pointer; }
 
 /*# sourceMappingURL=site.css.map */

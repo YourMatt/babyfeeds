@@ -2,6 +2,7 @@
 $color-black: #000;
 $color-white: #fff;
 $color-danger: #f00;
+$color-success: #0f0;
 
 $color-gradient-start:  #b2e1ff;
 $color-gradient-end:    #66b6fc;
@@ -291,6 +292,19 @@ body {
       display: block;
       padding-top: 0.4em;
       font-family: $font-standard;
+    }
+  }
+  .recipe-add-area {
+    padding: 5px;
+    button {
+      padding-bottom: 0.6em;
+      background: $color-gradient-start;
+      border: 1px solid $color-black;
+      border-radius: 5px;
+      color: $color-black;
+      font-size: 1em;
+      line-height: 1em;
+      cursor: pointer;
     }
   }
 }

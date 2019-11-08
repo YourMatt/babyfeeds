@@ -149,11 +149,15 @@ $menu-width: 350px;
             color: $color-black;
           }
           .fields {
-            padding: 5px;
+            margin: 10px;
             text-align: center;
             color: $color-black;
-            input, select {
-              border: none;
+            input, select, textarea {
+              padding: 0.2em 5px;
+              width: calc(100% - 15px);
+              background: $color-menu-buttons-background-hover;
+              border: 1px dashed $color-gradient-end;
+              border-radius: 5px;
               font-family: $font-standard;
               font-size: 1.3em;
               &#input-feed-volume {
@@ -168,6 +172,88 @@ $menu-width: 350px;
                 width: 70px;
                 text-align: right;
               }
+              &#input-recipe-name {
+              }
+              &#input-recipe-notes {
+                height: 180px;
+                font-size: 0.8em;
+              }
+              &#input-recipe-calories-per-ounce {
+                width: 50px;
+                margin-right: 5px;
+                padding: 0px;
+                text-align: right;
+                font-size: 2em;
+                line-height: 1em;
+              }
+            }
+            &.calorie-options {
+              display: flex;
+              justify-content: space-between;
+              .calorie-option-selection {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: start;
+                width: 45%;
+                border: 1px solid $color-black;
+                border-radius: 5px;
+                font-size: 0.9em;
+                cursor: pointer;
+                &:hover {
+                  background: $color-menu-buttons-background-hover;
+                }
+                &.selected {
+                  background: $color-gradient-start;
+                  &:hover {
+                    background: $color-gradient-start;
+                  }
+                }
+                h6 {
+                  font-size: 0.9em;
+                }
+                p {
+                  font-size: 0.75em;
+                  line-height: 1.2em;
+                }
+                .calorie-option-selection-fields {
+                  display: flex;
+                  align-items: center;
+                  margin-bottom: 7px;
+                  font-size: 0.75em;
+                }
+              }
+              .calorie-option-label-or {
+                display: flex;
+                align-items: center;
+                margin: 5px;
+              }
+            }
+          }
+        }
+        .activation-control {
+          margin: 0px 15px;
+          hr {
+            margin-top: 5px;
+            height: 1px;
+            border: none;
+            background: $color-black;
+          }
+          p {
+            margin-top: 15px;
+            color: $color-black;
+            font-family: $font-standard;
+            font-size: 0.8em;
+          }
+          button {
+            display: block;
+            margin: 0px;
+            width: 100%;
+            &.deactivate {
+              background-color: $color-danger;
+            }
+            &.activate {
+              background-color: $color-success;
             }
           }
         }
@@ -298,6 +384,103 @@ $menu-width: 350px;
     cursor: pointer;
   }
 }
+
+.menu-recipes {
+  .recipes-block {
+    $border-radius: 5px;
+    margin: 0px 15px 5px;
+    border: 1px solid $color-black;
+    border-radius: $border-radius;
+    .recipes-block-contents {
+      border-radius: $border-radius;
+      overflow: hidden;
+    }
+  }
+  h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 5px 2px;
+    color: $color-menu-headings;
+    background: $color-gradient-start;
+    font-size: 1em;
+    text-align: center;
+  }
+  button {
+    margin: 15px;
+    background: $color-gradient-start;
+    border: 1px solid $color-black;
+    border-radius: 5px;
+    color: $color-black;
+    font-size: 1em;
+    line-height: 1.5em;
+    cursor: pointer;
+    &.btn-add {
+      display: block;
+      width: 20px;
+      height: 20px;
+      margin: 0px;
+      padding: 0px;
+      background: none;
+      border: 1px solid $color-black;
+      border-radius: 10px;
+      font-family: $font-standard;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 14px;
+      text-align: center;
+    }
+    &.btn-edit {
+      margin: 0px;
+      padding: 10px 13px;
+      background: none;
+      border: none;
+      font-family: $font-standard;
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 18px;
+      transform: rotate(90deg);
+    }
+  }
+  .content {
+    .data {
+      .row {
+        $font-size: 1em;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: $font-standard;
+        color: $color-black;
+        cursor: pointer;
+        &.odd {
+          background: lighten($color-gradient-start, 12);
+        }
+        &.even {
+          background: lighten($color-gradient-start, 14);
+        }
+        .cell-name {
+          margin: 0.5em 0 0.5em 5px;
+          width: 52%;
+          font-size: $font-size;
+          line-height: $font-size;
+          text-align: left;
+        }
+        .cell-last-used {
+          width: 30%;
+          font-size: $font-size;
+          text-align: center;
+          h6 {
+            font-size: 0.75em;
+          }
+        }
+        strong {
+          font-weight: 700;
+        }
+      }
+    }
+  }
+}
+
 
 @keyframes submenu-slide-from-offscreen {
   0% {

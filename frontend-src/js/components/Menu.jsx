@@ -15,6 +15,7 @@ import MenuAbout from "./MenuAbout.jsx";
 
 // import utilities
 import FormatCssClass from "../utils/FormatCssClass.jsx";
+import StateManager from "../utils/StateManager.jsx";
 
 // export object
 export default class Menu extends Component {
@@ -22,12 +23,15 @@ export default class Menu extends Component {
     // Constructor.
     constructor(props, context) {
         super(props, context);
+        this.previousState = {};
 
-        // intialize the state
-        this.state = {
-            menuClosed: true,
-            displayedPanel: "" // the name of the panel to display, if any
-        };
+        StateManager.Store.subscribe(() => {
+            if (StateManager.ValueChanged(this.previousState, [
+                    "UI.IsMenuOpen",
+                    "UI.IsSubMenuOpen"
+                ]
+            )) this.forceUpdate();
+        });
 
         // bind event handlers
         this.changeOpenCloseStatus = this.changeOpenCloseStatus.bind(this);
@@ -40,7 +44,7 @@ export default class Menu extends Component {
 
         // load the menu selection
         let displayPanelContents = "";
-        switch (this.state.displayedPanel) {
+        switch (StateManager.State().UI.SelectedMenuPanel) {
             case "babies":
                 displayPanelContents = <MenuBabies/>;
                 break;
@@ -61,19 +65,23 @@ export default class Menu extends Component {
                 break;
         }
 
+        // set the hamburger close style
+        let hamburgerCloseStyle = "hamburger--squeeze"; // standard close X for top-level menu
+        if (StateManager.State().UI.SelectedMenuPanel) hamburgerCloseStyle = "hamburger--arrow"; // return with arrow for sub-menus
+
         // return jsx
         return (
             <div className={FormatCssClass("menu-area")}>
                 <div className={FormatCssClass("menu-open-close")}>
-                    <button className={FormatCssClass(["hamburger", "hamburger--squeeze", (this.state.menuClosed) ? "" : "is-active"])}
+                    <button className={FormatCssClass(["hamburger", hamburgerCloseStyle, (StateManager.State().UI.IsMenuOpen) ? "is-active" : ""])}
                             type="button"
                             onClick={this.changeOpenCloseStatus}>
-                      <span className={FormatCssClass("hamburger-box")}>
-                          <span className={FormatCssClass("hamburger-inner")}></span>
-                      </span>
+                        <span className={FormatCssClass("hamburger-box")}>
+                            <span className={FormatCssClass("hamburger-inner")}></span>
+                        </span>
                     </button>
                 </div>
-                <div className={FormatCssClass(["menu", (this.state.menuClosed) ? "" : "open"])}>
+                <div className={FormatCssClass(["menu", (StateManager.State().UI.IsMenuOpen) ? "open" : ""])}>
                     <div className={FormatCssClass("menu-panel-main")}>
                         <h1>Menu</h1>
                         <ul>
@@ -107,21 +115,37 @@ export default class Menu extends Component {
     // Handles open/close events.
     changeOpenCloseStatus(e) {
 
-        let newClosedStatus = !this.state.menuClosed;
+        // open the menu if not already open
+        if (!StateManager.State().UI.IsMenuOpen) {
+            return StateManager.UpdateValue("UI.IsMenuOpen", true);
+        }
 
-        this.setState({
-            menuClosed: newClosedStatus,
-            displayedPanel: (newClosedStatus) ? "" : this.state.displayedPanel // hide sub-panels if changing to closed
-        });
+        // go back if a menu panel is selected
+        if (StateManager.State().UI.SelectedMenuPanel) {
+
+            // return to recipes if on the recipe add/edit screen
+            if (StateManager.State().UI.EditingRecipe.RecipeId !== 0) {
+                return StateManager.UpdateValue("UI.EditingRecipe.RecipeId", 0);
+            }
+
+            // return to the base menu if not on any add/edit screens
+            else {
+                return StateManager.UpdateValue("UI.SelectedMenuPanel", "");
+            }
+
+        }
+
+        // close the menu if on the base options panels
+        else {
+            StateManager.UpdateValue("UI.IsMenuOpen", false);
+        }
 
     }
 
     // Handles panel selection.
     openPanel(e) {
 
-        this.setState({
-            displayedPanel: e.target.dataset.panel
-        });
+        StateManager.UpdateValue("UI.SelectedMenuPanel", e.target.dataset.panel);
 
     }
 

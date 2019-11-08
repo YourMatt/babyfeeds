@@ -62,6 +62,7 @@ export default class FeedRecorder extends Component {
         this.changeAmPmSelection = this.changeAmPmSelection.bind(this);
         this.changeUnitSelection = this.changeUnitSelection.bind(this);
         this.changeRecipeSelection = this.changeRecipeSelection.bind(this);
+        this.addRecipe = this.addRecipe.bind(this);
         this.submitFeed = this.submitFeed.bind(this);
 
     }
@@ -309,23 +310,30 @@ export default class FeedRecorder extends Component {
 
             let options = [];
             recipes.forEach(recipe => {
+                if (!recipe.Selectable) return; // skip any inactive recipes
+
                 let lastUsedDate = "Never Used";
-                if (recipe.lastUsed) {
-                    lastUsedDate = "Last Used " + moment(recipe.lastUsed).format("MMM Do, YYYY");
+                if (recipe.LastUsed) {
+                    lastUsedDate = "Last Used " + moment(recipe.LastUsed).format("MMM Do, YYYY");
                 }
                 let className = "";
-                if (recipe.recipeId === this.state.selectedRecipeId) className = "selected";
+                if (recipe.RecipeId === this.state.selectedRecipeId) className = "selected";
                 options.push(
                     <button
-                        key={"recipe-" + recipe.recipeId}
+                        key={"recipe-" + recipe.RecipeId}
                         className={FormatCssClass(className)}
-                        data-recipe-id={recipe.recipeId}
-                        data-recipe-name={recipe.name}
-                        data-recipe-calories-per-ounce={recipe.caloriesPerOunce}
+                        data-recipe-id={recipe.RecipeId}
+                        data-recipe-name={recipe.Name}
+                        data-recipe-calories-per-ounce={recipe.CaloriesPerOunce}
                         onClick={this.changeRecipeSelection}
-                    >{recipe.name}<small>{lastUsedDate}</small></button>
+                    >{recipe.Name}<small>{lastUsedDate}</small></button>
                 );
             });
+            options.push(
+                <div className={FormatCssClass("recipe-add-area")} key={"recipe-add"}>
+                    <button onClick={this.addRecipe}>Add New Recipe</button>
+                </div>
+            );
 
             let modalContent = (
                 <div className={FormatCssClass("options-recipe")}>
@@ -404,6 +412,16 @@ export default class FeedRecorder extends Component {
             selectedRecipeName: buttonData.recipeName,
             selectedRecipeCaloriesPerOunce: buttonData.recipeCaloriesPerOunce
         });
+
+    }
+
+    // opens menu to add a new recipe
+    addRecipe(e) {
+        e.preventDefault();
+
+        StateManager.UpdateValue("UI.EditingRecipe.RecipeId", -1);
+        StateManager.UpdateValue("UI.SelectedMenuPanel", "recipes");
+        StateManager.UpdateValue("UI.IsMenuOpen", true);
 
     }
 
