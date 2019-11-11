@@ -24,7 +24,8 @@ export default class RecipeEditor extends Component {
 
         StateManager.Store.subscribe(() => {
             if (StateManager.ValueChanged(this.previousState, [
-                    "UI.EditingRecipe"
+                    "UI.EditingRecipe",
+                    "UI.IsSaving"
                 ]
             )) this.forceUpdate();
         });

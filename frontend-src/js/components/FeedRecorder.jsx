@@ -42,7 +42,7 @@ export default class FeedRecorder extends Component {
             if (StateManager.ValueChanged(this.previousState, [
                     "Account.Settings.DisplayVolumeAsMetric",
                     "SelectedBaby",
-                    "Babies.Baby" + StateManager.State().SelectedBaby + ".CaloriesSliderMax",
+                    "Babies.Baby" + StateManager.State().SelectedBaby + ".CaloriesSliderMax", // need to apply for all baby IDs
                     "Babies.Baby" + StateManager.State().SelectedBaby + ".RecipeId",
                     "Babies.Baby" + StateManager.State().SelectedBaby + ".FeedsForToday",
                     "Babies.Baby" + StateManager.State().SelectedBaby + ".Goals",

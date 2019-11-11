@@ -43,24 +43,25 @@ const storeModel = {
             }],
             LastFeedTime: "",
             FeedsForToday: [{
-                Id: 0,
+                FeedId: 0,
                 RecipeId: 0,
                 DateTime: "",
                 Calories: 0
             }],
             Feeds: [{
-                Id: 0,
+                FeedId: 0,
                 RecipeId: 0,
-                DateTime: "",
+                Date: "",
+                Time: "",
                 Calories: 0
             }],
             Goals: [{
-                Id: 0,
+                GoalId: 0,
                 Date: "",
                 CaloriesPerKilogram: 0
             }],
             Weights: [{
-                Id: 0,
+                WeightId: 0,
                 Date: "",
                 Kilograms: 0
             }]
@@ -71,14 +72,13 @@ const storeModel = {
         IsSaving: false,
         IsMenuOpen: false,
         SelectedMenuPanel: "",
-
-        // TODO: Delete this block
-        IsMenuEditFormOpen: false,
-        SelectedMenuEditFormData: {
-            IsOpen: false,
-            Data: {} //
+        EditingFeed: {
+            FeedId: 0,
+            RecipeId: 0,
+            Date: "",
+            Time: "",
+            Calories: 0
         },
-
         EditingRecipe: {
             RecipeId: 0, // set to -1 for NEW
             Name: "",
@@ -87,7 +87,6 @@ const storeModel = {
             LastUsed: "",
             Selectable: false
         },
-
         ResultsCondensed: true,
         FeedRecorder: {
             SelectedHour: 0,
@@ -117,6 +116,7 @@ const reducer = (state, action) => {
         case "RESET_SERVER_DATA":
             newState.DateToday = action.payload.dateToday;
             newState.SelectedBaby = action.payload.babyId;
+            newState.Account.Settings.DisplayVolumeAsMetric = true; // TODO: Return from API
             newState.Account.Recipes = action.payload.recipes;
             newState.Babies["Baby" + newState.SelectedBaby] = JSON.parse(JSON.stringify(newState.Babies.Baby0));
             newState.Babies["Baby" + newState.SelectedBaby].BabyId = action.payload.babyId;
@@ -177,7 +177,19 @@ class StateManager {
                 LastUsed: "",
                 Selectable: false
             }
-        )
+        );
+    }
+    ResetEditingFeed() {
+        this.UpdateValue(
+            "UI.EditingFeed",
+            {
+                FeedId: 0, // set to -1 for NEW
+                RecipeId: 0,
+                Date: "",
+                Time: "",
+                Calories: 0
+            }
+        );
     }
 
     ValueChanged(oldState, path) {

@@ -40,64 +40,6 @@ export default class MenuWeights extends Component {
     render() {
         this.previousState = StateManager.CopyState();
 
-        // TODO: set open/close trigger
-        // TODO: add WeightEditor for menu
-
-        /*
-        let content = "";
-        let weights = StateManager.GetCurrentBabyDetails().Weights;
-        if (weights.length) {
-
-            let lineItems = [];
-            for (let i = weights.length - 1; i >= 0; i--) {
-
-                let date = weights[i].Date;
-                let weight = weights[i].Kilograms;
-                let weightUnits = "Unit";
-
-                lineItems.push(
-                    <div className={FormatCssClass(["row", (i % 2) ? "even" : "odd"])}
-                         key={"weight-for-day-" + weights[i].Date}>
-                        <span className={FormatCssClass("cell-date")}><strong>{date}</strong></span>
-                        <span className={FormatCssClass("cell-weight")}><strong>{weight}</strong></span>
-                        <span className={FormatCssClass("cell-unit")}>{weightUnits}</span>
-                    </div>
-                );
-
-            }
-
-            content = lineItems;
-
-        }
-        else content = <p>No Weights Recorded</p>;
-
-        return (
-            <div className={FormatCssClass(["menu-panel-sub", "menu-weights"])}>
-                <div className={FormatCssClass(["menu-panel-edit-form", (false) ? "open" : "closed"])}>
-
-                </div>
-                <h1>Weight History</h1>
-                <div className={FormatCssClass("content")}>
-                    <div className={FormatCssClass("data")}>
-                        {content}
-                    </div>
-                    <div className={FormatCssClass("graph")}>[GRAPH]</div>
-                </div>
-            </div>
-        );
-
-         */
-
-        /*
-        return (
-            <div className={FormatCssClass("menu-panel-sub open")}>
-                <h1>Weights</h1>
-                <p>Weights panel.</p>
-            </div>
-        );
-
-         */
-
         let weightRecord = StateManager.GetCurrentBabyWeightRecord();
         let weight = weightRecord.Kilograms;
         let weightUnits = "";

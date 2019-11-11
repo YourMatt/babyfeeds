@@ -692,6 +692,8 @@ var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.js
 
 var _Converters = require("../utils/Converters.jsx");
 
+var _StateManager = _interopRequireDefault(require("../utils/StateManager.jsx"));
+
 var _SaveFeed = _interopRequireDefault(require("../api/SaveFeed.jsx"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
@@ -730,11 +732,13 @@ function (_Component) {
 
     _classCallCheck(this, FeedEditor);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(FeedEditor).call(this, props, context)); // intialize the state
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(FeedEditor).call(this, props, context));
+    _this.previousState = {};
 
-    _this.state = {
-      isSaving: false
-    };
+    _StateManager["default"].Store.subscribe(function () {
+      if (_StateManager["default"].ValueChanged(_this.previousState, ["UI.EditingFeed", "UI.IsSaving"])) _this.forceUpdate();
+    });
+
     _this.submitFeed = _this.submitFeed.bind(_assertThisInitialized(_this));
     return _this;
   }
@@ -743,25 +747,29 @@ function (_Component) {
     key: "render",
     // Renders the menu panel.
     value: function render() {
-      var _this2 = this;
+      var feed = _StateManager["default"].State().UI.EditingFeed;
 
-      if (!this.props.feed.RecipeId) return null;
-      var title = this.props.feed.FeedId ? "Edit Feed" : "Add Feed";
+      if (feed.FeedId === 0) return null;
+      var title = feed.FeedId !== -1 ? "Edit Feed" : "Add Feed";
       var optionsRecipes = [];
-      var volumeUnit = "mls";
+      var volumeUnit = _StateManager["default"].State().Account.Settings.DisplayVolumeAsMetric ? "mls" : "ozs";
       var recipeCaloriesPerOunce = 0;
-      this.props.recipes.forEach(function (recipe) {
-        if (recipe.recipeId === _this2.props.feed.RecipeId) {
-          recipeCaloriesPerOunce = recipe.caloriesPerOunce;
+
+      _StateManager["default"].State().Account.Recipes.forEach(function (recipe) {
+        if (!recipe.Selectable) return;
+
+        if (recipe.RecipeId === feed.RecipeId) {
+          recipeCaloriesPerOunce = recipe.CaloriesPerOunce;
           if (!recipeCaloriesPerOunce) volumeUnit = "cals";
         }
 
         optionsRecipes.push(_react["default"].createElement("option", {
-          key: "option-recipe-" + recipe.recipeId,
-          value: recipe.recipeId
-        }, recipe.name));
+          key: "option-recipe-" + recipe.RecipeId,
+          value: recipe.RecipeId
+        }, recipe.Name));
       });
-      var volume = (0, _Converters.ConvertCaloriesToVolume)(this.props.feed.Calories, volumeUnit, recipeCaloriesPerOunce);
+
+      var volume = (0, _Converters.ConvertCaloriesToVolume)(feed.Calories, volumeUnit, recipeCaloriesPerOunce);
       return _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("panel-form")
       }, _react["default"].createElement("h1", null, title), _react["default"].createElement("form", {
@@ -775,20 +783,20 @@ function (_Component) {
         id: "input-feed-date",
         name: "inputFeedDate",
         type: "date",
-        defaultValue: this.props.feed.Date
+        defaultValue: feed.Date
       })), _react["default"].createElement("h2", null, "Time"), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("fields")
       }, _react["default"].createElement("input", {
         id: "input-feed-time",
         name: "inputFeedTime",
         type: "time",
-        defaultValue: this.props.feed.Time
+        defaultValue: feed.Time
       })), _react["default"].createElement("h2", null, "Recipe"), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("fields")
       }, _react["default"].createElement("select", {
         id: "select-feed-recipe",
         name: "inputFeedRecipe",
-        defaultValue: this.props.feed.RecipeId
+        defaultValue: feed.RecipeId
       }, optionsRecipes)), _react["default"].createElement("h2", null, "Volume"), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("fields")
       }, _react["default"].createElement("input", {
@@ -809,24 +817,27 @@ function (_Component) {
       }, "Cals")))), _react["default"].createElement("button", {
         type: "submit",
         className: (0, _FormatCssClass["default"])("save"),
-        disabled: this.state.isSaving
+        disabled: _StateManager["default"].State().UI.IsSaving
       }, "Save")));
     }
   }, {
     key: "submitFeed",
     value: function submitFeed(e) {
       e.preventDefault();
-      this.setState({
-        isSaving: true
-      });
+
+      _StateManager["default"].UpdateValue("UI.IsSaving", true);
+
       var recipeId = parseInt(e.target.inputFeedRecipe.value);
       var recipeCaloriesPerOunce = 0;
-      this.props.recipes.forEach(function (recipe) {
-        if (recipe.recipeId === recipeId) {
-          recipeCaloriesPerOunce = recipe.caloriesPerOunce;
+
+      _StateManager["default"].State().Account.Recipes.forEach(function (recipe) {
+        if (recipe.RecipeId === recipeId) {
+          recipeCaloriesPerOunce = recipe.CaloriesPerOunce;
         }
       });
-      var feed = this.props.feed;
+
+      var feed = _StateManager["default"].State().UI.EditingFeed;
+
       feed.Date = e.target.inputFeedDate.value;
       feed.Time = e.target.inputFeedTime.value;
       feed.RecipeId = recipeId;
@@ -836,7 +847,10 @@ function (_Component) {
         dateTime: feed.Date + " " + feed.Time,
         calories: feed.Calories,
         recipeId: feed.RecipeId
-      }, function (success) {// TODO: Set saving to false and return to feed list
+      }, function (success) {
+        _StateManager["default"].UpdateValue("UI.IsSaving", false);
+
+        _StateManager["default"].ResetEditingFeed();
       });
     }
   }]);
@@ -847,7 +861,7 @@ function (_Component) {
 exports["default"] = FeedEditor;
 
 
-},{"../api/SaveFeed.jsx":5,"../utils/Converters.jsx":30,"../utils/FormatCssClass.jsx":32,"react":82}],13:[function(require,module,exports){
+},{"../api/SaveFeed.jsx":5,"../utils/Converters.jsx":30,"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"react":82}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -929,7 +943,8 @@ function (_Component) {
     });
 
     _StateManager["default"].Store.subscribe(function () {
-      if (_StateManager["default"].ValueChanged(_this.previousState, ["Account.Settings.DisplayVolumeAsMetric", "SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".CaloriesSliderMax", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".RecipeId", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".FeedsForToday", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Goals", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Weights", "UI.IsSaving", "UI.FeedRecorder"])) _this.forceUpdate();
+      if (_StateManager["default"].ValueChanged(_this.previousState, ["Account.Settings.DisplayVolumeAsMetric", "SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".CaloriesSliderMax", // need to apply for all baby IDs
+      "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".RecipeId", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".FeedsForToday", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Goals", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Weights", "UI.IsSaving", "UI.FeedRecorder"])) _this.forceUpdate();
     });
 
     _this.updateVolume = _this.updateVolume.bind(_assertThisInitialized(_this));
@@ -2026,9 +2041,9 @@ var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.js
 
 var _LoadFeeds = _interopRequireDefault(require("../api/LoadFeeds.jsx"));
 
-var _LoadRecipes = _interopRequireDefault(require("../api/LoadRecipes.jsx"));
-
 var _Converters = require("../utils/Converters.jsx");
+
+var _StateManager = _interopRequireDefault(require("../utils/StateManager.jsx"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -2066,18 +2081,14 @@ function (_Component) {
 
     _classCallCheck(this, MenuFeeds);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuFeeds).call(this, props, context)); // intialize the state
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuFeeds).call(this, props, context));
+    _this.previousState = {};
 
-    _this.state = {
-      feeds: [],
-      recipes: [],
-      condenseList: true,
-      // shows only last [Constants.FeedHistoryDisplayDays] days if condensed
-      editingFeed: {},
-      // will be populated when a feed is being edited
-      volumeUnits: "mls" // TODO: Move to state of App
+    _StateManager["default"].Store.subscribe(function () {
+      if (_StateManager["default"].ValueChanged(_this.previousState, ["SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Feeds", // need to apply for all baby IDs
+      "UI.EditingFeed"])) _this.forceUpdate();
+    });
 
-    };
     _this.showMoreFeeds = _this.showMoreFeeds.bind(_assertThisInitialized(_this));
     _this.editFeed = _this.editFeed.bind(_assertThisInitialized(_this));
     return _this;
@@ -2095,9 +2106,10 @@ function (_Component) {
     value: function render() {
       var content = "";
 
-      if (this.state.feeds.length) {
-        var currentDate = moment().format("Y-MM-DD");
-        var oldestDate = this.state.feeds[0].Date;
+      if (_StateManager["default"].GetCurrentBabyDetails().Feeds.length) {
+        var oldestDate = _StateManager["default"].State().DateToday;
+
+        if (_StateManager["default"].GetCurrentBabyDetails().DailyTotals.length) oldestDate = _StateManager["default"].GetCurrentBabyDetails().DailyTotals[0].Date;
         var dayBlocks = [];
         var isComplete = false;
         var iteration = 0;
@@ -2116,10 +2128,10 @@ function (_Component) {
             className: (0, _FormatCssClass["default"])("btn-add")
           }, "+")), feedBlocks)));
           iteration++;
-          if (this.state.condenseList && iteration >= Constants.FeedHistoryDisplayDays) isComplete = true;else if (!this.state.condenseList && checkDate.format("Y-MM-DD") === oldestDate) isComplete = true;
+          if (_StateManager["default"].State().UI.ResultsCondensed && iteration >= Constants.FeedHistoryDisplayDays) isComplete = true;else if (!_StateManager["default"].State().UI.ResultsCondensed && checkDate.format("Y-MM-DD") === oldestDate) isComplete = true;
         }
 
-        if (this.state.condenseList) {
+        if (_StateManager["default"].State().UI.ResultsCondensed) {
           dayBlocks.push(_react["default"].createElement("button", {
             key: "feeds-load-more",
             onClick: this.showMoreFeeds
@@ -2132,11 +2144,8 @@ function (_Component) {
       return _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])(["menu-panel-sub", "menu-feeds"])
       }, _react["default"].createElement("div", {
-        className: (0, _FormatCssClass["default"])(["menu-panel-edit-form", this.state.editingFeed.RecipeId ? "open" : "closed"])
-      }, _react["default"].createElement(_FeedEditor["default"], {
-        feed: this.state.editingFeed,
-        recipes: this.state.recipes
-      })), _react["default"].createElement("h1", null, "Feeds"), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])(["menu-panel-edit-form", _StateManager["default"].State().UI.EditingFeed.FeedId !== 0 ? "open" : "closed"])
+      }, _react["default"].createElement(_FeedEditor["default"], null)), _react["default"].createElement("h1", null, "Feeds"), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("content")
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("data")
@@ -2149,8 +2158,9 @@ function (_Component) {
     value: function renderFeedBlocks(dateString) {
       var feedBlocks = [];
 
-      for (var i = this.state.feeds.length; i > 0; i--) {
-        var feed = this.state.feeds[i - 1];
+      for (var i = _StateManager["default"].GetCurrentBabyDetails().Feeds.length; i > 0; i--) {
+        var feed = _StateManager["default"].GetCurrentBabyDetails().Feeds[i - 1];
+
         if (feed.Date !== dateString) continue;
         var time = moment(feed.Date + " " + feed.Time).format("h:mm");
         var timeUnit = moment(feed.Date + " " + feed.Time).format("a");
@@ -2158,9 +2168,9 @@ function (_Component) {
         var volume = 0;
         var volumeUnits = "";
 
-        if (recipe.caloriesPerOunce) {
-          volume = (0, _Converters.ConvertCaloriesToVolume)(feed.Calories, this.state.volumeUnits, recipe.caloriesPerOunce);
-          volumeUnits = this.state.volumeUnits;
+        if (recipe.CaloriesPerOunce) {
+          volumeUnits = _StateManager["default"].State().Account.Settings.DisplayVolumeAsMetric ? "mls" : "ozs";
+          volume = (0, _Converters.ConvertCaloriesToVolume)(feed.Calories, volumeUnits, recipe.CaloriesPerOunce);
         } else {
           volume = feed.Calories;
           volumeUnits = "cals";
@@ -2187,48 +2197,41 @@ function (_Component) {
   }, {
     key: "getRecipeById",
     value: function getRecipeById(recipeId) {
-      for (var i = 0; i < this.state.recipes.length; i++) {
-        if (this.state.recipes[i].recipeId === recipeId) return this.state.recipes[i];
+      var recipes = _StateManager["default"].State().Account.Recipes;
+
+      for (var i = 0; i < recipes.length; i++) {
+        if (recipes[i].RecipeId === recipeId) return recipes[i];
       }
 
       return {
-        name: "Unknown"
+        Name: "Unknown"
       };
     }
   }, {
     key: "reloadFeeds",
     value: function reloadFeeds() {
-      var _this2 = this;
-
       (0, _LoadFeeds["default"])(function (feedData) {
-        (0, _LoadRecipes["default"])(function (recipeData) {
-          _this2.setState({
-            feeds: feedData,
-            recipes: recipeData
-          });
-        });
+        _StateManager["default"].UpdateValue("Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Feeds", feedData);
       });
     }
   }, {
     key: "showMoreFeeds",
     value: function showMoreFeeds(e) {
       e.preventDefault();
-      this.setState({
-        condenseList: false
-      });
+
+      _StateManager["default"].UpdateValue("UI.ResultsCondensed", false);
     }
   }, {
     key: "editFeed",
     value: function editFeed(e) {
-      var _this3 = this;
-
       e.preventDefault();
       var feedId = parseInt(e.currentTarget.dataset.feedId);
-      this.state.feeds.forEach(function (feed) {
+
+      var feeds = _StateManager["default"].GetCurrentBabyDetails().Feeds;
+
+      feeds.forEach(function (feed) {
         if (feed.FeedId === feedId) {
-          _this3.setState({
-            editingFeed: feed
-          });
+          _StateManager["default"].UpdateValue("UI.EditingFeed", feed);
 
           return false;
         }
@@ -2242,7 +2245,7 @@ function (_Component) {
 exports["default"] = MenuFeeds;
 
 
-},{"../api/LoadFeeds.jsx":2,"../api/LoadRecipes.jsx":3,"../utils/Constants.jsx":29,"../utils/Converters.jsx":30,"../utils/FormatCssClass.jsx":32,"./FeedEditor.jsx":12,"react":82}],22:[function(require,module,exports){
+},{"../api/LoadFeeds.jsx":2,"../utils/Constants.jsx":29,"../utils/Converters.jsx":30,"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"./FeedEditor.jsx":12,"react":82}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2508,53 +2511,7 @@ function (_Component) {
     key: "render",
     // Renders the menu panel.
     value: function render() {
-      this.previousState = _StateManager["default"].CopyState(); // TODO: set open/close trigger
-      // TODO: add WeightEditor for menu
-
-      /*
-      let content = "";
-      let weights = StateManager.GetCurrentBabyDetails().Weights;
-      if (weights.length) {
-            let lineItems = [];
-          for (let i = weights.length - 1; i >= 0; i--) {
-                let date = weights[i].Date;
-              let weight = weights[i].Kilograms;
-              let weightUnits = "Unit";
-                lineItems.push(
-                  <div className={FormatCssClass(["row", (i % 2) ? "even" : "odd"])}
-                       key={"weight-for-day-" + weights[i].Date}>
-                      <span className={FormatCssClass("cell-date")}><strong>{date}</strong></span>
-                      <span className={FormatCssClass("cell-weight")}><strong>{weight}</strong></span>
-                      <span className={FormatCssClass("cell-unit")}>{weightUnits}</span>
-                  </div>
-              );
-            }
-            content = lineItems;
-        }
-      else content = <p>No Weights Recorded</p>;
-        return (
-          <div className={FormatCssClass(["menu-panel-sub", "menu-weights"])}>
-              <div className={FormatCssClass(["menu-panel-edit-form", (false) ? "open" : "closed"])}>
-                </div>
-              <h1>Weight History</h1>
-              <div className={FormatCssClass("content")}>
-                  <div className={FormatCssClass("data")}>
-                      {content}
-                  </div>
-                  <div className={FormatCssClass("graph")}>[GRAPH]</div>
-              </div>
-          </div>
-      );
-         */
-
-      /*
-      return (
-          <div className={FormatCssClass("menu-panel-sub open")}>
-              <h1>Weights</h1>
-              <p>Weights panel.</p>
-          </div>
-      );
-         */
+      this.previousState = _StateManager["default"].CopyState();
 
       var weightRecord = _StateManager["default"].GetCurrentBabyWeightRecord();
 
@@ -2789,7 +2746,7 @@ function (_Component) {
     _this.previousState = {};
 
     _StateManager["default"].Store.subscribe(function () {
-      if (_StateManager["default"].ValueChanged(_this.previousState, ["UI.EditingRecipe"])) _this.forceUpdate();
+      if (_StateManager["default"].ValueChanged(_this.previousState, ["UI.EditingRecipe", "UI.IsSaving"])) _this.forceUpdate();
     });
 
     _this.submitRecipe = _this.submitRecipe.bind(_assertThisInitialized(_this));
@@ -3450,24 +3407,25 @@ var storeModel = {
       }],
       LastFeedTime: "",
       FeedsForToday: [{
-        Id: 0,
+        FeedId: 0,
         RecipeId: 0,
         DateTime: "",
         Calories: 0
       }],
       Feeds: [{
-        Id: 0,
+        FeedId: 0,
         RecipeId: 0,
-        DateTime: "",
+        Date: "",
+        Time: "",
         Calories: 0
       }],
       Goals: [{
-        Id: 0,
+        GoalId: 0,
         Date: "",
         CaloriesPerKilogram: 0
       }],
       Weights: [{
-        Id: 0,
+        WeightId: 0,
         Date: "",
         Kilograms: 0
       }]
@@ -3478,12 +3436,12 @@ var storeModel = {
     IsSaving: false,
     IsMenuOpen: false,
     SelectedMenuPanel: "",
-    // TODO: Delete this block
-    IsMenuEditFormOpen: false,
-    SelectedMenuEditFormData: {
-      IsOpen: false,
-      Data: {} //
-
+    EditingFeed: {
+      FeedId: 0,
+      RecipeId: 0,
+      Date: "",
+      Time: "",
+      Calories: 0
     },
     EditingRecipe: {
       RecipeId: 0,
@@ -3524,6 +3482,8 @@ var reducer = function reducer(state, action) {
     case "RESET_SERVER_DATA":
       newState.DateToday = action.payload.dateToday;
       newState.SelectedBaby = action.payload.babyId;
+      newState.Account.Settings.DisplayVolumeAsMetric = true; // TODO: Return from API
+
       newState.Account.Recipes = action.payload.recipes;
       newState.Babies["Baby" + newState.SelectedBaby] = JSON.parse(JSON.stringify(newState.Babies.Baby0));
       newState.Babies["Baby" + newState.SelectedBaby].BabyId = action.payload.babyId; // newState.Babies["Baby" + newState.SelectedBaby].Name = action.payload.babyName; // TODO: Return from API
@@ -3589,6 +3549,18 @@ function () {
         CaloriesPerOunce: 0,
         LastUsed: "",
         Selectable: false
+      });
+    }
+  }, {
+    key: "ResetEditingFeed",
+    value: function ResetEditingFeed() {
+      this.UpdateValue("UI.EditingFeed", {
+        FeedId: 0,
+        // set to -1 for NEW
+        RecipeId: 0,
+        Date: "",
+        Time: "",
+        Calories: 0
       });
     }
   }, {

@@ -12,8 +12,8 @@ import FeedEditor from "./FeedEditor.jsx";
 import * as Constants from "../utils/Constants.jsx";
 import FormatCssClass from "../utils/FormatCssClass.jsx";
 import ApiLoadFeeds from "../api/LoadFeeds.jsx";
-import ApiLoadRecipes from "../api/LoadRecipes.jsx";
 import {ConvertCaloriesToVolume, ConvertVolumeToCalories} from "../utils/Converters.jsx";
+import StateManager from "../utils/StateManager.jsx";
 
 // export object
 export default class MenuFeeds extends Component {
@@ -21,15 +21,16 @@ export default class MenuFeeds extends Component {
     // Constructor.
     constructor(props, context) {
         super(props, context);
+        this.previousState = {};
 
-        // intialize the state
-        this.state = {
-            feeds: [],
-            recipes: [],
-            condenseList: true, // shows only last [Constants.FeedHistoryDisplayDays] days if condensed
-            editingFeed: {}, // will be populated when a feed is being edited
-            volumeUnits: "mls" // TODO: Move to state of App
-        };
+        StateManager.Store.subscribe(() => {
+            if (StateManager.ValueChanged(this.previousState, [
+                    "SelectedBaby",
+                    "Babies.Baby" + StateManager.State().SelectedBaby + ".Feeds", // need to apply for all baby IDs
+                    "UI.EditingFeed"
+                ]
+            )) this.forceUpdate();
+        });
 
         this.showMoreFeeds = this.showMoreFeeds.bind(this);
         this.editFeed = this.editFeed.bind(this);
@@ -47,9 +48,10 @@ export default class MenuFeeds extends Component {
     render() {
 
         let content = "";
-        if (this.state.feeds.length) {
-            let currentDate = moment().format("Y-MM-DD");
-            let oldestDate = this.state.feeds[0].Date;
+        if (StateManager.GetCurrentBabyDetails().Feeds.length) {
+            let oldestDate = StateManager.State().DateToday;
+            if (StateManager.GetCurrentBabyDetails().DailyTotals.length)
+                oldestDate = StateManager.GetCurrentBabyDetails().DailyTotals[0].Date;
 
             let dayBlocks = [];
             let isComplete = false;
@@ -78,12 +80,12 @@ export default class MenuFeeds extends Component {
                 );
 
                 iteration++;
-                if (this.state.condenseList && iteration >= Constants.FeedHistoryDisplayDays) isComplete = true;
-                else if (!this.state.condenseList && checkDate.format("Y-MM-DD") === oldestDate) isComplete = true;
+                if (StateManager.State().UI.ResultsCondensed && iteration >= Constants.FeedHistoryDisplayDays) isComplete = true;
+                else if (!StateManager.State().UI.ResultsCondensed && checkDate.format("Y-MM-DD") === oldestDate) isComplete = true;
 
             }
 
-            if (this.state.condenseList) {
+            if (StateManager.State().UI.ResultsCondensed) {
                 dayBlocks.push(
                     <button key="feeds-load-more" onClick={this.showMoreFeeds}>Load Older Feeds</button>
                 );
@@ -96,8 +98,8 @@ export default class MenuFeeds extends Component {
 
         return (
             <div className={FormatCssClass(["menu-panel-sub", "menu-feeds"])}>
-                <div className={FormatCssClass(["menu-panel-edit-form", (this.state.editingFeed.RecipeId) ? "open" : "closed"])}>
-                    <FeedEditor feed={this.state.editingFeed} recipes={this.state.recipes}/>
+                <div className={FormatCssClass(["menu-panel-edit-form", (StateManager.State().UI.EditingFeed.FeedId !== 0) ? "open" : "closed"])}>
+                    <FeedEditor/>
                 </div>
                 <h1>Feeds</h1>
                 <div className={FormatCssClass("content")}>
@@ -114,8 +116,8 @@ export default class MenuFeeds extends Component {
     renderFeedBlocks(dateString) {
 
         let feedBlocks = [];
-        for (let i = this.state.feeds.length; i > 0; i--) {
-            let feed = this.state.feeds[i-1];
+        for (let i = StateManager.GetCurrentBabyDetails().Feeds.length; i > 0; i--) {
+            let feed = StateManager.GetCurrentBabyDetails().Feeds[i-1];
             if (feed.Date !== dateString) continue;
 
             let time = moment(feed.Date + " " + feed.Time).format("h:mm");
@@ -124,9 +126,9 @@ export default class MenuFeeds extends Component {
 
             let volume = 0;
             let volumeUnits = "";
-            if (recipe.caloriesPerOunce) {
-                volume = ConvertCaloriesToVolume(feed.Calories, this.state.volumeUnits, recipe.caloriesPerOunce);
-                volumeUnits = this.state.volumeUnits;
+            if (recipe.CaloriesPerOunce) {
+                volumeUnits = (StateManager.State().Account.Settings.DisplayVolumeAsMetric) ? "mls" : "ozs";
+                volume = ConvertCaloriesToVolume(feed.Calories, volumeUnits, recipe.CaloriesPerOunce);
             }
             else {
                 volume = feed.Calories;
@@ -153,12 +155,13 @@ export default class MenuFeeds extends Component {
 
     getRecipeById(recipeId) {
 
-        for (let i = 0; i < this.state.recipes.length; i++) {
-            if (this.state.recipes[i].recipeId === recipeId) return this.state.recipes[i];
+        const recipes = StateManager.State().Account.Recipes;
+        for (let i = 0; i < recipes.length; i++) {
+            if (recipes[i].RecipeId === recipeId) return recipes[i];
         }
 
         return {
-            name: "Unknown"
+            Name: "Unknown"
         }
 
     }
@@ -166,12 +169,7 @@ export default class MenuFeeds extends Component {
     reloadFeeds() {
 
         ApiLoadFeeds(feedData => {
-            ApiLoadRecipes(recipeData => {
-                this.setState({
-                    feeds: feedData,
-                    recipes: recipeData
-                });
-            });
+            StateManager.UpdateValue("Babies.Baby" + StateManager.State().SelectedBaby + ".Feeds", feedData);
         });
 
     }
@@ -179,9 +177,7 @@ export default class MenuFeeds extends Component {
     showMoreFeeds(e) {
         e.preventDefault();
 
-        this.setState({
-            condenseList: false
-        });
+        StateManager.UpdateValue("UI.ResultsCondensed", false);
 
     }
 
@@ -190,11 +186,10 @@ export default class MenuFeeds extends Component {
 
         let feedId = parseInt(e.currentTarget.dataset.feedId);
 
-        this.state.feeds.forEach((feed) => {
+        let feeds = StateManager.GetCurrentBabyDetails().Feeds;
+        feeds.forEach((feed) => {
             if (feed.FeedId === feedId) {
-                this.setState({
-                    editingFeed: feed
-                });
+                StateManager.UpdateValue("UI.EditingFeed", feed);
                 return false;
             }
         });
