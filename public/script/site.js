@@ -1609,7 +1609,7 @@ function (_Component) {
 
       var hamburgerCloseStyle = "hamburger--squeeze"; // standard close X for top-level menu
 
-      if (_StateManager["default"].State().UI.SelectedMenuPanel) hamburgerCloseStyle = "hamburger--arrow"; // return with arrow for sub-menus
+      if (_StateManager["default"].State().UI.SelectedMenuPanel) hamburgerCloseStyle = "hamburger--arrowalt"; // return with arrow for sub-menus
       // return jsx
 
       return _react["default"].createElement("div", {

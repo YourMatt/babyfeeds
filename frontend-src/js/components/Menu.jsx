@@ -67,7 +67,7 @@ export default class Menu extends Component {
 
         // set the hamburger close style
         let hamburgerCloseStyle = "hamburger--squeeze"; // standard close X for top-level menu
-        if (StateManager.State().UI.SelectedMenuPanel) hamburgerCloseStyle = "hamburger--arrow"; // return with arrow for sub-menus
+        if (StateManager.State().UI.SelectedMenuPanel) hamburgerCloseStyle = "hamburger--arrowalt"; // return with arrow for sub-menus
 
         // return jsx
         return (
