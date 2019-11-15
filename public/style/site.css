@@ -1444,8 +1444,7 @@ body {
         .feed-recorder .areas .remaining h2 small {
           margin-left: 5px;
           font-size: 0.7em;
-          letter-spacing: -3px;
-          cursor: pointer; }
+          letter-spacing: -3px; }
       .feed-recorder .areas .remaining h3 {
         margin-top: -1em;
         font-size: 1.7em;

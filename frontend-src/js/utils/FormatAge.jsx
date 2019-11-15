@@ -45,6 +45,4 @@ export default function FormatAge (today, ageDate) {
         </div>
     );
 
-    return age.join(" ");
-
 }

@@ -344,8 +344,6 @@ var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.js
 
 var _StateManager = _interopRequireDefault(require("../utils/StateManager.jsx"));
 
-var _Load = _interopRequireDefault(require("../api/Load.jsx"));
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
@@ -362,9 +360,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -382,90 +380,26 @@ function (_Component) {
 
     _classCallCheck(this, App);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(App).call(this, props, context)); // intialize the application state
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(App).call(this, props, context)); // load all server data
 
-    _this.state = {
-      caloriesFeedMax: 0,
-      caloriesLastFeed: 0,
-      caloriesGoal: 0,
-      //dateToday: "",
-      dateBirth: "",
-      dateExpected: "",
-      feedsForToday: [],
-      feedTotalsPerDay: [],
-      lastFeedTime: "",
-      recipeId: 0,
-      recipeName: "",
-      recipeCaloriesPerOunce: 0,
-      // weightKilograms: 0,
-      modal: ""
-    };
-    _this.reloadData = _this.reloadData.bind(_assertThisInitialized(_this));
+    _StateManager["default"].ReloadFromServer();
+
     return _this;
   }
 
   _createClass(App, [{
-    key: "componentWillMount",
-    // Pre-mount logic.
-    value: function componentWillMount() {
-      this.reloadData();
-    } // Renders the full application.
-
-  }, {
     key: "render",
+    // Renders the full application.
     value: function render() {
-      // return jsx
       return _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("app")
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("header")
       }, _react["default"].createElement(_LastFeedTime["default"], null), _react["default"].createElement(_Menu["default"], null)), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("body")
-      }, _react["default"].createElement(_FeedRecorder["default"], {
-        feedsForToday: this.state.feedsForToday,
-        caloriesGoal: this.state.caloriesGoal,
-        caloriesFeedMax: this.state.caloriesFeedMax,
-        caloriesLastFeed: this.state.caloriesLastFeed,
-        recipeId: this.state.recipeId,
-        recipeName: this.state.recipeName,
-        recipeCaloriesPerOunce: this.state.recipeCaloriesPerOunce,
-        fnReloadData: this.reloadData
-      }), _react["default"].createElement(_History["default"], null)), _react["default"].createElement("div", {
+      }, _react["default"].createElement(_FeedRecorder["default"], null), _react["default"].createElement(_History["default"], null)), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("footer")
       }, _react["default"].createElement(_Weight["default"], null), _react["default"].createElement(_Age["default"], null)), _react["default"].createElement(_Modal["default"], null), _react["default"].createElement(_Loading["default"], null));
-    } // Loads all data from the server.
-
-  }, {
-    key: "reloadData",
-    value: function reloadData(callback) {
-      var _this2 = this;
-
-      (0, _Load["default"])(function (data) {
-        _StateManager["default"].Store.dispatch({
-          type: "RESET_SERVER_DATA",
-          payload: data
-        });
-
-        _StateManager["default"].UpdateValue("UI.IsLoading", false);
-
-        _this2.setState({
-          caloriesFeedMax: data.caloriesFeedMax,
-          caloriesLastFeed: data.caloriesLastFeed,
-          caloriesGoal: data.caloriesGoal,
-          //dateToday: data.dateToday,
-          dateBirth: data.dateBirth,
-          dateExpected: data.dateExpected,
-          feedsForToday: data.feedsForToday,
-          feedTotalsPerDay: data.feedTotalsPerDay,
-          lastFeedTime: data.lastFeedTime,
-          recipeId: data.recipeId,
-          recipeName: data.recipeName,
-          recipeCaloriesPerOunce: data.recipeCaloriesPerOunce,
-          weightKilograms: data.weightKilograms
-        });
-
-        if (callback) callback();
-      });
     }
   }]);
 
@@ -475,7 +409,7 @@ function (_Component) {
 exports["default"] = App;
 
 
-},{"../api/Load.jsx":1,"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"./Age.jsx":8,"./FeedRecorder.jsx":13,"./History.jsx":14,"./LastFeedTime.jsx":15,"./Loading.jsx":16,"./Menu.jsx":17,"./Modal.jsx":24,"./SiteTitle.jsx":26,"./Weight.jsx":27,"react":82}],10:[function(require,module,exports){
+},{"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"./Age.jsx":8,"./FeedRecorder.jsx":13,"./History.jsx":14,"./LastFeedTime.jsx":15,"./Loading.jsx":16,"./Menu.jsx":17,"./Modal.jsx":24,"./SiteTitle.jsx":26,"./Weight.jsx":27,"react":82}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -891,6 +825,12 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -919,18 +859,7 @@ function (_Component) {
     _classCallCheck(this, FeedRecorder);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(FeedRecorder).call(this, props, context));
-    _this.previousState = {}; // intialize the application state
-
-    _this.state = {
-      selectedCalories: 0,
-      // the current calorie content of the selected volume - could be refactored out to be derived only when needed
-      selectedRecipeId: 0,
-      // the selected recipe ID
-      selectedRecipeName: "",
-      // the selected recipe name
-      selectedRecipeCaloriesPerOunce: 0 // the selected recipe calorie density
-
-    }; // reload the data after regaining focus
+    _this.previousState = {}; // reload the data after regaining focus
 
     var self = _assertThisInitialized(_this);
 
@@ -938,7 +867,7 @@ function (_Component) {
       var state = document.visibilityState || document.webkitVisibilityState;
 
       if (state === "visible") {
-        self.props.fnReloadData(function () {});
+        _StateManager["default"].ReloadFromServer();
       }
     });
 
@@ -954,38 +883,14 @@ function (_Component) {
     _this.changeHourSelection = _this.changeHourSelection.bind(_assertThisInitialized(_this));
     _this.changeMinuteSelection = _this.changeMinuteSelection.bind(_assertThisInitialized(_this));
     _this.changeAmPmSelection = _this.changeAmPmSelection.bind(_assertThisInitialized(_this));
-    _this.changeUnitSelection = _this.changeUnitSelection.bind(_assertThisInitialized(_this));
     _this.changeRecipeSelection = _this.changeRecipeSelection.bind(_assertThisInitialized(_this));
     _this.addRecipe = _this.addRecipe.bind(_assertThisInitialized(_this));
     _this.submitFeed = _this.submitFeed.bind(_assertThisInitialized(_this));
     return _this;
-  } // TODO: REMOVE THIS METHOD
-  // Changes when updating component.
+  } // Renders the feed recorder.
 
 
   _createClass(FeedRecorder, [{
-    key: "componentDidUpdate",
-    value: function componentDidUpdate() {
-      // set the recipe selection if provided by props
-      if (!this.state.selectedRecipeId && this.props.recipeId) {
-        this.setState({
-          selectedRecipeId: this.props.recipeId,
-          selectedRecipeName: this.props.recipeName,
-          selectedRecipeCaloriesPerOunce: this.props.recipeCaloriesPerOunce
-        });
-      } // set the calorie selection if provided by props
-
-
-      if (!this.state.selectedCalories && this.props.caloriesLastFeed) {
-        this.setState({
-          selectedCalories: this.props.caloriesLastFeed
-        });
-
-        _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedVolume", (0, _Converters.ConvertCaloriesToVolume)(this.props.caloriesLastFeed, _StateManager["default"].State().UI.FeedRecorder.SelectedVolumeUnit, this.props.recipeCaloriesPerOunce));
-      }
-    } // Renders the feed recorder.
-
-  }, {
     key: "render",
     value: function render() {
       // find the total volume for the day
@@ -993,17 +898,17 @@ function (_Component) {
 
       _StateManager["default"].GetCurrentBabyDetails().FeedsForToday.forEach(function (value) {
         totalCalories += value.Calories;
-      }); // find the remaining amount
-      //let remainingCalories = (totalCalories < this.props.caloriesGoal) ? (this.props.caloriesGoal - totalCalories) : 0;
-      //let pluralRemainingCalories = (remainingCalories === 1) ? "" : "s";
+      });
+
+      var selectedRecipe = _StateManager["default"].GetRecipeRecord(_StateManager["default"].GetFeedRecorderData().SelectedRecipeId); // convert volume to the current unit
 
 
-      var caloriesCurrent = this.state.selectedCalories;
-      var caloriesMax = this.props.caloriesFeedMax + 20; // TODO: Change to vary by percentage, ending in even numbers - maybe set a minimum based upon the baby's weight for new signups
-      // convert volume to the current unit
+      var remainingVolumeData = (0, _FormatFeedVolume["default"])(_StateManager["default"].GetFeedRecorderData().SelectedVolumeUnit, totalCalories < _StateManager["default"].GetCurrentBabyDetails().CaloriesGoal ? _StateManager["default"].GetCurrentBabyDetails().CaloriesGoal - totalCalories : 0, _StateManager["default"].GetCurrentBabyDetails().CaloriesFeedMax, selectedRecipe.CaloriesPerOunce);
 
-      var remainingVolumeData = (0, _FormatFeedVolume["default"])(_StateManager["default"].State().UI.FeedRecorder.SelectedVolumeUnit, totalCalories < this.props.caloriesGoal ? this.props.caloriesGoal - totalCalories : 0, 0, this.state.selectedRecipeCaloriesPerOunce);
-      var sliderVolumeData = (0, _FormatFeedVolume["default"])(_StateManager["default"].State().UI.FeedRecorder.SelectedVolumeUnit, this.state.selectedCalories, this.props.caloriesFeedMax, this.state.selectedRecipeCaloriesPerOunce); // return jsx
+      var sliderVolumeData = _objectSpread({}, remainingVolumeData, {
+        volume: _StateManager["default"].GetFeedRecorderData().SelectedVolume
+      }); // return jsx
+
 
       return _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("feed-recorder")
@@ -1052,20 +957,18 @@ function (_Component) {
         height: "100%"
       }), _react["default"].createElement("g", {
         id: "bottle-fills"
-      }, this.buildSvgFeedVolumeBlocks(this.props.caloriesGoal, this.props.feedsForToday)))), _react["default"].createElement("div", {
+      }, this.buildSvgFeedVolumeBlocks(_StateManager["default"].GetCurrentBabyDetails().CaloriesGoal, _StateManager["default"].GetCurrentBabyDetails().FeedsForToday)))), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("areas")
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("remaining")
-      }, _react["default"].createElement("h2", null, remainingVolumeData.volume, _react["default"].createElement("small", {
-        onClick: this.changeUnitSelection
-      }, remainingVolumeData.unitLabel)), _react["default"].createElement("h3", null, "Remaining")), _react["default"].createElement("form", {
+      }, _react["default"].createElement("h2", null, remainingVolumeData.volume, _react["default"].createElement("small", null, remainingVolumeData.unitLabel)), _react["default"].createElement("h3", null, "Remaining")), _react["default"].createElement("form", {
         className: (0, _FormatCssClass["default"])("input"),
         onSubmit: this.submitFeed
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("recipe")
       }, _react["default"].createElement("button", {
         onClick: this.displayRecipeSelection
-      }, this.state.selectedRecipeName)), _react["default"].createElement("div", {
+      }, selectedRecipe.Name)), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("time")
       }, _react["default"].createElement("button", {
         onClick: this.displayHourSelection
@@ -1078,13 +981,13 @@ function (_Component) {
         className: (0, _FormatCssClass["default"])("volume-control")
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("volume")
-      }, _StateManager["default"].State().UI.FeedRecorder.SelectedVolume, _react["default"].createElement("small", null, sliderVolumeData.unitLabel)), _react["default"].createElement("div", {
+      }, _StateManager["default"].GetFeedRecorderData().SelectedVolume, _react["default"].createElement("small", null, sliderVolumeData.unitLabel)), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("slider")
       }, _react["default"].createElement("input", {
         type: "range",
         min: sliderVolumeData.sliderMin,
         max: sliderVolumeData.sliderMax,
-        value: _StateManager["default"].State().UI.FeedRecorder.SelectedVolume,
+        value: _StateManager["default"].GetFeedRecorderData().SelectedVolume,
         step: sliderVolumeData.sliderIncrement,
         onChange: this.updateVolume
       }))), _react["default"].createElement("div", {
@@ -1101,6 +1004,7 @@ function (_Component) {
       var currentPercent = 100;
       var feedBlocks = [];
       feedsForToday.forEach(function (value) {
+        if (!value.Time) return;
         var feedPercent = 100 * value.Calories / totalFeedsRequired;
         currentPercent -= feedPercent;
         feedBlocks.push(_react["default"].createElement("rect", {
@@ -1191,15 +1095,15 @@ function (_Component) {
           }
 
           var className = "";
-          if (recipe.RecipeId === _this2.state.selectedRecipeId) className = "selected";
+          if (recipe.RecipeId === _StateManager["default"].GetFeedRecorderData().SelectedRecipeId) className = "selected";
           options.push(_react["default"].createElement("button", {
             key: "recipe-" + recipe.RecipeId,
             className: (0, _FormatCssClass["default"])(className),
             "data-recipe-id": recipe.RecipeId,
-            "data-recipe-name": recipe.Name,
-            "data-recipe-calories-per-ounce": recipe.CaloriesPerOunce,
             onClick: _this2.changeRecipeSelection
-          }, recipe.Name, _react["default"].createElement("small", null, lastUsedDate)));
+          }, recipe.Name, _react["default"].createElement("small", {
+            "data-recipe-id": recipe.RecipeId
+          }, lastUsedDate)));
         });
         options.push(_react["default"].createElement("div", {
           className: (0, _FormatCssClass["default"])("recipe-add-area"),
@@ -1222,7 +1126,7 @@ function (_Component) {
   }, {
     key: "changeHourSelection",
     value: function changeHourSelection(e) {
-      e.preventDefault(); //this.props.fnDismissModal();
+      e.preventDefault();
 
       _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedHour", parseInt(e.target.innerText));
 
@@ -1247,19 +1151,6 @@ function (_Component) {
       _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedAmPm", _StateManager["default"].GetFeedRecorderData().SelectedAmPm === "am" ? "pm" : "am");
 
       _StateManager["default"].UpdateValue("UI.SelectedModalData.Content", "");
-    } // Cycles through units of: cals, mls, ozs.
-
-  }, {
-    key: "changeUnitSelection",
-    value: function changeUnitSelection(e) {
-      e.preventDefault();
-      var units = ["mls", "ozs"]; // can use "cals", but leaving out because less practical
-
-      var newUnit = units[(units.indexOf(this.state.units) + 1) % units.length];
-
-      _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedVolumeUnit", newUnit);
-
-      _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedVolume", (0, _Converters.ConvertCaloriesToVolume)(this.state.selectedCalories, newUnit, this.props.recipeCaloriesPerOunce));
     } // Updates the recipe to the selection.
 
   }, {
@@ -1267,12 +1158,10 @@ function (_Component) {
     value: function changeRecipeSelection(e) {
       e.preventDefault();
       var buttonData = e.target.dataset;
-      this.props.fnDismissModal();
-      this.setState({
-        selectedRecipeId: parseInt(buttonData.recipeId),
-        selectedRecipeName: buttonData.recipeName,
-        selectedRecipeCaloriesPerOunce: buttonData.recipeCaloriesPerOunce
-      });
+
+      _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedRecipeId", parseInt(buttonData.recipeId));
+
+      _StateManager["default"].UpdateValue("UI.SelectedModalData.Content", "");
     } // opens menu to add a new recipe
 
   }, {
@@ -1290,11 +1179,6 @@ function (_Component) {
   }, {
     key: "updateVolume",
     value: function updateVolume(e) {
-      this.setState({
-        //selectedVolume: e.target.value,
-        selectedCalories: (0, _Converters.ConvertVolumeToCalories)(e.target.value, _StateManager["default"].State().UI.FeedRecorder.SelectedVolumeUnit, this.state.selectedRecipeCaloriesPerOunce)
-      });
-
       _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedVolume", e.target.value);
     } // Saves the current selections.
 
@@ -1304,8 +1188,6 @@ function (_Component) {
       e.preventDefault(); // validate provided data
       // TODO: Validate time and show feedback if error
 
-      if (!this.state.selectedCalories) return;
-
       _StateManager["default"].UpdateValue("UI.IsSaving", true); // find the date - if the time if more than 2 hours into the future, use yesterday, allowing for up to 22
       // hours to enter a past feed
 
@@ -1314,24 +1196,20 @@ function (_Component) {
       if (_StateManager["default"].GetFeedRecorderData().SelectedHour - 2 > moment().hours()) date = moment().subtract(1, "days").format("YYYY-MM-DD"); // add the hours to the date
 
       var hoursIn24Format = _StateManager["default"].GetFeedRecorderData().SelectedAmPm === "pm" && _StateManager["default"].GetFeedRecorderData().SelectedHour !== 12 ? _StateManager["default"].GetFeedRecorderData().SelectedHour + 12 : _StateManager["default"].GetFeedRecorderData().SelectedHour;
-      date += " " + hoursIn24Format + ":" + _StateManager["default"].GetFeedRecorderData().SelectedMinute.toString().padStart(2, "0"); // save the feed data
+      date += " " + hoursIn24Format + ":" + _StateManager["default"].GetFeedRecorderData().SelectedMinute.toString().padStart(2, "0"); // prepare the save data for the save
+
+      var selectedRecipe = _StateManager["default"].GetRecipeRecord(_StateManager["default"].GetFeedRecorderData().SelectedRecipeId);
+
+      var saveData = {
+        dateTime: date,
+        calories: (0, _Converters.ConvertVolumeToCalories)(_StateManager["default"].GetFeedRecorderData().SelectedVolume, _StateManager["default"].GetFeedRecorderData().SelectedVolumeUnit, selectedRecipe.CaloriesPerOunce),
+        recipeId: _StateManager["default"].GetFeedRecorderData().SelectedRecipeId
+      }; // save the feed data
 
       var self = this;
-      (0, _SaveFeed["default"])({
-        dateTime: date,
-        calories: this.state.selectedCalories,
-        recipeId: this.state.selectedRecipeId
-      }, function (success) {
+      (0, _SaveFeed["default"])(saveData, function (success) {
         // TODO: Handle non-success
-        self.props.fnReloadData(function () {
-          _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedHour", parseInt(moment().format("h")));
-
-          _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedMinute", moment().minute());
-
-          _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedAmPm", moment().format("a"));
-
-          _StateManager["default"].UpdateValue("UI.IsSaving", false);
-        });
+        _StateManager["default"].ReloadFromServer();
       });
     }
   }]);
@@ -1857,14 +1735,9 @@ function (_Component) {
 
   // Constructor.
   function MenuAbout(props, context) {
-    var _this;
-
     _classCallCheck(this, MenuAbout);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuAbout).call(this, props, context)); // intialize the state
-
-    _this.state = {};
-    return _this;
+    return _possibleConstructorReturn(this, _getPrototypeOf(MenuAbout).call(this, props, context));
   }
 
   _createClass(MenuAbout, [{
@@ -1927,14 +1800,9 @@ function (_Component) {
 
   // Constructor.
   function MenuAccount(props, context) {
-    var _this;
-
     _classCallCheck(this, MenuAccount);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuAccount).call(this, props, context)); // intialize the state
-
-    _this.state = {};
-    return _this;
+    return _possibleConstructorReturn(this, _getPrototypeOf(MenuAccount).call(this, props, context));
   }
 
   _createClass(MenuAccount, [{
@@ -1997,14 +1865,9 @@ function (_Component) {
 
   // Constructor.
   function MenuBabies(props, context) {
-    var _this;
-
     _classCallCheck(this, MenuBabies);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuBabies).call(this, props, context)); // intialize the state
-
-    _this.state = {};
-    return _this;
+    return _possibleConstructorReturn(this, _getPrototypeOf(MenuBabies).call(this, props, context));
   }
 
   _createClass(MenuBabies, [{
@@ -3211,7 +3074,6 @@ function FormatAge(today, ageDate) {
 
 
   return _react["default"].createElement("div", null, ageMonthsFormatted, " ", ageWeeksFormatted, " ", ageDaysFormatted);
-  return age.join(" ");
 }
 
 
@@ -3353,6 +3215,10 @@ var _react = _interopRequireDefault(require("react"));
 
 var _redux = require("redux");
 
+var _Converters = require("./Converters.jsx");
+
+var _Load = _interopRequireDefault(require("../api/Load.jsx"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3397,6 +3263,10 @@ var storeModel = {
       BabyId: 0,
       Name: "",
       CaloriesSliderMax: 0,
+      CaloriesFeedMax: 0,
+      // TODO: Evaluate if still needed
+      CaloriesGoal: 0,
+      // TODO: Remove after adding goals load
       BirthDate: "",
       ExpectedDate: "",
       RecipeId: 0,
@@ -3454,6 +3324,7 @@ var storeModel = {
     },
     ResultsCondensed: true,
     FeedRecorder: {
+      SelectedRecipeId: 0,
       SelectedHour: 0,
       SelectedMinute: 0,
       SelectedAmPm: "am",
@@ -3480,6 +3351,41 @@ var reducer = function reducer(state, action) {
       break;
 
     case "RESET_SERVER_DATA":
+      // get volume data from recipes
+      var selectedVolume = 0;
+      var selectedRecipeCaloriesPerOunce = 0;
+      var selectedRecipeVolumeUnit = "";
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = action.payload.recipes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var recipe = _step.value;
+
+          if (recipe.RecipeId === action.payload.recipeId) {
+            selectedRecipeCaloriesPerOunce = recipe.CaloriesPerOunce;
+            selectedRecipeVolumeUnit = selectedRecipeCaloriesPerOunce ? true ? "mls" : "ozs" : "cals"; // TODO: Use display as metric from API
+
+            selectedVolume = (0, _Converters.ConvertCaloriesToVolume)(action.payload.caloriesLastFeed, selectedRecipeVolumeUnit, selectedRecipeCaloriesPerOunce);
+            break;
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
       newState.DateToday = action.payload.dateToday;
       newState.SelectedBaby = action.payload.babyId;
       newState.Account.Settings.DisplayVolumeAsMetric = true; // TODO: Return from API
@@ -3488,6 +3394,10 @@ var reducer = function reducer(state, action) {
       newState.Babies["Baby" + newState.SelectedBaby] = JSON.parse(JSON.stringify(newState.Babies.Baby0));
       newState.Babies["Baby" + newState.SelectedBaby].BabyId = action.payload.babyId; // newState.Babies["Baby" + newState.SelectedBaby].Name = action.payload.babyName; // TODO: Return from API
       // newState.Babies["Baby" + newState.SelectedBaby].CaloriesSliderMax = CALC; // TODO: Calculate
+
+      newState.Babies["Baby" + newState.SelectedBaby].CaloriesFeedMax = action.payload.caloriesFeedMax; // TODO: Evaluate if still needed
+
+      newState.Babies["Baby" + newState.SelectedBaby].CaloriesGoal = action.payload.caloriesGoal; // TODO: Remove and replace with goals list
 
       newState.Babies["Baby" + newState.SelectedBaby].BirthDate = action.payload.dateBirth;
       newState.Babies["Baby" + newState.SelectedBaby].ExpectedDate = action.payload.dateExpected;
@@ -3498,9 +3408,14 @@ var reducer = function reducer(state, action) {
       // newState.Babies["Baby" + newState.SelectedBaby].Goals = // TODO: Return from API
 
       newState.Babies["Baby" + newState.SelectedBaby].Weights = action.payload.weights;
+      newState.UI.IsLoading = false;
+      newState.UI.IsSaving = false;
+      newState.UI.FeedRecorder.SelectedRecipeId = action.payload.recipeId;
       newState.UI.FeedRecorder.SelectedHour = parseInt(moment().format("h"));
       newState.UI.FeedRecorder.SelectedMinute = moment().minute();
       newState.UI.FeedRecorder.SelectedAmPm = moment().format("a");
+      newState.UI.FeedRecorder.SelectedVolume = selectedVolume;
+      newState.UI.FeedRecorder.SelectedVolumeUnit = selectedRecipeVolumeUnit;
       break;
   }
 
@@ -3511,7 +3426,7 @@ var StateManager =
 /*#__PURE__*/
 function () {
   // Constructor.
-  function StateManager(props, context) {
+  function StateManager() {
     _classCallCheck(this, StateManager);
 
     this.Store = (0, _redux.createStore)(reducer, storeModel);
@@ -3526,6 +3441,20 @@ function () {
     key: "CopyState",
     value: function CopyState() {
       return JSON.parse(JSON.stringify(this.State()));
+    }
+  }, {
+    key: "ReloadFromServer",
+    value: function ReloadFromServer(callback) {
+      var _this = this;
+
+      (0, _Load["default"])(function (data) {
+        _this.Store.dispatch({
+          type: "RESET_SERVER_DATA",
+          payload: data
+        });
+
+        if (callback) callback();
+      });
     }
   }, {
     key: "UpdateValue",
@@ -3616,6 +3545,40 @@ function () {
       return this.GetCurrentBabyDetails().Weights[this.GetCurrentBabyDetails().Weights.length - 1];
     }
   }, {
+    key: "GetRecipeRecord",
+    value: function GetRecipeRecord(recipeId) {
+      var selectedRecipe = {};
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = this.State().Account.Recipes[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var recipe = _step2.value;
+
+          if (recipe.RecipeId === recipeId) {
+            selectedRecipe = _objectSpread({}, recipe);
+            break;
+          }
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+            _iterator2["return"]();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+
+      return selectedRecipe;
+    }
+  }, {
     key: "GetFeedRecorderData",
     value: function GetFeedRecorderData() {
       return this.State().UI.FeedRecorder;
@@ -3630,7 +3593,7 @@ var _default = StateManager = new StateManager();
 exports["default"] = _default;
 
 
-},{"react":82,"redux":83}],36:[function(require,module,exports){
+},{"../api/Load.jsx":1,"./Converters.jsx":30,"react":82,"redux":83}],36:[function(require,module,exports){
 function _extends() {
   module.exports = _extends = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {

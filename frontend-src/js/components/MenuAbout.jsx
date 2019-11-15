@@ -15,9 +15,6 @@ export default class MenuAbout extends Component {
     constructor(props, context) {
         super(props, context);
 
-        // intialize the state
-        this.state = {};
-
     };
 
     // Renders the menu panel.

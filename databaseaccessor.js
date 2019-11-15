@@ -369,9 +369,12 @@ exports.access = {
 
     db: null,
 
-    init: () => {
+    runQuery: (queryCallback) => {
 
-        if (exports.access.db) return;
+        if (exports.access.db) {
+            console.log("Connection exists. State = " + exports.access.db.state);
+            return queryCallback();
+        }
 
         // create the db connection
         exports.access.db = mysql.createConnection({
@@ -388,6 +391,7 @@ exports.access = {
                 console.log('Error connecting to Db: ' + error);
                 return;
             }
+            return queryCallback();
         });
 
     },
@@ -418,54 +422,47 @@ exports.access = {
     },
 
     selectMultiple: (query, callback, returnSingle) => {
+        exports.access.runQuery(() => {
+            exports.access.db.query(query, (error, rows) => {
 
-        exports.access.init();
+                // report error and return if error state
+                if (error) return exports.access.handleError(query, error);
+                exports.access.close();
 
-        // run the query
-        exports.access.db.query(query, (error, rows) => {
+                // call the callback with data
+                if (returnSingle) callback(rows[0]);
+                else callback(rows);
 
-            // report error and return if error state
-            if (error) return exports.access.handleError(query, error);
-            exports.access.close();
-
-            // call the callback with data
-            if (returnSingle) callback(rows[0]);
-            else callback(rows);
-
+            });
         });
-
     },
 
     insert: (query, callback) => {
+        exports.access.runQuery(() => {
+            exports.access.db.query(query, (error, results) => {
 
-        exports.access.init();
+                if (error) return exports.access.handleError(query, error);
+                exports.access.close();
 
-        exports.access.db.query(query, (error, results) => {
+                // call the callback with the insert ID
+                callback(results.insertId);
 
-            if (error) return exports.access.handleError(query, error);
-            exports.access.close();
-
-            // call the callback with the insert ID
-            callback(results.insertId);
-
+            });
         });
-
     },
 
     update: (query, callback) => {
+        exports.access.runQuery(() => {
+            exports.access.db.query(query, (error, results) => {
 
-        exports.access.init();
+                if (error) return exports.access.handleError(query, error);
+                exports.access.close();
 
-        exports.access.db.query(query, (error, results) => {
+                // call the callback with number of affected records
+                callback(results.affectedRows);
 
-            if (error) return exports.access.handleError(query, error);
-            exports.access.close();
-
-            // call the callback with number of affected records
-            callback(results.affectedRows);
-
+            });
         });
-
     }
 
 };

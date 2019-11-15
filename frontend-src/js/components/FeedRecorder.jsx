@@ -21,20 +21,12 @@ export default class FeedRecorder extends Component {
         super(props, context);
         this.previousState = {};
 
-        // intialize the application state
-        this.state = {
-            selectedCalories: 0, // the current calorie content of the selected volume - could be refactored out to be derived only when needed
-            selectedRecipeId: 0, // the selected recipe ID
-            selectedRecipeName: "", // the selected recipe name
-            selectedRecipeCaloriesPerOunce: 0, // the selected recipe calorie density
-        };
-
         // reload the data after regaining focus
         let self = this;
         document.addEventListener("visibilitychange", function() {
             let state = document.visibilityState || document.webkitVisibilityState;
             if (state === "visible") {
-                self.props.fnReloadData(() => {});
+                StateManager.ReloadFromServer();
             }
         });
 
@@ -60,40 +52,9 @@ export default class FeedRecorder extends Component {
         this.changeHourSelection = this.changeHourSelection.bind(this);
         this.changeMinuteSelection = this.changeMinuteSelection.bind(this);
         this.changeAmPmSelection = this.changeAmPmSelection.bind(this);
-        this.changeUnitSelection = this.changeUnitSelection.bind(this);
         this.changeRecipeSelection = this.changeRecipeSelection.bind(this);
         this.addRecipe = this.addRecipe.bind(this);
         this.submitFeed = this.submitFeed.bind(this);
-
-    }
-
-    // TODO: REMOVE THIS METHOD
-    // Changes when updating component.
-    componentDidUpdate() {
-
-        // set the recipe selection if provided by props
-        if (!this.state.selectedRecipeId && this.props.recipeId) {
-            this.setState({
-                selectedRecipeId: this.props.recipeId,
-                selectedRecipeName: this.props.recipeName,
-                selectedRecipeCaloriesPerOunce: this.props.recipeCaloriesPerOunce
-            });
-        }
-
-        // set the calorie selection if provided by props
-        if (!this.state.selectedCalories && this.props.caloriesLastFeed) {
-            this.setState({
-                selectedCalories: this.props.caloriesLastFeed
-            });
-            StateManager.UpdateValue(
-                "UI.FeedRecorder.SelectedVolume",
-                ConvertCaloriesToVolume(
-                    this.props.caloriesLastFeed,
-                    StateManager.State().UI.FeedRecorder.SelectedVolumeUnit,
-                    this.props.recipeCaloriesPerOunce
-                )
-            );
-        }
 
     }
 
@@ -106,26 +67,20 @@ export default class FeedRecorder extends Component {
             totalCalories += value.Calories;
         });
 
-        // find the remaining amount
-        //let remainingCalories = (totalCalories < this.props.caloriesGoal) ? (this.props.caloriesGoal - totalCalories) : 0;
-        //let pluralRemainingCalories = (remainingCalories === 1) ? "" : "s";
-
-        let caloriesCurrent = this.state.selectedCalories;
-        let caloriesMax = this.props.caloriesFeedMax + 20; // TODO: Change to vary by percentage, ending in even numbers - maybe set a minimum based upon the baby's weight for new signups
+        let selectedRecipe = StateManager.GetRecipeRecord(StateManager.GetFeedRecorderData().SelectedRecipeId);
 
         // convert volume to the current unit
         let remainingVolumeData = FormatFeedVolume(
-            StateManager.State().UI.FeedRecorder.SelectedVolumeUnit,
-            (totalCalories < this.props.caloriesGoal) ? (this.props.caloriesGoal - totalCalories) : 0,
-            0,
-            this.state.selectedRecipeCaloriesPerOunce
+            StateManager.GetFeedRecorderData().SelectedVolumeUnit,
+            (totalCalories < StateManager.GetCurrentBabyDetails().CaloriesGoal) ? (StateManager.GetCurrentBabyDetails().CaloriesGoal - totalCalories) : 0,
+            StateManager.GetCurrentBabyDetails().CaloriesFeedMax,
+            selectedRecipe.CaloriesPerOunce
         );
-        let sliderVolumeData = FormatFeedVolume(
-            StateManager.State().UI.FeedRecorder.SelectedVolumeUnit,
-            this.state.selectedCalories,
-            this.props.caloriesFeedMax,
-            this.state.selectedRecipeCaloriesPerOunce
-        );
+
+        let sliderVolumeData = {
+            ...remainingVolumeData,
+            volume: StateManager.GetFeedRecorderData().SelectedVolume,
+        };
 
         // return jsx
         return (
@@ -154,13 +109,13 @@ export default class FeedRecorder extends Component {
                     <g className="bottle-clipped">
                         <rect className={FormatCssClass("bottle-background")} x="0" y="0" width="100%" height="100%"/>
                         <g id="bottle-fills">
-                            {this.buildSvgFeedVolumeBlocks(this.props.caloriesGoal, this.props.feedsForToday)}
+                            {this.buildSvgFeedVolumeBlocks(StateManager.GetCurrentBabyDetails().CaloriesGoal, StateManager.GetCurrentBabyDetails().FeedsForToday)}
                         </g>
                     </g>
                 </svg>
                 <div className={FormatCssClass("areas")}>
                     <div className={FormatCssClass("remaining")}>
-                        <h2>{remainingVolumeData.volume}<small onClick={this.changeUnitSelection}>{remainingVolumeData.unitLabel}</small></h2>
+                        <h2>{remainingVolumeData.volume}<small>{remainingVolumeData.unitLabel}</small></h2>
                         <h3>Remaining</h3>
                     </div>
                     <form
@@ -168,7 +123,7 @@ export default class FeedRecorder extends Component {
                         onSubmit={this.submitFeed}
                     >
                         <div className={FormatCssClass("recipe")}>
-                            <button onClick={this.displayRecipeSelection}>{this.state.selectedRecipeName}</button>
+                            <button onClick={this.displayRecipeSelection}>{selectedRecipe.Name}</button>
                         </div>
                         <div className={FormatCssClass("time")}>
                             <button onClick={this.displayHourSelection}>{StateManager.GetFeedRecorderData().SelectedHour}</button>
@@ -178,14 +133,14 @@ export default class FeedRecorder extends Component {
                         </div>
                         <div className={FormatCssClass("volume-control")}>
                             <div className={FormatCssClass("volume")}>
-                                {StateManager.State().UI.FeedRecorder.SelectedVolume}<small>{sliderVolumeData.unitLabel}</small>
+                                {StateManager.GetFeedRecorderData().SelectedVolume}<small>{sliderVolumeData.unitLabel}</small>
                             </div>
                             <div className={FormatCssClass("slider")}>
                                 <input
                                     type="range"
                                     min={sliderVolumeData.sliderMin}
                                     max={sliderVolumeData.sliderMax}
-                                    value={StateManager.State().UI.FeedRecorder.SelectedVolume}
+                                    value={StateManager.GetFeedRecorderData().SelectedVolume}
                                     step={sliderVolumeData.sliderIncrement}
                                     onChange={this.updateVolume}
                                 />
@@ -206,7 +161,8 @@ export default class FeedRecorder extends Component {
 
         let currentPercent = 100;
         let feedBlocks = [];
-        feedsForToday.forEach((value) => {
+        feedsForToday.forEach(value => {
+            if (!value.Time) return;
 
             let feedPercent = 100 * value.Calories / totalFeedsRequired;
             currentPercent -= feedPercent;
@@ -317,16 +273,14 @@ export default class FeedRecorder extends Component {
                     lastUsedDate = "Last Used " + moment(recipe.LastUsed).format("MMM Do, YYYY");
                 }
                 let className = "";
-                if (recipe.RecipeId === this.state.selectedRecipeId) className = "selected";
+                if (recipe.RecipeId === StateManager.GetFeedRecorderData().SelectedRecipeId) className = "selected";
                 options.push(
                     <button
                         key={"recipe-" + recipe.RecipeId}
                         className={FormatCssClass(className)}
                         data-recipe-id={recipe.RecipeId}
-                        data-recipe-name={recipe.Name}
-                        data-recipe-calories-per-ounce={recipe.CaloriesPerOunce}
                         onClick={this.changeRecipeSelection}
-                    >{recipe.Name}<small>{lastUsedDate}</small></button>
+                    >{recipe.Name}<small data-recipe-id={recipe.RecipeId}>{lastUsedDate}</small></button>
                 );
             });
             options.push(
@@ -357,7 +311,6 @@ export default class FeedRecorder extends Component {
     changeHourSelection(e) {
         e.preventDefault();
 
-        //this.props.fnDismissModal();
         StateManager.UpdateValue("UI.FeedRecorder.SelectedHour", parseInt(e.target.innerText));
         StateManager.UpdateValue("UI.SelectedModalData.Content", "");
 
@@ -381,37 +334,14 @@ export default class FeedRecorder extends Component {
 
     }
 
-    // Cycles through units of: cals, mls, ozs.
-    changeUnitSelection(e) {
-        e.preventDefault();
-
-        const units = ["mls", "ozs"]; // can use "cals", but leaving out because less practical
-        let newUnit = units[(units.indexOf(this.state.units) + 1) % units.length];
-
-        StateManager.UpdateValue("UI.FeedRecorder.SelectedVolumeUnit", newUnit);
-        StateManager.UpdateValue(
-            "UI.FeedRecorder.SelectedVolume",
-            ConvertCaloriesToVolume(
-                this.state.selectedCalories,
-                newUnit,
-                this.props.recipeCaloriesPerOunce
-            )
-        );
-
-    }
-
     // Updates the recipe to the selection.
     changeRecipeSelection(e) {
         e.preventDefault();
 
         let buttonData = e.target.dataset;
 
-        this.props.fnDismissModal();
-        this.setState({
-            selectedRecipeId: parseInt(buttonData.recipeId),
-            selectedRecipeName: buttonData.recipeName,
-            selectedRecipeCaloriesPerOunce: buttonData.recipeCaloriesPerOunce
-        });
+        StateManager.UpdateValue("UI.FeedRecorder.SelectedRecipeId", parseInt(buttonData.recipeId));
+        StateManager.UpdateValue("UI.SelectedModalData.Content", "");
 
     }
 
@@ -428,14 +358,6 @@ export default class FeedRecorder extends Component {
     // Change the current selection of the feed volume.
     updateVolume(e) {
 
-        this.setState({
-            //selectedVolume: e.target.value,
-            selectedCalories: ConvertVolumeToCalories(
-                e.target.value,
-                StateManager.State().UI.FeedRecorder.SelectedVolumeUnit,
-                this.state.selectedRecipeCaloriesPerOunce
-            )
-        });
         StateManager.UpdateValue(
             "UI.FeedRecorder.SelectedVolume",
             e.target.value
@@ -449,7 +371,6 @@ export default class FeedRecorder extends Component {
 
         // validate provided data
         // TODO: Validate time and show feedback if error
-        if (!this.state.selectedCalories) return;
 
         StateManager.UpdateValue("UI.IsSaving", true);
 
@@ -463,22 +384,24 @@ export default class FeedRecorder extends Component {
         let hoursIn24Format = (StateManager.GetFeedRecorderData().SelectedAmPm === "pm" && StateManager.GetFeedRecorderData().SelectedHour !== 12) ? (StateManager.GetFeedRecorderData().SelectedHour + 12) : StateManager.GetFeedRecorderData().SelectedHour;
         date += " " + hoursIn24Format + ":" + StateManager.GetFeedRecorderData().SelectedMinute.toString().padStart(2, "0");
 
+        // prepare the save data for the save
+        let selectedRecipe = StateManager.GetRecipeRecord(StateManager.GetFeedRecorderData().SelectedRecipeId);
+        let saveData = {
+            dateTime: date,
+            calories: ConvertVolumeToCalories(
+                StateManager.GetFeedRecorderData().SelectedVolume,
+                StateManager.GetFeedRecorderData().SelectedVolumeUnit,
+                selectedRecipe.CaloriesPerOunce
+            ),
+            recipeId: StateManager.GetFeedRecorderData().SelectedRecipeId
+        };
+
         // save the feed data
         let self = this;
-        ApiSaveFeed({
-            dateTime: date,
-            calories: this.state.selectedCalories,
-            recipeId: this.state.selectedRecipeId
-        }, success => {
-
+        ApiSaveFeed(saveData, success => {
             // TODO: Handle non-success
 
-            self.props.fnReloadData(() => {
-                StateManager.UpdateValue("UI.FeedRecorder.SelectedHour", parseInt(moment().format("h")));
-                StateManager.UpdateValue("UI.FeedRecorder.SelectedMinute", moment().minute());
-                StateManager.UpdateValue("UI.FeedRecorder.SelectedAmPm", moment().format("a"));
-                StateManager.UpdateValue("UI.IsSaving", false);
-            });
+            StateManager.ReloadFromServer();
 
         });
 

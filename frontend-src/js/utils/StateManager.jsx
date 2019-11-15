@@ -5,6 +5,12 @@
 import React from "react";
 import {createStore} from "redux";
 
+// import utilities
+import {ConvertCaloriesToVolume} from "./Converters.jsx";
+
+// import api interactions
+import ApiLoad from "../api/Load.jsx";
+
 // build the initial state
 const storeModel = {
     DateToday: "",
@@ -33,6 +39,8 @@ const storeModel = {
             BabyId: 0,
             Name: "",
             CaloriesSliderMax: 0,
+            CaloriesFeedMax: 0, // TODO: Evaluate if still needed
+            CaloriesGoal: 0, // TODO: Remove after adding goals load
             BirthDate: "",
             ExpectedDate: "",
             RecipeId: 0,
@@ -89,6 +97,7 @@ const storeModel = {
         },
         ResultsCondensed: true,
         FeedRecorder: {
+            SelectedRecipeId: 0,
             SelectedHour: 0,
             SelectedMinute: 0,
             SelectedAmPm: "am", // can be: am, pm
@@ -114,6 +123,20 @@ const reducer = (state, action) => {
             eval("newState." + action.item + " = action.payload.value");
             break;
         case "RESET_SERVER_DATA":
+
+            // get volume data from recipes
+            let selectedVolume = 0;
+            let selectedRecipeCaloriesPerOunce = 0;
+            let selectedRecipeVolumeUnit = "";
+            for (let recipe of action.payload.recipes) {
+                if (recipe.RecipeId === action.payload.recipeId) {
+                    selectedRecipeCaloriesPerOunce = recipe.CaloriesPerOunce;
+                    selectedRecipeVolumeUnit = (selectedRecipeCaloriesPerOunce) ? ((true) ? "mls" : "ozs") : "cals"; // TODO: Use display as metric from API
+                    selectedVolume = ConvertCaloriesToVolume(action.payload.caloriesLastFeed, selectedRecipeVolumeUnit, selectedRecipeCaloriesPerOunce);
+                    break;
+                }
+            }
+
             newState.DateToday = action.payload.dateToday;
             newState.SelectedBaby = action.payload.babyId;
             newState.Account.Settings.DisplayVolumeAsMetric = true; // TODO: Return from API
@@ -122,6 +145,8 @@ const reducer = (state, action) => {
             newState.Babies["Baby" + newState.SelectedBaby].BabyId = action.payload.babyId;
             // newState.Babies["Baby" + newState.SelectedBaby].Name = action.payload.babyName; // TODO: Return from API
             // newState.Babies["Baby" + newState.SelectedBaby].CaloriesSliderMax = CALC; // TODO: Calculate
+            newState.Babies["Baby" + newState.SelectedBaby].CaloriesFeedMax = action.payload.caloriesFeedMax; // TODO: Evaluate if still needed
+            newState.Babies["Baby" + newState.SelectedBaby].CaloriesGoal = action.payload.caloriesGoal; // TODO: Remove and replace with goals list
             newState.Babies["Baby" + newState.SelectedBaby].BirthDate = action.payload.dateBirth;
             newState.Babies["Baby" + newState.SelectedBaby].ExpectedDate = action.payload.dateExpected;
             newState.Babies["Baby" + newState.SelectedBaby].RecipeId = action.payload.recipeId;
@@ -131,9 +156,14 @@ const reducer = (state, action) => {
             // newState.Babies["Baby" + newState.SelectedBaby].Feeds = // TODO: Return from API
             // newState.Babies["Baby" + newState.SelectedBaby].Goals = // TODO: Return from API
             newState.Babies["Baby" + newState.SelectedBaby].Weights = action.payload.weights;
+            newState.UI.IsLoading = false;
+            newState.UI.IsSaving = false;
+            newState.UI.FeedRecorder.SelectedRecipeId = action.payload.recipeId;
             newState.UI.FeedRecorder.SelectedHour = parseInt(moment().format("h"));
             newState.UI.FeedRecorder.SelectedMinute = moment().minute();
             newState.UI.FeedRecorder.SelectedAmPm = moment().format("a");
+            newState.UI.FeedRecorder.SelectedVolume = selectedVolume;
+            newState.UI.FeedRecorder.SelectedVolumeUnit = selectedRecipeVolumeUnit;
             break;
     }
 
@@ -144,7 +174,7 @@ const reducer = (state, action) => {
 class StateManager {
 
     // Constructor.
-    constructor(props, context) {
+    constructor() {
         this.Store = createStore(reducer, storeModel);
     }
 
@@ -154,6 +184,16 @@ class StateManager {
 
     CopyState() {
         return JSON.parse(JSON.stringify(this.State()));
+    }
+
+    ReloadFromServer(callback) {
+        ApiLoad(data => {
+            this.Store.dispatch({
+                type: "RESET_SERVER_DATA",
+                payload: data
+            });
+            if (callback) callback();
+        });
     }
 
     UpdateValue(modelPath, newValue) {
@@ -240,6 +280,17 @@ class StateManager {
     }
     GetCurrentBabyWeightRecord() {
         return this.GetCurrentBabyDetails().Weights[this.GetCurrentBabyDetails().Weights.length - 1];
+    }
+
+    GetRecipeRecord(recipeId) {
+        let selectedRecipe = {};
+        for (let recipe of this.State().Account.Recipes) {
+            if (recipe.RecipeId === recipeId) {
+                selectedRecipe = {...recipe};
+                break;
+            }
+        }
+        return selectedRecipe;
     }
 
     GetFeedRecorderData() {

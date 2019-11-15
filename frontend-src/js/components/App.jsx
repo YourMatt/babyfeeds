@@ -19,9 +19,6 @@ import Weight from "./Weight.jsx"
 import FormatCssClass from "../utils/FormatCssClass.jsx";
 import StateManager from "../utils/StateManager.jsx";
 
-// import api interactions
-import ApiLoad from "../api/Load.jsx";
-
 // export object
 export default class App extends Component {
 
@@ -29,41 +26,14 @@ export default class App extends Component {
     constructor(props, context) {
         super(props, context);
 
-        // intialize the application state
-        this.state = {
-            caloriesFeedMax: 0,
-            caloriesLastFeed: 0,
-            caloriesGoal: 0,
-            //dateToday: "",
-            dateBirth: "",
-            dateExpected: "",
-            feedsForToday: [],
-            feedTotalsPerDay: [],
-            lastFeedTime: "",
-            recipeId: 0,
-            recipeName: "",
-            recipeCaloriesPerOunce: 0,
-            // weightKilograms: 0,
-
-            modal: "",
-
-        };
-
-        this.reloadData = this.reloadData.bind(this);
+        // load all server data
+        StateManager.ReloadFromServer();
 
     };
-
-    // Pre-mount logic.
-    componentWillMount() {
-
-        this.reloadData();
-
-    }
 
     // Renders the full application.
     render() {
 
-        // return jsx
         return (
             <div className={FormatCssClass("app")}>
                 <div className={FormatCssClass("header")}>
@@ -71,16 +41,7 @@ export default class App extends Component {
                     <Menu/>
                 </div>
                 <div className={FormatCssClass("body")}>
-                    <FeedRecorder
-                        feedsForToday={this.state.feedsForToday}
-                        caloriesGoal={this.state.caloriesGoal}
-                        caloriesFeedMax={this.state.caloriesFeedMax}
-                        caloriesLastFeed={this.state.caloriesLastFeed}
-                        recipeId={this.state.recipeId}
-                        recipeName={this.state.recipeName}
-                        recipeCaloriesPerOunce={this.state.recipeCaloriesPerOunce}
-                        fnReloadData={this.reloadData}
-                    />
+                    <FeedRecorder/>
                     <History/>
                 </div>
                 <div className={FormatCssClass("footer")}>
@@ -91,37 +52,6 @@ export default class App extends Component {
                 <Loading/>
             </div>
         );
-
-    }
-
-    // Loads all data from the server.
-    reloadData(callback) {
-
-        ApiLoad(data => {
-
-            StateManager.Store.dispatch({
-                type: "RESET_SERVER_DATA",
-                payload: data
-            });
-            StateManager.UpdateValue("UI.IsLoading", false);
-
-            this.setState({
-                caloriesFeedMax: data.caloriesFeedMax,
-                caloriesLastFeed: data.caloriesLastFeed,
-                caloriesGoal: data.caloriesGoal,
-                //dateToday: data.dateToday,
-                dateBirth: data.dateBirth,
-                dateExpected: data.dateExpected,
-                feedsForToday: data.feedsForToday,
-                feedTotalsPerDay: data.feedTotalsPerDay,
-                lastFeedTime: data.lastFeedTime,
-                recipeId: data.recipeId,
-                recipeName: data.recipeName,
-                recipeCaloriesPerOunce: data.recipeCaloriesPerOunce,
-                weightKilograms: data.weightKilograms
-            });
-            if (callback) callback();
-        });
 
     }
 
