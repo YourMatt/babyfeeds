@@ -1537,7 +1537,8 @@ body {
       opacity: 0.75; }
     .feed-recorder svg .bottle-fill-topline {
       fill: #000;
-      opacity: 0.1; }
+      opacity: 0.05;
+      z-index: 99; }
 
 .options-hour, .options-minute {
   width: 250px; }

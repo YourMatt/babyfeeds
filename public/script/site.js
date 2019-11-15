@@ -1014,14 +1014,14 @@ function (_Component) {
           width: "100",
           height: feedPercent
         }));
+        feedBlocks.push(_react["default"].createElement("rect", {
+          key: "TopBorder" + value.Time,
+          className: (0, _FormatCssClass["default"])("bottle-fill-topline"),
+          y: currentPercent - 0.5,
+          width: "100",
+          height: "1"
+        }));
       });
-      feedBlocks.push(_react["default"].createElement("rect", {
-        key: "TopBorder",
-        className: (0, _FormatCssClass["default"])("bottle-fill-topline"),
-        y: currentPercent - 1,
-        width: "100",
-        height: "1"
-      }));
       return feedBlocks;
     } // Display a modal allowing selection of an hour.
 

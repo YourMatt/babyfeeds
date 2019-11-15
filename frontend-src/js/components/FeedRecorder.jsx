@@ -176,17 +176,17 @@ export default class FeedRecorder extends Component {
                     height={feedPercent}
                 />
             );
+            feedBlocks.push(
+                <rect
+                    key={"TopBorder" + value.Time}
+                    className={FormatCssClass("bottle-fill-topline")}
+                    y={currentPercent - 0.5}
+                    width="100"
+                    height="1"
+                />
+            );
 
         });
-        feedBlocks.push(
-            <rect
-                key="TopBorder"
-                className={FormatCssClass("bottle-fill-topline")}
-                y={currentPercent - 1}
-                width="100"
-                height="1"
-            />
-        );
 
         return feedBlocks;
 
