@@ -75,6 +75,30 @@
       width: 550%; }
     .history .scroll.calendars-12 {
       width: 600%; }
+    .history .scroll.calendars-13 {
+      width: 650%; }
+    .history .scroll.calendars-14 {
+      width: 700%; }
+    .history .scroll.calendars-15 {
+      width: 750%; }
+    .history .scroll.calendars-16 {
+      width: 800%; }
+    .history .scroll.calendars-17 {
+      width: 850%; }
+    .history .scroll.calendars-18 {
+      width: 900%; }
+    .history .scroll.calendars-19 {
+      width: 950%; }
+    .history .scroll.calendars-20 {
+      width: 1000%; }
+    .history .scroll.calendars-21 {
+      width: 1050%; }
+    .history .scroll.calendars-22 {
+      width: 1100%; }
+    .history .scroll.calendars-23 {
+      width: 1150%; }
+    .history .scroll.calendars-24 {
+      width: 1200%; }
 
 @media (orientation: landscape) {
   .history {
@@ -107,6 +131,30 @@
       .history .scroll.calendars-11 {
         width: 100% !important; }
       .history .scroll.calendars-12 {
+        width: 100% !important; }
+      .history .scroll.calendars-13 {
+        width: 100% !important; }
+      .history .scroll.calendars-14 {
+        width: 100% !important; }
+      .history .scroll.calendars-15 {
+        width: 100% !important; }
+      .history .scroll.calendars-16 {
+        width: 100% !important; }
+      .history .scroll.calendars-17 {
+        width: 100% !important; }
+      .history .scroll.calendars-18 {
+        width: 100% !important; }
+      .history .scroll.calendars-19 {
+        width: 100% !important; }
+      .history .scroll.calendars-20 {
+        width: 100% !important; }
+      .history .scroll.calendars-21 {
+        width: 100% !important; }
+      .history .scroll.calendars-22 {
+        width: 100% !important; }
+      .history .scroll.calendars-23 {
+        width: 100% !important; }
+      .history .scroll.calendars-24 {
         width: 100% !important; } }
 .calendar {
   display: flex;
@@ -174,7 +222,31 @@
   .history .scroll.calendars-11 {
     width: 366.6666666667%; }
   .history .scroll.calendars-12 {
-    width: 400%; } }
+    width: 400%; }
+  .history .scroll.calendars-13 {
+    width: 433.3333333333%; }
+  .history .scroll.calendars-14 {
+    width: 466.6666666667%; }
+  .history .scroll.calendars-15 {
+    width: 500%; }
+  .history .scroll.calendars-16 {
+    width: 533.3333333333%; }
+  .history .scroll.calendars-17 {
+    width: 566.6666666667%; }
+  .history .scroll.calendars-18 {
+    width: 600%; }
+  .history .scroll.calendars-19 {
+    width: 633.3333333333%; }
+  .history .scroll.calendars-20 {
+    width: 666.6666666667%; }
+  .history .scroll.calendars-21 {
+    width: 700%; }
+  .history .scroll.calendars-22 {
+    width: 733.3333333333%; }
+  .history .scroll.calendars-23 {
+    width: 766.6666666667%; }
+  .history .scroll.calendars-24 {
+    width: 800%; } }
 @media (min-width: 750px) {
   .history .scroll.calendars-1 {
     width: 100% !important; }
@@ -199,7 +271,31 @@
   .history .scroll.calendars-11 {
     width: 275%; }
   .history .scroll.calendars-12 {
-    width: 300%; } }
+    width: 300%; }
+  .history .scroll.calendars-13 {
+    width: 325%; }
+  .history .scroll.calendars-14 {
+    width: 350%; }
+  .history .scroll.calendars-15 {
+    width: 375%; }
+  .history .scroll.calendars-16 {
+    width: 400%; }
+  .history .scroll.calendars-17 {
+    width: 425%; }
+  .history .scroll.calendars-18 {
+    width: 450%; }
+  .history .scroll.calendars-19 {
+    width: 475%; }
+  .history .scroll.calendars-20 {
+    width: 500%; }
+  .history .scroll.calendars-21 {
+    width: 525%; }
+  .history .scroll.calendars-22 {
+    width: 550%; }
+  .history .scroll.calendars-23 {
+    width: 575%; }
+  .history .scroll.calendars-24 {
+    width: 600%; } }
 @media (min-width: 1000px) {
   .history .scroll.calendars-1 {
     width: 100% !important; }
@@ -224,7 +320,31 @@
   .history .scroll.calendars-11 {
     width: 220%; }
   .history .scroll.calendars-12 {
-    width: 240%; } }
+    width: 240%; }
+  .history .scroll.calendars-13 {
+    width: 260%; }
+  .history .scroll.calendars-14 {
+    width: 280%; }
+  .history .scroll.calendars-15 {
+    width: 300%; }
+  .history .scroll.calendars-16 {
+    width: 320%; }
+  .history .scroll.calendars-17 {
+    width: 340%; }
+  .history .scroll.calendars-18 {
+    width: 360%; }
+  .history .scroll.calendars-19 {
+    width: 380%; }
+  .history .scroll.calendars-20 {
+    width: 400%; }
+  .history .scroll.calendars-21 {
+    width: 420%; }
+  .history .scroll.calendars-22 {
+    width: 440%; }
+  .history .scroll.calendars-23 {
+    width: 460%; }
+  .history .scroll.calendars-24 {
+    width: 480%; } }
 @media (min-width: 1250px) {
   .history .scroll.calendars-1 {
     width: 100% !important; }
@@ -249,7 +369,31 @@
   .history .scroll.calendars-11 {
     width: 183.3333333333%; }
   .history .scroll.calendars-12 {
-    width: 200%; } }
+    width: 200%; }
+  .history .scroll.calendars-13 {
+    width: 216.6666666667%; }
+  .history .scroll.calendars-14 {
+    width: 233.3333333333%; }
+  .history .scroll.calendars-15 {
+    width: 250%; }
+  .history .scroll.calendars-16 {
+    width: 266.6666666667%; }
+  .history .scroll.calendars-17 {
+    width: 283.3333333333%; }
+  .history .scroll.calendars-18 {
+    width: 300%; }
+  .history .scroll.calendars-19 {
+    width: 316.6666666667%; }
+  .history .scroll.calendars-20 {
+    width: 333.3333333333%; }
+  .history .scroll.calendars-21 {
+    width: 350%; }
+  .history .scroll.calendars-22 {
+    width: 366.6666666667%; }
+  .history .scroll.calendars-23 {
+    width: 383.3333333333%; }
+  .history .scroll.calendars-24 {
+    width: 400%; } }
 @media (min-width: 1500px) {
   .history .scroll.calendars-1 {
     width: 100% !important; }
@@ -274,7 +418,31 @@
   .history .scroll.calendars-11 {
     width: 157.1428571429%; }
   .history .scroll.calendars-12 {
-    width: 171.4285714286%; } }
+    width: 171.4285714286%; }
+  .history .scroll.calendars-13 {
+    width: 185.7142857143%; }
+  .history .scroll.calendars-14 {
+    width: 200%; }
+  .history .scroll.calendars-15 {
+    width: 214.2857142857%; }
+  .history .scroll.calendars-16 {
+    width: 228.5714285714%; }
+  .history .scroll.calendars-17 {
+    width: 242.8571428571%; }
+  .history .scroll.calendars-18 {
+    width: 257.1428571429%; }
+  .history .scroll.calendars-19 {
+    width: 271.4285714286%; }
+  .history .scroll.calendars-20 {
+    width: 285.7142857143%; }
+  .history .scroll.calendars-21 {
+    width: 300%; }
+  .history .scroll.calendars-22 {
+    width: 314.2857142857%; }
+  .history .scroll.calendars-23 {
+    width: 328.5714285714%; }
+  .history .scroll.calendars-24 {
+    width: 342.8571428571%; } }
 @media (min-width: 1750px) {
   .history .scroll.calendars-1 {
     width: 100% !important; }
@@ -299,7 +467,31 @@
   .history .scroll.calendars-11 {
     width: 137.5%; }
   .history .scroll.calendars-12 {
-    width: 150%; } }
+    width: 150%; }
+  .history .scroll.calendars-13 {
+    width: 162.5%; }
+  .history .scroll.calendars-14 {
+    width: 175%; }
+  .history .scroll.calendars-15 {
+    width: 187.5%; }
+  .history .scroll.calendars-16 {
+    width: 200%; }
+  .history .scroll.calendars-17 {
+    width: 212.5%; }
+  .history .scroll.calendars-18 {
+    width: 225%; }
+  .history .scroll.calendars-19 {
+    width: 237.5%; }
+  .history .scroll.calendars-20 {
+    width: 250%; }
+  .history .scroll.calendars-21 {
+    width: 262.5%; }
+  .history .scroll.calendars-22 {
+    width: 275%; }
+  .history .scroll.calendars-23 {
+    width: 287.5%; }
+  .history .scroll.calendars-24 {
+    width: 300%; } }
 /*
   Menu
   Styling for the menu control.

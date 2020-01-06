@@ -8,7 +8,7 @@
 }
 
 @mixin show-number-calendars($number, $for-landscape: false) {
-  @for $i from 1 through 12 {
+  @for $i from 1 through 24 {
     &.calendars-#{$i} {
       @if $i < $number or $for-landscape {
         width: 100% !important; // important required for landscape media query
