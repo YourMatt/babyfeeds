@@ -2,6 +2,72 @@ const mysql = require ("mysql");
 
 exports.query = {
 
+    authenticateAccountByAPICredentials: (accountId, hashedPassword, callback) => {
+
+        //console.log("checking account ID " + accountId + " with password of " + hashedPassword);
+        // when saving password, use SHA2(password, 256)
+
+        exports.access.selectSingle({
+                sql:
+                    "SELECT  AccountId " +
+                    "FROM    Accounts " +
+                    "WHERE   AccountId = ? " +
+                    "AND     Password = ? ",
+                values: [accountId, hashedPassword]
+            },
+            results => {
+                if (!results) callback(false);
+
+                callback(results.AccountId);
+
+            }
+        );
+
+    },
+
+    getAccountInfo: (accountId, callback) => {
+
+        exports.access.selectSingle({
+                sql:
+                    "SELECT     a.AccountId " +
+                    ",          a.Name " +
+                    ",          a.Email " +
+                    ",          a.CreateDate " +
+                    ",          ase.DisplayAgeAsAdjusted " +
+                    ",          ase.DisplayVolumeAsMetric " +
+                    ",          ase.DisplayWeightAsMetric " +
+                    "FROM       Accounts a " +
+                    "INNER JOIN AccountSettings ase ON ase.AccountId = a.AccountId " +
+                    "WHERE      a.AccountId = ? ",
+                values: accountId
+            },
+            callback
+        );
+
+    },
+
+    getAccountBabies: (accountId, callback) => {
+
+        exports.access.selectMultiple({
+                sql:
+                    "SELECT  BabyId " +
+                    ",       AccountId " +
+                    ",       Name " +
+                    ",       BirthDate " +
+                    ",       ExpectedDate " +
+                    ",       RecipeId " +
+                    ", (     SELECT MAX(Date) FROM Feeds WHERE BabyId = b.BabyId) AS LastFeedTime " +
+                    ", (     SELECT Calories FROM Feeds WHERE BabyId = b.BabyId ORDER BY Date DESC LIMIT 1) AS LastFeedCalories " +
+                    ", (     SELECT MAX(Calories) FROM Feeds WHERE BabyId = b.BabyId) AS MaxFeedCalories " +
+                    "FROM    Babies b " +
+                    "WHERE   AccountId = ? ",
+                values: accountId
+            },
+            callback
+        );
+
+    },
+
     getBabyInfo: (babyId, callback) => {
 
         exports.access.selectSingle({
@@ -122,6 +188,24 @@ exports.query = {
                 callback
             );
         });
+
+    },
+
+    getGoals: (babyId, callback) => {
+
+        exports.access.selectMultiple({
+                sql:
+                    "SELECT     g.GoalId " +
+                    ",          g.BabyId " +
+                    ",          g.Date " +
+                    ",          g.CaloriesPerKilogram " +
+                    "FROM       Goals g " +
+                    "WHERE      g.BabyId = ? " +
+                    "ORDER BY   g.Date ASC ",
+                values: babyId
+            },
+            callback
+        );
 
     },
 

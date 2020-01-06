@@ -33,7 +33,7 @@ export default function FormatAge (today, ageDate) {
         plural = (ageWeeksInMonth === 1) ? "" : "s";
         ageWeeksFormatted = <span>{ageWeeksInMonth}<small>wk{plural}</small></span>;
     }
-    if (ageDaysInWeek) {
+    if (ageMonths < 12 && ageDaysInWeek) { // show days only if under a year old
         plural = (ageDaysInWeek === 1) ? "" : "s";
         ageDaysFormatted = <span>{ageDaysInWeek}<small>dy{plural}</small></span>;
     }

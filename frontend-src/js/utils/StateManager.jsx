@@ -38,18 +38,18 @@ const storeModel = {
         Baby0: { // placeholder to be replaced after loading
             BabyId: 0,
             Name: "",
-            CaloriesSliderMax: 0,
-            CaloriesFeedMax: 0, // TODO: Evaluate if still needed
-            CaloriesGoal: 0, // TODO: Remove after adding goals load
+            MaxFeedCalories: 0,
             BirthDate: "",
             ExpectedDate: "",
             RecipeId: 0,
             DailyTotals: [{
                 Date: "",
                 GoalCalories: 0,
-                TotalCalories: 0
+                TotalCalories: 0,
+                Percent: 0
             }],
             LastFeedTime: "",
+            LastFeedCalories: 0,
             FeedsForToday: [{
                 FeedId: 0,
                 RecipeId: 0,
@@ -124,46 +124,58 @@ const reducer = (state, action) => {
             break;
         case "RESET_SERVER_DATA":
 
+            newState.DateToday = action.payload.DateToday;
+            newState.SelectedBaby = action.payload.SelectedBaby;
+
+            newState.Account.Settings.DisplayAgeAsAdjusted = (action.payload.Account.Settings.DisplayAgeAsAdjusted === 1);
+            newState.Account.Settings.DisplayVolumeAsMetric = (action.payload.Account.Settings.DisplayVolumeAsMetric === 1);
+            newState.Account.Settings.DisplayWeightAsMetric = (action.payload.Account.Settings.DisplayWeightAsMetric === 1);
+
+            newState.Account.Recipes = action.payload.Account.Recipes;
+
+            for (let babyIndex in action.payload.Babies) {
+                let baby = action.payload.Babies[babyIndex];
+                newState.Babies[babyIndex] = JSON.parse(JSON.stringify(newState.Babies.Baby0)); // copy the data structure
+                newState.Babies[babyIndex].BabyId = baby.BabyId;
+                newState.Babies[babyIndex].Name = baby.Name;
+                newState.Babies[babyIndex].BirthDate = baby.BirthDate;
+                newState.Babies[babyIndex].ExpectedDate = baby.ExpectedDate;
+                newState.Babies[babyIndex].RecipeId = baby.RecipeId;
+                newState.Babies[babyIndex].DailyTotals = baby.DailyTotals;
+                newState.Babies[babyIndex].LastFeedTime = moment(baby.LastFeedTime).format("h:ma");
+                newState.Babies[babyIndex].LastFeedCalories = baby.LastFeedCalories;
+                newState.Babies[babyIndex].MaxFeedCalories = baby.MaxFeedCalories;
+                newState.Babies[babyIndex].FeedsForToday = baby.FeedsForToday;
+                newState.Babies[babyIndex].Goals = baby.Goals;
+                newState.Babies[babyIndex].Weights = baby.Weights;
+            }
+
             // get volume data from recipes
+            let selectedRecipeId = newState.Babies["Baby" + newState.SelectedBaby].RecipeId;
             let selectedVolume = 0;
             let selectedRecipeCaloriesPerOunce = 0;
             let selectedRecipeVolumeUnit = "";
-            for (let recipe of action.payload.recipes) {
-                if (recipe.RecipeId === action.payload.recipeId) {
+            for (let recipe of action.payload.Account.Recipes) {
+                if (recipe.RecipeId === selectedRecipeId) {
                     selectedRecipeCaloriesPerOunce = recipe.CaloriesPerOunce;
-                    selectedRecipeVolumeUnit = (selectedRecipeCaloriesPerOunce) ? ((true) ? "mls" : "ozs") : "cals"; // TODO: Use display as metric from API
-                    selectedVolume = ConvertCaloriesToVolume(action.payload.caloriesLastFeed, selectedRecipeVolumeUnit, selectedRecipeCaloriesPerOunce);
+                    selectedRecipeVolumeUnit = (selectedRecipeCaloriesPerOunce) ? ((action.payload.Account.Settings.DisplayVolumeAsMetric) ? "mls" : "ozs") : "cals";
+                    selectedVolume = ConvertCaloriesToVolume(newState.Babies["Baby" + newState.SelectedBaby].LastFeedCalories, selectedRecipeVolumeUnit, selectedRecipeCaloriesPerOunce);
                     break;
                 }
             }
 
-            newState.DateToday = action.payload.dateToday;
-            newState.SelectedBaby = action.payload.babyId;
-            newState.Account.Settings.DisplayVolumeAsMetric = true; // TODO: Return from API
-            newState.Account.Recipes = action.payload.recipes;
-            newState.Babies["Baby" + newState.SelectedBaby] = JSON.parse(JSON.stringify(newState.Babies.Baby0));
-            newState.Babies["Baby" + newState.SelectedBaby].BabyId = action.payload.babyId;
-            // newState.Babies["Baby" + newState.SelectedBaby].Name = action.payload.babyName; // TODO: Return from API
-            // newState.Babies["Baby" + newState.SelectedBaby].CaloriesSliderMax = CALC; // TODO: Calculate
-            newState.Babies["Baby" + newState.SelectedBaby].CaloriesFeedMax = action.payload.caloriesFeedMax; // TODO: Evaluate if still needed
-            newState.Babies["Baby" + newState.SelectedBaby].CaloriesGoal = action.payload.caloriesGoal; // TODO: Remove and replace with goals list
-            newState.Babies["Baby" + newState.SelectedBaby].BirthDate = action.payload.dateBirth;
-            newState.Babies["Baby" + newState.SelectedBaby].ExpectedDate = action.payload.dateExpected;
-            newState.Babies["Baby" + newState.SelectedBaby].RecipeId = action.payload.recipeId;
-            newState.Babies["Baby" + newState.SelectedBaby].DailyTotals = action.payload.feedTotalsPerDay;
-            newState.Babies["Baby" + newState.SelectedBaby].LastFeedTime = action.payload.lastFeedTime;
-            newState.Babies["Baby" + newState.SelectedBaby].FeedsForToday = action.payload.feedsForToday;
-            // newState.Babies["Baby" + newState.SelectedBaby].Feeds = // TODO: Return from API
-            // newState.Babies["Baby" + newState.SelectedBaby].Goals = // TODO: Return from API
-            newState.Babies["Baby" + newState.SelectedBaby].Weights = action.payload.weights;
             newState.UI.IsLoading = false;
             newState.UI.IsSaving = false;
-            newState.UI.FeedRecorder.SelectedRecipeId = action.payload.recipeId;
+            newState.UI.FeedRecorder.SelectedRecipeId = selectedRecipeId;
             newState.UI.FeedRecorder.SelectedHour = parseInt(moment().format("h"));
             newState.UI.FeedRecorder.SelectedMinute = moment().minute();
             newState.UI.FeedRecorder.SelectedAmPm = moment().format("a");
             newState.UI.FeedRecorder.SelectedVolume = selectedVolume;
             newState.UI.FeedRecorder.SelectedVolumeUnit = selectedRecipeVolumeUnit;
+
+            console.log("Reloaded from server. State is now:");
+            console.log(newState);
+
             break;
     }
 
@@ -280,6 +292,10 @@ class StateManager {
     }
     GetCurrentBabyWeightRecord() {
         return this.GetCurrentBabyDetails().Weights[this.GetCurrentBabyDetails().Weights.length - 1];
+    }
+
+    GetCurrentBabyGoalCaloriesPerKilogram() {
+        return this.GetCurrentBabyDetails().Goals[this.GetCurrentBabyDetails().Goals.length - 1].CaloriesPerKilogram;
     }
 
     GetRecipeRecord(recipeId) {

@@ -34,7 +34,6 @@ export default class FeedRecorder extends Component {
             if (StateManager.ValueChanged(this.previousState, [
                     "Account.Settings.DisplayVolumeAsMetric",
                     "SelectedBaby",
-                    "Babies.Baby" + StateManager.State().SelectedBaby + ".CaloriesSliderMax", // need to apply for all baby IDs
                     "Babies.Baby" + StateManager.State().SelectedBaby + ".RecipeId",
                     "Babies.Baby" + StateManager.State().SelectedBaby + ".FeedsForToday",
                     "Babies.Baby" + StateManager.State().SelectedBaby + ".Goals",
@@ -66,14 +65,15 @@ export default class FeedRecorder extends Component {
         StateManager.GetCurrentBabyDetails().FeedsForToday.forEach((value) => {
             totalCalories += value.Calories;
         });
+        let totalCaloriesGoal = Math.round(StateManager.GetCurrentBabyGoalCaloriesPerKilogram() * StateManager.GetCurrentBabyWeight());
 
         let selectedRecipe = StateManager.GetRecipeRecord(StateManager.GetFeedRecorderData().SelectedRecipeId);
 
         // convert volume to the current unit
         let remainingVolumeData = FormatFeedVolume(
             StateManager.GetFeedRecorderData().SelectedVolumeUnit,
-            (totalCalories < StateManager.GetCurrentBabyDetails().CaloriesGoal) ? (StateManager.GetCurrentBabyDetails().CaloriesGoal - totalCalories) : 0,
-            StateManager.GetCurrentBabyDetails().CaloriesFeedMax,
+            (totalCalories < totalCaloriesGoal) ? (totalCaloriesGoal - totalCalories) : 0,
+            StateManager.GetCurrentBabyDetails().MaxFeedCalories,
             selectedRecipe.CaloriesPerOunce
         );
 
@@ -109,7 +109,7 @@ export default class FeedRecorder extends Component {
                     <g className="bottle-clipped">
                         <rect className={FormatCssClass("bottle-background")} x="0" y="0" width="100%" height="100%"/>
                         <g id="bottle-fills">
-                            {this.buildSvgFeedVolumeBlocks(StateManager.GetCurrentBabyDetails().CaloriesGoal, StateManager.GetCurrentBabyDetails().FeedsForToday)}
+                            {this.buildSvgFeedVolumeBlocks(totalCaloriesGoal, StateManager.GetCurrentBabyDetails().FeedsForToday)}
                         </g>
                     </g>
                 </svg>

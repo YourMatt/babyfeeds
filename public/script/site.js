@@ -15,7 +15,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
  */
 // Loads all initial data from the API.
 function ApiLoad(callback) {
-  fetch("/api/load").then(function (results) {
+  fetch("/api/load", {
+    method: "get",
+    headers: new Headers({
+      Authorization: "Basic " + btoa("1:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08")
+    })
+  }).then(function (results) {
     return results.json();
   }).then(function (data) {
     console.log(data); // TODO: Remove this
@@ -42,7 +47,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
  */
 // Loads all feed data from the API.
 function ApiLoadFeeds(callback) {
-  fetch("/api/load/feeds").then(function (results) {
+  fetch("/api/load/feeds", {
+    method: "get",
+    headers: new Headers({
+      Authorization: "Basic " + btoa("1:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08")
+    })
+  }).then(function (results) {
     return results.json();
   }).then(function (data) {
     callback(data);
@@ -67,7 +77,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
  */
 // Loads all recipe data from the API.
 function ApiLoadRecipes(callback) {
-  fetch("/api/load/recipes").then(function (results) {
+  fetch("/api/load/recipes", {
+    method: "get",
+    headers: new Headers({
+      Authorization: "Basic " + btoa("1:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08")
+    })
+  }).then(function (results) {
     return results.json();
   }).then(function (data) {
     callback(data);
@@ -92,7 +107,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
  */
 // Loads baby's weight data from the API.
 function ApiLoadWeights(callback) {
-  fetch("/api/load/weights").then(function (results) {
+  fetch("/api/load/weights", {
+    method: "get",
+    headers: new Headers({
+      Authorization: "Basic " + btoa("1:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08")
+    })
+  }).then(function (results) {
     return results.json();
   }).then(function (data) {
     callback(data);
@@ -120,6 +140,7 @@ function ApiSaveFeed(saveData, callback) {
   fetch("/api/savefeed", {
     method: "POST",
     headers: {
+      "Authorization": "Basic " + btoa("1:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"),
       "Accept": "application/json",
       "Content-Type": "application/json"
     },
@@ -157,6 +178,7 @@ function ApiSaveRecipe(saveData, callback) {
   fetch("/api/saverecipe", {
     method: "POST",
     headers: {
+      "Authorization": "Basic " + btoa("1:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"),
       "Accept": "application/json",
       "Content-Type": "application/json"
     },
@@ -195,6 +217,7 @@ function ApiSaveWeight(saveData, callback) {
   fetch("/api/saveweight", {
     method: "POST",
     headers: {
+      "Authorization": "Basic " + btoa("1:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"),
       "Accept": "application/json",
       "Content-Type": "application/json"
     },
@@ -872,8 +895,7 @@ function (_Component) {
     });
 
     _StateManager["default"].Store.subscribe(function () {
-      if (_StateManager["default"].ValueChanged(_this.previousState, ["Account.Settings.DisplayVolumeAsMetric", "SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".CaloriesSliderMax", // need to apply for all baby IDs
-      "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".RecipeId", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".FeedsForToday", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Goals", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Weights", "UI.IsSaving", "UI.FeedRecorder"])) _this.forceUpdate();
+      if (_StateManager["default"].ValueChanged(_this.previousState, ["Account.Settings.DisplayVolumeAsMetric", "SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".RecipeId", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".FeedsForToday", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Goals", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Weights", "UI.IsSaving", "UI.FeedRecorder"])) _this.forceUpdate();
     });
 
     _this.updateVolume = _this.updateVolume.bind(_assertThisInitialized(_this));
@@ -900,10 +922,12 @@ function (_Component) {
         totalCalories += value.Calories;
       });
 
+      var totalCaloriesGoal = Math.round(_StateManager["default"].GetCurrentBabyGoalCaloriesPerKilogram() * _StateManager["default"].GetCurrentBabyWeight());
+
       var selectedRecipe = _StateManager["default"].GetRecipeRecord(_StateManager["default"].GetFeedRecorderData().SelectedRecipeId); // convert volume to the current unit
 
 
-      var remainingVolumeData = (0, _FormatFeedVolume["default"])(_StateManager["default"].GetFeedRecorderData().SelectedVolumeUnit, totalCalories < _StateManager["default"].GetCurrentBabyDetails().CaloriesGoal ? _StateManager["default"].GetCurrentBabyDetails().CaloriesGoal - totalCalories : 0, _StateManager["default"].GetCurrentBabyDetails().CaloriesFeedMax, selectedRecipe.CaloriesPerOunce);
+      var remainingVolumeData = (0, _FormatFeedVolume["default"])(_StateManager["default"].GetFeedRecorderData().SelectedVolumeUnit, totalCalories < totalCaloriesGoal ? totalCaloriesGoal - totalCalories : 0, _StateManager["default"].GetCurrentBabyDetails().MaxFeedCalories, selectedRecipe.CaloriesPerOunce);
 
       var sliderVolumeData = _objectSpread({}, remainingVolumeData, {
         volume: _StateManager["default"].GetFeedRecorderData().SelectedVolume
@@ -957,7 +981,7 @@ function (_Component) {
         height: "100%"
       }), _react["default"].createElement("g", {
         id: "bottle-fills"
-      }, this.buildSvgFeedVolumeBlocks(_StateManager["default"].GetCurrentBabyDetails().CaloriesGoal, _StateManager["default"].GetCurrentBabyDetails().FeedsForToday)))), _react["default"].createElement("div", {
+      }, this.buildSvgFeedVolumeBlocks(totalCaloriesGoal, _StateManager["default"].GetCurrentBabyDetails().FeedsForToday)))), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("areas")
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("remaining")
@@ -3067,7 +3091,8 @@ function FormatAge(today, ageDate) {
     ageWeeksFormatted = _react["default"].createElement("span", null, ageWeeksInMonth, _react["default"].createElement("small", null, "wk", plural));
   }
 
-  if (ageDaysInWeek) {
+  if (ageMonths < 12 && ageDaysInWeek) {
+    // show days only if under a year old
     plural = ageDaysInWeek === 1 ? "" : "s";
     ageDaysFormatted = _react["default"].createElement("span", null, ageDaysInWeek, _react["default"].createElement("small", null, "dy", plural));
   } // return jsx
@@ -3262,20 +3287,18 @@ var storeModel = {
       // placeholder to be replaced after loading
       BabyId: 0,
       Name: "",
-      CaloriesSliderMax: 0,
-      CaloriesFeedMax: 0,
-      // TODO: Evaluate if still needed
-      CaloriesGoal: 0,
-      // TODO: Remove after adding goals load
+      MaxFeedCalories: 0,
       BirthDate: "",
       ExpectedDate: "",
       RecipeId: 0,
       DailyTotals: [{
         Date: "",
         GoalCalories: 0,
-        TotalCalories: 0
+        TotalCalories: 0,
+        Percent: 0
       }],
       LastFeedTime: "",
+      LastFeedCalories: 0,
       FeedsForToday: [{
         FeedId: 0,
         RecipeId: 0,
@@ -3351,7 +3374,33 @@ var reducer = function reducer(state, action) {
       break;
 
     case "RESET_SERVER_DATA":
-      // get volume data from recipes
+      newState.DateToday = action.payload.DateToday;
+      newState.SelectedBaby = action.payload.SelectedBaby;
+      newState.Account.Settings.DisplayAgeAsAdjusted = action.payload.Account.Settings.DisplayAgeAsAdjusted === 1;
+      newState.Account.Settings.DisplayVolumeAsMetric = action.payload.Account.Settings.DisplayVolumeAsMetric === 1;
+      newState.Account.Settings.DisplayWeightAsMetric = action.payload.Account.Settings.DisplayWeightAsMetric === 1;
+      newState.Account.Recipes = action.payload.Account.Recipes;
+
+      for (var babyIndex in action.payload.Babies) {
+        var baby = action.payload.Babies[babyIndex];
+        newState.Babies[babyIndex] = JSON.parse(JSON.stringify(newState.Babies.Baby0)); // copy the data structure
+
+        newState.Babies[babyIndex].BabyId = baby.BabyId;
+        newState.Babies[babyIndex].Name = baby.Name;
+        newState.Babies[babyIndex].BirthDate = baby.BirthDate;
+        newState.Babies[babyIndex].ExpectedDate = baby.ExpectedDate;
+        newState.Babies[babyIndex].RecipeId = baby.RecipeId;
+        newState.Babies[babyIndex].DailyTotals = baby.DailyTotals;
+        newState.Babies[babyIndex].LastFeedTime = moment(baby.LastFeedTime).format("h:ma");
+        newState.Babies[babyIndex].LastFeedCalories = baby.LastFeedCalories;
+        newState.Babies[babyIndex].MaxFeedCalories = baby.MaxFeedCalories;
+        newState.Babies[babyIndex].FeedsForToday = baby.FeedsForToday;
+        newState.Babies[babyIndex].Goals = baby.Goals;
+        newState.Babies[babyIndex].Weights = baby.Weights;
+      } // get volume data from recipes
+
+
+      var selectedRecipeId = newState.Babies["Baby" + newState.SelectedBaby].RecipeId;
       var selectedVolume = 0;
       var selectedRecipeCaloriesPerOunce = 0;
       var selectedRecipeVolumeUnit = "";
@@ -3360,14 +3409,13 @@ var reducer = function reducer(state, action) {
       var _iteratorError = undefined;
 
       try {
-        for (var _iterator = action.payload.recipes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        for (var _iterator = action.payload.Account.Recipes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var recipe = _step.value;
 
-          if (recipe.RecipeId === action.payload.recipeId) {
+          if (recipe.RecipeId === selectedRecipeId) {
             selectedRecipeCaloriesPerOunce = recipe.CaloriesPerOunce;
-            selectedRecipeVolumeUnit = selectedRecipeCaloriesPerOunce ? true ? "mls" : "ozs" : "cals"; // TODO: Use display as metric from API
-
-            selectedVolume = (0, _Converters.ConvertCaloriesToVolume)(action.payload.caloriesLastFeed, selectedRecipeVolumeUnit, selectedRecipeCaloriesPerOunce);
+            selectedRecipeVolumeUnit = selectedRecipeCaloriesPerOunce ? action.payload.Account.Settings.DisplayVolumeAsMetric ? "mls" : "ozs" : "cals";
+            selectedVolume = (0, _Converters.ConvertCaloriesToVolume)(newState.Babies["Baby" + newState.SelectedBaby].LastFeedCalories, selectedRecipeVolumeUnit, selectedRecipeCaloriesPerOunce);
             break;
           }
         }
@@ -3386,36 +3434,16 @@ var reducer = function reducer(state, action) {
         }
       }
 
-      newState.DateToday = action.payload.dateToday;
-      newState.SelectedBaby = action.payload.babyId;
-      newState.Account.Settings.DisplayVolumeAsMetric = true; // TODO: Return from API
-
-      newState.Account.Recipes = action.payload.recipes;
-      newState.Babies["Baby" + newState.SelectedBaby] = JSON.parse(JSON.stringify(newState.Babies.Baby0));
-      newState.Babies["Baby" + newState.SelectedBaby].BabyId = action.payload.babyId; // newState.Babies["Baby" + newState.SelectedBaby].Name = action.payload.babyName; // TODO: Return from API
-      // newState.Babies["Baby" + newState.SelectedBaby].CaloriesSliderMax = CALC; // TODO: Calculate
-
-      newState.Babies["Baby" + newState.SelectedBaby].CaloriesFeedMax = action.payload.caloriesFeedMax; // TODO: Evaluate if still needed
-
-      newState.Babies["Baby" + newState.SelectedBaby].CaloriesGoal = action.payload.caloriesGoal; // TODO: Remove and replace with goals list
-
-      newState.Babies["Baby" + newState.SelectedBaby].BirthDate = action.payload.dateBirth;
-      newState.Babies["Baby" + newState.SelectedBaby].ExpectedDate = action.payload.dateExpected;
-      newState.Babies["Baby" + newState.SelectedBaby].RecipeId = action.payload.recipeId;
-      newState.Babies["Baby" + newState.SelectedBaby].DailyTotals = action.payload.feedTotalsPerDay;
-      newState.Babies["Baby" + newState.SelectedBaby].LastFeedTime = action.payload.lastFeedTime;
-      newState.Babies["Baby" + newState.SelectedBaby].FeedsForToday = action.payload.feedsForToday; // newState.Babies["Baby" + newState.SelectedBaby].Feeds = // TODO: Return from API
-      // newState.Babies["Baby" + newState.SelectedBaby].Goals = // TODO: Return from API
-
-      newState.Babies["Baby" + newState.SelectedBaby].Weights = action.payload.weights;
       newState.UI.IsLoading = false;
       newState.UI.IsSaving = false;
-      newState.UI.FeedRecorder.SelectedRecipeId = action.payload.recipeId;
+      newState.UI.FeedRecorder.SelectedRecipeId = selectedRecipeId;
       newState.UI.FeedRecorder.SelectedHour = parseInt(moment().format("h"));
       newState.UI.FeedRecorder.SelectedMinute = moment().minute();
       newState.UI.FeedRecorder.SelectedAmPm = moment().format("a");
       newState.UI.FeedRecorder.SelectedVolume = selectedVolume;
       newState.UI.FeedRecorder.SelectedVolumeUnit = selectedRecipeVolumeUnit;
+      console.log("Reloaded from server. State is now:");
+      console.log(newState);
       break;
   }
 
@@ -3543,6 +3571,11 @@ function () {
     key: "GetCurrentBabyWeightRecord",
     value: function GetCurrentBabyWeightRecord() {
       return this.GetCurrentBabyDetails().Weights[this.GetCurrentBabyDetails().Weights.length - 1];
+    }
+  }, {
+    key: "GetCurrentBabyGoalCaloriesPerKilogram",
+    value: function GetCurrentBabyGoalCaloriesPerKilogram() {
+      return this.GetCurrentBabyDetails().Goals[this.GetCurrentBabyDetails().Goals.length - 1].CaloriesPerKilogram;
     }
   }, {
     key: "GetRecipeRecord",
