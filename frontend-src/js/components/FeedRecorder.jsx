@@ -347,6 +347,17 @@ export default class FeedRecorder extends Component {
         let buttonData = e.target.dataset;
 
         StateManager.UpdateValue("UI.FeedRecorder.SelectedRecipeId", parseInt(buttonData.recipeId));
+
+        // change the unit if the recipe changes between recording in calories vs volume
+        let selectedRecipe = StateManager.GetRecipeRecord(StateManager.GetFeedRecorderData().SelectedRecipeId);
+        let newUnit = "";
+        if (selectedRecipe.CaloriesPerOunce > 0)
+            newUnit = (StateManager.State().Account.Settings.DisplayVolumeAsMetric) ? "mls" : "ozs";
+        else newUnit = "cals";
+        if (StateManager.State().UI.FeedRecorder.SelectedVolumeUnit !== newUnit) {
+            StateManager.UpdateValue("UI.FeedRecorder.SelectedVolumeUnit", newUnit);
+        }
+
         StateManager.UpdateValue("UI.SelectedModalData.Content", "");
 
     }

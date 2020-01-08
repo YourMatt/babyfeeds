@@ -1190,7 +1190,17 @@ function (_Component) {
       e.preventDefault();
       var buttonData = e.target.dataset;
 
-      _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedRecipeId", parseInt(buttonData.recipeId));
+      _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedRecipeId", parseInt(buttonData.recipeId)); // change the unit if the recipe changes between recording in calories vs volume
+
+
+      var selectedRecipe = _StateManager["default"].GetRecipeRecord(_StateManager["default"].GetFeedRecorderData().SelectedRecipeId);
+
+      var newUnit = "";
+      if (selectedRecipe.CaloriesPerOunce > 0) newUnit = _StateManager["default"].State().Account.Settings.DisplayVolumeAsMetric ? "mls" : "ozs";else newUnit = "cals";
+
+      if (_StateManager["default"].State().UI.FeedRecorder.SelectedVolumeUnit !== newUnit) {
+        _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedVolumeUnit", newUnit);
+      }
 
       _StateManager["default"].UpdateValue("UI.SelectedModalData.Content", "");
     } // opens menu to add a new recipe

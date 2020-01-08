@@ -117,9 +117,7 @@ exports.process = function (req, res) {
                                     calories,
                                     recipeId,
                                     () => {
-                                        database.query.updateBabyDefaultRecipe(process.env.SELECTED_BABY, recipeId, () => {
-                                            res.json({});
-                                        });
+                                        res.json({});
                                     });
                             }
 
