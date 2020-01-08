@@ -82,6 +82,12 @@ export default class FeedRecorder extends Component {
             volume: StateManager.GetFeedRecorderData().SelectedVolume,
         };
 
+        // adjust the volume to match a number by the increment step
+        let selectedVolume = 0;
+        if (StateManager.GetFeedRecorderData().SelectedVolume) {
+            selectedVolume = Math.round((StateManager.GetFeedRecorderData().SelectedVolume - sliderVolumeData.sliderIncrement) / sliderVolumeData.sliderIncrement) * sliderVolumeData.sliderIncrement + sliderVolumeData.sliderIncrement;
+        }
+
         // return jsx
         return (
             <div className={FormatCssClass("feed-recorder")}>
@@ -133,14 +139,14 @@ export default class FeedRecorder extends Component {
                         </div>
                         <div className={FormatCssClass("volume-control")}>
                             <div className={FormatCssClass("volume")}>
-                                {StateManager.GetFeedRecorderData().SelectedVolume}<small>{sliderVolumeData.unitLabel}</small>
+                                {selectedVolume}<small>{sliderVolumeData.unitLabel}</small>
                             </div>
                             <div className={FormatCssClass("slider")}>
                                 <input
                                     type="range"
                                     min={sliderVolumeData.sliderMin}
                                     max={sliderVolumeData.sliderMax}
-                                    value={StateManager.GetFeedRecorderData().SelectedVolume}
+                                    value={selectedVolume}
                                     step={sliderVolumeData.sliderIncrement}
                                     onChange={this.updateVolume}
                                 />

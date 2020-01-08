@@ -931,7 +931,14 @@ function (_Component) {
 
       var sliderVolumeData = _objectSpread({}, remainingVolumeData, {
         volume: _StateManager["default"].GetFeedRecorderData().SelectedVolume
-      }); // return jsx
+      }); // adjust the volume to match a number by the increment step
+
+
+      var selectedVolume = 0;
+
+      if (_StateManager["default"].GetFeedRecorderData().SelectedVolume) {
+        selectedVolume = Math.round((_StateManager["default"].GetFeedRecorderData().SelectedVolume - sliderVolumeData.sliderIncrement) / sliderVolumeData.sliderIncrement) * sliderVolumeData.sliderIncrement + sliderVolumeData.sliderIncrement;
+      } // return jsx
 
 
       return _react["default"].createElement("div", {
@@ -1005,13 +1012,13 @@ function (_Component) {
         className: (0, _FormatCssClass["default"])("volume-control")
       }, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("volume")
-      }, _StateManager["default"].GetFeedRecorderData().SelectedVolume, _react["default"].createElement("small", null, sliderVolumeData.unitLabel)), _react["default"].createElement("div", {
+      }, selectedVolume, _react["default"].createElement("small", null, sliderVolumeData.unitLabel)), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("slider")
       }, _react["default"].createElement("input", {
         type: "range",
         min: sliderVolumeData.sliderMin,
         max: sliderVolumeData.sliderMax,
-        value: _StateManager["default"].GetFeedRecorderData().SelectedVolume,
+        value: selectedVolume,
         step: sliderVolumeData.sliderIncrement,
         onChange: this.updateVolume
       }))), _react["default"].createElement("div", {
