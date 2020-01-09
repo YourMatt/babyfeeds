@@ -18,7 +18,7 @@ export default class MenuRecipes extends Component {
         super(props, context);
         this.previousState = {};
 
-        StateManager.Store.subscribe(() => {
+        this.unsubscribe = StateManager.Store.subscribe(() => {
             if (StateManager.ValueChanged(this.previousState, [
                     "Account.Recipes",
                     "UI.EditingRecipe"
@@ -29,7 +29,12 @@ export default class MenuRecipes extends Component {
         this.addRecipe = this.addRecipe.bind(this);
         this.editRecipe = this.editRecipe.bind(this);
 
-    };
+    }
+
+    // Unmount actions.
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
 
     // Renders the menu panel.
     render() {

@@ -19,7 +19,7 @@ export default class Age extends Component {
         super(props, context);
         this.previousState = {};
 
-        StateManager.Store.subscribe(() => {
+        this.unsubscribe = StateManager.Store.subscribe(() => {
             if (StateManager.ValueChanged(this.previousState, [
                     "SelectedBaby",
                     "Babies.Baby" + StateManager.State().SelectedBaby + ".BirthDate",
@@ -32,6 +32,11 @@ export default class Age extends Component {
         // bind event handlers
         this.changeAgeDisplay = this.changeAgeDisplay.bind(this);
 
+    }
+
+    // Unmount actions.
+    componentWillUnmount() {
+        this.unsubscribe();
     }
 
     // Renders the age block.

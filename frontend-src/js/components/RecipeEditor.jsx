@@ -22,7 +22,7 @@ export default class RecipeEditor extends Component {
         super(props, context);
         this.previousState = {};
 
-        StateManager.Store.subscribe(() => {
+        this.unsubscribe = StateManager.Store.subscribe(() => {
             if (StateManager.ValueChanged(this.previousState, [
                     "UI.EditingRecipe",
                     "UI.IsSaving"
@@ -35,7 +35,12 @@ export default class RecipeEditor extends Component {
         this.setCalorieTypeToVariable = this.setCalorieTypeToVariable.bind(this);
         this.setCalorieTypeToVolume = this.setCalorieTypeToVolume.bind(this);
 
-    };
+    }
+
+    // Unmount actions.
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
 
     // Renders the menu panel.
     render() {

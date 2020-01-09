@@ -21,7 +21,7 @@ export default class FeedEditor extends Component {
         super(props, context);
         this.previousState = {};
 
-        StateManager.Store.subscribe(() => {
+        this.unsubscribe = StateManager.Store.subscribe(() => {
             if (StateManager.ValueChanged(this.previousState, [
                     "UI.EditingFeed",
                     "UI.IsSaving"
@@ -31,7 +31,12 @@ export default class FeedEditor extends Component {
 
         this.submitFeed = this.submitFeed.bind(this);
 
-    };
+    }
+
+    // Unmount actions.
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
 
     // Renders the menu panel.
     render() {

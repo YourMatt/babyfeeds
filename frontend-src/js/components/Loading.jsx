@@ -17,11 +17,16 @@ export default class Loading extends Component {
         super(props, context);
         this.previousState = StateManager.CopyState();
 
-        StateManager.Store.subscribe(() => {
+        this.unsubscribe = StateManager.Store.subscribe(() => {
             if (StateManager.ValueChanged(this.previousState, "UI.IsLoading"))
                 this.forceUpdate();
         });
 
+    }
+
+    // Unmount actions.
+    componentWillUnmount() {
+        this.unsubscribe();
     }
 
     // Renders the loading overlay.

@@ -15,7 +15,7 @@ export default class MenuBabies extends Component {
     constructor(props, context) {
         super(props, context);
 
-    };
+    }
 
     // Renders the menu panel.
     render() {

@@ -15,7 +15,7 @@ export default class MenuAccount extends Component {
     constructor(props, context) {
         super(props, context);
 
-    };
+    }
 
     // Renders the menu panel.
     render() {

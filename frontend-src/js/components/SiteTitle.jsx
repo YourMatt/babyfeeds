@@ -15,7 +15,7 @@ export default class SiteTitle extends Component {
         // bind event handlers
         this.changeBaby = this.changeBaby.bind(this);
 
-    };
+    }
 
     // Renders the age block.
     render() {

@@ -30,7 +30,7 @@ export default class FeedRecorder extends Component {
             }
         });
 
-        StateManager.Store.subscribe(() => {
+        this.unsubscribe = StateManager.Store.subscribe(() => {
             if (StateManager.ValueChanged(this.previousState, [
                     "Account.Settings.DisplayVolumeAsMetric",
                     "SelectedBaby",
@@ -55,6 +55,11 @@ export default class FeedRecorder extends Component {
         this.addRecipe = this.addRecipe.bind(this);
         this.submitFeed = this.submitFeed.bind(this);
 
+    }
+
+    // Unmount actions.
+    componentWillUnmount() {
+        this.unsubscribe();
     }
 
     // Renders the feed recorder.

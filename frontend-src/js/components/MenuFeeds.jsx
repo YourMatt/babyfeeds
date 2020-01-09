@@ -23,7 +23,7 @@ export default class MenuFeeds extends Component {
         super(props, context);
         this.previousState = {};
 
-        StateManager.Store.subscribe(() => {
+        this.unsubscribe = StateManager.Store.subscribe(() => {
             if (StateManager.ValueChanged(this.previousState, [
                     "SelectedBaby",
                     "Babies.Baby" + StateManager.State().SelectedBaby + ".Feeds", // need to apply for all baby IDs
@@ -35,13 +35,11 @@ export default class MenuFeeds extends Component {
         this.showMoreFeeds = this.showMoreFeeds.bind(this);
         this.editFeed = this.editFeed.bind(this);
 
-    };
+    }
 
-    // Pre-mount logic.
-    componentWillMount() {
-
-        this.reloadFeeds();
-
+    // Unmount actions.
+    componentWillUnmount() {
+        this.unsubscribe();
     }
 
     // Renders the menu panel.

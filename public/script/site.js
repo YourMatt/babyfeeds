@@ -286,18 +286,22 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Age).call(this, props, context));
     _this.previousState = {};
-
-    _StateManager["default"].Store.subscribe(function () {
+    _this.unsubscribe = _StateManager["default"].Store.subscribe(function () {
       if (_StateManager["default"].ValueChanged(_this.previousState, ["SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".BirthDate", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".ExpectedDate", "Account.Settings.DisplayAgeAsAdjusted"])) _this.forceUpdate();
     }); // bind event handlers
 
-
     _this.changeAgeDisplay = _this.changeAgeDisplay.bind(_assertThisInitialized(_this));
     return _this;
-  } // Renders the age block.
+  } // Unmount actions.
 
 
   _createClass(Age, [{
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.unsubscribe();
+    } // Renders the age block.
+
+  }, {
     key: "render",
     value: function render() {
       var age = "";
@@ -408,11 +412,11 @@ function (_Component) {
     _StateManager["default"].ReloadFromServer();
 
     return _this;
-  }
+  } // Renders the full application.
+
 
   _createClass(App, [{
     key: "render",
-    // Renders the full application.
     value: function render() {
       return _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("app")
@@ -691,18 +695,22 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(FeedEditor).call(this, props, context));
     _this.previousState = {};
-
-    _StateManager["default"].Store.subscribe(function () {
+    _this.unsubscribe = _StateManager["default"].Store.subscribe(function () {
       if (_StateManager["default"].ValueChanged(_this.previousState, ["UI.EditingFeed", "UI.IsSaving"])) _this.forceUpdate();
     });
-
     _this.submitFeed = _this.submitFeed.bind(_assertThisInitialized(_this));
     return _this;
-  }
+  } // Unmount actions.
+
 
   _createClass(FeedEditor, [{
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.unsubscribe();
+    } // Renders the menu panel.
+
+  }, {
     key: "render",
-    // Renders the menu panel.
     value: function render() {
       var feed = _StateManager["default"].State().UI.EditingFeed;
 
@@ -893,11 +901,9 @@ function (_Component) {
         _StateManager["default"].ReloadFromServer();
       }
     });
-
-    _StateManager["default"].Store.subscribe(function () {
+    _this.unsubscribe = _StateManager["default"].Store.subscribe(function () {
       if (_StateManager["default"].ValueChanged(_this.previousState, ["Account.Settings.DisplayVolumeAsMetric", "SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".RecipeId", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".FeedsForToday", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Goals", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Weights", "UI.IsSaving", "UI.FeedRecorder"])) _this.forceUpdate();
     });
-
     _this.updateVolume = _this.updateVolume.bind(_assertThisInitialized(_this));
     _this.displayHourSelection = _this.displayHourSelection.bind(_assertThisInitialized(_this));
     _this.displayMinuteSelection = _this.displayMinuteSelection.bind(_assertThisInitialized(_this));
@@ -909,10 +915,16 @@ function (_Component) {
     _this.addRecipe = _this.addRecipe.bind(_assertThisInitialized(_this));
     _this.submitFeed = _this.submitFeed.bind(_assertThisInitialized(_this));
     return _this;
-  } // Renders the feed recorder.
+  } // Unmount actions.
 
 
   _createClass(FeedRecorder, [{
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.unsubscribe();
+    } // Renders the feed recorder.
+
+  }, {
     key: "render",
     value: function render() {
       // find the total volume for the day
@@ -1315,17 +1327,21 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(History).call(this, props, context));
     _this.previousState = {};
-
-    _StateManager["default"].Store.subscribe(function () {
+    _this.unsubscribe = _StateManager["default"].Store.subscribe(function () {
       if (_StateManager["default"].ValueChanged(_this.previousState, ["SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".DailyTotals"])) _this.forceUpdate();
     });
-
     return _this;
-  }
+  } // Unmount actions.
+
 
   _createClass(History, [{
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.unsubscribe();
+    } // Renders the history area.
+
+  }, {
     key: "render",
-    // Renders the history area.
     value: function render() {
       // find date span
       var dateEnd = _StateManager["default"].State().DateToday;
@@ -1432,16 +1448,20 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(LastFeedTime).call(this, props, context));
     _this.previousState = {};
-
-    _StateManager["default"].Store.subscribe(function () {
+    _this.unsubscribe = _StateManager["default"].Store.subscribe(function () {
       if (_StateManager["default"].ValueChanged(_this.previousState, ["SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".LastFeedTime"])) _this.forceUpdate();
     });
-
     return _this;
-  } // Renders the last feed time area.
+  } // Unmount actions.
 
 
   _createClass(LastFeedTime, [{
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.unsubscribe();
+    } // Renders the last feed time area.
+
+  }, {
     key: "render",
     value: function render() {
       return _react["default"].createElement("div", {
@@ -1508,16 +1528,20 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Loading).call(this, props, context));
     _this.previousState = _StateManager["default"].CopyState();
-
-    _StateManager["default"].Store.subscribe(function () {
+    _this.unsubscribe = _StateManager["default"].Store.subscribe(function () {
       if (_StateManager["default"].ValueChanged(_this.previousState, "UI.IsLoading")) _this.forceUpdate();
     });
-
     return _this;
-  } // Renders the loading overlay.
+  } // Unmount actions.
 
 
   _createClass(Loading, [{
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.unsubscribe();
+    } // Renders the loading overlay.
+
+  }, {
     key: "render",
     value: function render() {
       this.previousState = _StateManager["default"].CopyState();
@@ -1561,6 +1585,8 @@ var _MenuAccount = _interopRequireDefault(require("./MenuAccount.jsx"));
 
 var _MenuAbout = _interopRequireDefault(require("./MenuAbout.jsx"));
 
+var _LoadFeeds = _interopRequireDefault(require("../api/LoadFeeds.jsx"));
+
 var _FormatCssClass = _interopRequireDefault(require("../utils/FormatCssClass.jsx"));
 
 var _StateManager = _interopRequireDefault(require("../utils/StateManager.jsx"));
@@ -1603,20 +1629,24 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Menu).call(this, props, context));
     _this.previousState = {};
-
-    _StateManager["default"].Store.subscribe(function () {
+    _this.unsubscribe = _StateManager["default"].Store.subscribe(function () {
       if (_StateManager["default"].ValueChanged(_this.previousState, ["UI.IsMenuOpen", "UI.IsSubMenuOpen"])) _this.forceUpdate();
     }); // bind event handlers
-
 
     _this.changeOpenCloseStatus = _this.changeOpenCloseStatus.bind(_assertThisInitialized(_this));
     _this.openPanel = _this.openPanel.bind(_assertThisInitialized(_this));
     return _this;
-  }
+  } // Unmount actions.
+
 
   _createClass(Menu, [{
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.unsubscribe();
+    } // Renders the menu.
+
+  }, {
     key: "render",
-    // Renders the menu.
     value: function render() {
       // load the menu selection
       var displayPanelContents = "";
@@ -1722,6 +1752,17 @@ function (_Component) {
   }, {
     key: "openPanel",
     value: function openPanel(e) {
+      var panel = e.target.dataset.panel; // load feeds before opening the panel
+
+      if (panel === "feeds") {
+        (0, _LoadFeeds["default"])(function (feedData) {
+          _StateManager["default"].UpdateValue("Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Feeds", feedData);
+
+          _StateManager["default"].UpdateValue("UI.SelectedMenuPanel", panel);
+        });
+        return;
+      }
+
       _StateManager["default"].UpdateValue("UI.SelectedMenuPanel", e.target.dataset.panel);
     }
   }]);
@@ -1732,7 +1773,7 @@ function (_Component) {
 exports["default"] = Menu;
 
 
-},{"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"./MenuAbout.jsx":18,"./MenuAccount.jsx":19,"./MenuBabies.jsx":20,"./MenuFeeds.jsx":21,"./MenuRecipes.jsx":22,"./MenuWeights.jsx":23,"react":82}],18:[function(require,module,exports){
+},{"../api/LoadFeeds.jsx":2,"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"./MenuAbout.jsx":18,"./MenuAccount.jsx":19,"./MenuBabies.jsx":20,"./MenuFeeds.jsx":21,"./MenuRecipes.jsx":22,"./MenuWeights.jsx":23,"react":82}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1779,11 +1820,11 @@ function (_Component) {
     _classCallCheck(this, MenuAbout);
 
     return _possibleConstructorReturn(this, _getPrototypeOf(MenuAbout).call(this, props, context));
-  }
+  } // Renders the menu panel.
+
 
   _createClass(MenuAbout, [{
     key: "render",
-    // Renders the menu panel.
     value: function render() {
       return _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("menu-panel-sub open")
@@ -1844,11 +1885,11 @@ function (_Component) {
     _classCallCheck(this, MenuAccount);
 
     return _possibleConstructorReturn(this, _getPrototypeOf(MenuAccount).call(this, props, context));
-  }
+  } // Renders the menu panel.
+
 
   _createClass(MenuAccount, [{
     key: "render",
-    // Renders the menu panel.
     value: function render() {
       return _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("menu-panel-sub open")
@@ -1909,11 +1950,11 @@ function (_Component) {
     _classCallCheck(this, MenuBabies);
 
     return _possibleConstructorReturn(this, _getPrototypeOf(MenuBabies).call(this, props, context));
-  }
+  } // Renders the menu panel.
+
 
   _createClass(MenuBabies, [{
     key: "render",
-    // Renders the menu panel.
     value: function render() {
       return _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("menu-panel-sub open")
@@ -1987,22 +2028,20 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuFeeds).call(this, props, context));
     _this.previousState = {};
-
-    _StateManager["default"].Store.subscribe(function () {
+    _this.unsubscribe = _StateManager["default"].Store.subscribe(function () {
       if (_StateManager["default"].ValueChanged(_this.previousState, ["SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Feeds", // need to apply for all baby IDs
       "UI.EditingFeed"])) _this.forceUpdate();
     });
-
     _this.showMoreFeeds = _this.showMoreFeeds.bind(_assertThisInitialized(_this));
     _this.editFeed = _this.editFeed.bind(_assertThisInitialized(_this));
     return _this;
-  }
+  } // Unmount actions.
+
 
   _createClass(MenuFeeds, [{
-    key: "componentWillMount",
-    // Pre-mount logic.
-    value: function componentWillMount() {
-      this.reloadFeeds();
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.unsubscribe();
     } // Renders the menu panel.
 
   }, {
@@ -2209,19 +2248,23 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuRecipes).call(this, props, context));
     _this.previousState = {};
-
-    _StateManager["default"].Store.subscribe(function () {
+    _this.unsubscribe = _StateManager["default"].Store.subscribe(function () {
       if (_StateManager["default"].ValueChanged(_this.previousState, ["Account.Recipes", "UI.EditingRecipe"])) _this.forceUpdate();
     });
-
     _this.addRecipe = _this.addRecipe.bind(_assertThisInitialized(_this));
     _this.editRecipe = _this.editRecipe.bind(_assertThisInitialized(_this));
     return _this;
-  }
+  } // Unmount actions.
+
 
   _createClass(MenuRecipes, [{
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.unsubscribe();
+    } // Renders the menu panel.
+
+  }, {
     key: "render",
-    // Renders the menu panel.
     value: function render() {
       var content = "";
 
@@ -2402,18 +2445,22 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuWeights).call(this, props, context));
     _this.previousState = {};
-
-    _StateManager["default"].Store.subscribe(function () {
+    _this.unsubscribe = _StateManager["default"].Store.subscribe(function () {
       if (_StateManager["default"].ValueChanged(_this.previousState, ["UI.IsSaving", "Account.Settings.DisplayWeightAsMetric", "SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Weights"])) _this.forceUpdate();
     });
-
     _this.submitWeight = _this.submitWeight.bind(_assertThisInitialized(_this));
     return _this;
-  }
+  } // Unmount actions.
+
 
   _createClass(MenuWeights, [{
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.unsubscribe();
+    } // Renders the menu panel.
+
+  }, {
     key: "render",
-    // Renders the menu panel.
     value: function render() {
       this.previousState = _StateManager["default"].CopyState();
 
@@ -2551,18 +2598,22 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Modal).call(this, props, context));
     _this.previousState = {};
-
-    _StateManager["default"].Store.subscribe(function () {
+    _this.unsubscribe = _StateManager["default"].Store.subscribe(function () {
       if (_StateManager["default"].ValueChanged(_this.previousState, ["UI.SelectedModalData"])) _this.forceUpdate();
     }); // bind event handlers
 
-
     _this.dismissModal = _this.dismissModal.bind(_assertThisInitialized(_this));
     return _this;
-  } // Renders the modal window.
+  } // Unmount actions.
 
 
   _createClass(Modal, [{
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.unsubscribe();
+    } // Renders the modal window.
+
+  }, {
     key: "render",
     value: function render() {
       if (!_StateManager["default"].State().UI.SelectedModalData.Content) return null;
@@ -2648,21 +2699,25 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(RecipeEditor).call(this, props, context));
     _this.previousState = {};
-
-    _StateManager["default"].Store.subscribe(function () {
+    _this.unsubscribe = _StateManager["default"].Store.subscribe(function () {
       if (_StateManager["default"].ValueChanged(_this.previousState, ["UI.EditingRecipe", "UI.IsSaving"])) _this.forceUpdate();
     });
-
     _this.submitRecipe = _this.submitRecipe.bind(_assertThisInitialized(_this));
     _this.changeActiveStatus = _this.changeActiveStatus.bind(_assertThisInitialized(_this));
     _this.setCalorieTypeToVariable = _this.setCalorieTypeToVariable.bind(_assertThisInitialized(_this));
     _this.setCalorieTypeToVolume = _this.setCalorieTypeToVolume.bind(_assertThisInitialized(_this));
     return _this;
-  }
+  } // Unmount actions.
+
 
   _createClass(RecipeEditor, [{
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.unsubscribe();
+    } // Renders the menu panel.
+
+  }, {
     key: "render",
-    // Renders the menu panel.
     value: function render() {
       var recipe = _StateManager["default"].State().UI.EditingRecipe;
 
@@ -2844,11 +2899,11 @@ function (_Component) {
 
     _this.changeBaby = _this.changeBaby.bind(_assertThisInitialized(_this));
     return _this;
-  }
+  } // Renders the age block.
+
 
   _createClass(SiteTitle, [{
     key: "render",
-    // Renders the age block.
     value: function render() {
       // return jsx
       return _react["default"].createElement("div", {
@@ -2921,19 +2976,23 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Weight).call(this, props, context));
     _this.previousState = {};
-
-    _StateManager["default"].Store.subscribe(function () {
+    _this.unsubscribe = _StateManager["default"].Store.subscribe(function () {
       if (_StateManager["default"].ValueChanged(_this.previousState, ["Account.Settings.DisplayWeightAsMetric", "SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Weights"])) _this.forceUpdate();
     }); // bind event handlers
 
-
     _this.changeWeightDisplay = _this.changeWeightDisplay.bind(_assertThisInitialized(_this));
     return _this;
-  }
+  } // Unmount actions.
+
 
   _createClass(Weight, [{
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.unsubscribe();
+    } // Renders the age block.
+
+  }, {
     key: "render",
-    // Renders the age block.
     value: function render() {
       this.previousState = _StateManager["default"].CopyState(); // return jsx
 

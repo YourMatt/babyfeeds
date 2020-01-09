@@ -14,6 +14,7 @@ import MenuAccount from "./MenuAccount.jsx";
 import MenuAbout from "./MenuAbout.jsx";
 
 // import utilities
+import ApiLoadFeeds from "../api/LoadFeeds.jsx";
 import FormatCssClass from "../utils/FormatCssClass.jsx";
 import StateManager from "../utils/StateManager.jsx";
 
@@ -25,7 +26,7 @@ export default class Menu extends Component {
         super(props, context);
         this.previousState = {};
 
-        StateManager.Store.subscribe(() => {
+        this.unsubscribe = StateManager.Store.subscribe(() => {
             if (StateManager.ValueChanged(this.previousState, [
                     "UI.IsMenuOpen",
                     "UI.IsSubMenuOpen"
@@ -37,7 +38,12 @@ export default class Menu extends Component {
         this.changeOpenCloseStatus = this.changeOpenCloseStatus.bind(this);
         this.openPanel = this.openPanel.bind(this);
 
-    };
+    }
+
+    // Unmount actions.
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
 
     // Renders the menu.
     render() {
@@ -144,6 +150,17 @@ export default class Menu extends Component {
 
     // Handles panel selection.
     openPanel(e) {
+
+        let panel = e.target.dataset.panel;
+
+        // load feeds before opening the panel
+        if (panel ===  "feeds") {
+            ApiLoadFeeds(feedData => {
+                StateManager.UpdateValue("Babies.Baby" + StateManager.State().SelectedBaby + ".Feeds", feedData);
+                StateManager.UpdateValue("UI.SelectedMenuPanel", panel);
+            });
+            return;
+        }
 
         StateManager.UpdateValue("UI.SelectedMenuPanel", e.target.dataset.panel);
 

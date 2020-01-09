@@ -15,7 +15,7 @@ export default class LastFeedTime extends Component {
         super(props, context);
         this.previousState = {};
 
-        StateManager.Store.subscribe(() => {
+        this.unsubscribe = StateManager.Store.subscribe(() => {
             if (StateManager.ValueChanged(this.previousState, [
                     "SelectedBaby",
                     "Babies.Baby" + StateManager.State().SelectedBaby + ".LastFeedTime"
@@ -23,6 +23,11 @@ export default class LastFeedTime extends Component {
             )) this.forceUpdate();
         });
 
+    }
+
+    // Unmount actions.
+    componentWillUnmount() {
+        this.unsubscribe();
     }
 
     // Renders the last feed time area.

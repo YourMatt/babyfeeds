@@ -29,7 +29,7 @@ export default class App extends Component {
         // load all server data
         StateManager.ReloadFromServer();
 
-    };
+    }
 
     // Renders the full application.
     render() {

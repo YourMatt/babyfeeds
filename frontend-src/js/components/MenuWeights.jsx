@@ -22,7 +22,7 @@ export default class MenuWeights extends Component {
         super(props, context);
         this.previousState = {};
 
-        StateManager.Store.subscribe(() => {
+        this.unsubscribe = StateManager.Store.subscribe(() => {
             if (StateManager.ValueChanged(this.previousState, [
                     "UI.IsSaving",
                     "Account.Settings.DisplayWeightAsMetric",
@@ -34,7 +34,12 @@ export default class MenuWeights extends Component {
 
         this.submitWeight = this.submitWeight.bind(this);
 
-    };
+    }
+
+    // Unmount actions.
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
 
     // Renders the menu panel.
     render() {

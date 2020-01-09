@@ -18,7 +18,7 @@ export default class Weight extends Component {
         super(props, context);
         this.previousState = {};
 
-        StateManager.Store.subscribe(() => {
+        this.unsubscribe = StateManager.Store.subscribe(() => {
             if (StateManager.ValueChanged(this.previousState, [
                 "Account.Settings.DisplayWeightAsMetric",
                 "SelectedBaby",
@@ -30,7 +30,12 @@ export default class Weight extends Component {
         // bind event handlers
         this.changeWeightDisplay = this.changeWeightDisplay.bind(this);
 
-    };
+    }
+
+    // Unmount actions.
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
 
     // Renders the age block.
     render() {

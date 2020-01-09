@@ -17,7 +17,7 @@ export default class Modal extends Component {
         super(props, context);
         this.previousState = {};
 
-        StateManager.Store.subscribe(() => {
+        this.unsubscribe = StateManager.Store.subscribe(() => {
             if (StateManager.ValueChanged(this.previousState, [
                     "UI.SelectedModalData"
                 ]
@@ -27,6 +27,11 @@ export default class Modal extends Component {
         // bind event handlers
         this.dismissModal = this.dismissModal.bind(this);
 
+    }
+
+    // Unmount actions.
+    componentWillUnmount() {
+        this.unsubscribe();
     }
 
     // Renders the modal window.
