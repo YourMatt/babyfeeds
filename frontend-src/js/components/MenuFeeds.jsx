@@ -33,6 +33,7 @@ export default class MenuFeeds extends Component {
         });
 
         this.showMoreFeeds = this.showMoreFeeds.bind(this);
+        this.createFeed = this.createFeed.bind(this);
         this.editFeed = this.editFeed.bind(this);
 
     }
@@ -70,7 +71,9 @@ export default class MenuFeeds extends Component {
                         <div className={FormatCssClass("feeds-day-block-contents")}>
                         <h2>
                             {dateLabel}
-                            <button className={FormatCssClass("btn-add")}>+</button>
+                            <button className={FormatCssClass("btn-add")}
+                                    data-date={checkDate}
+                                    onClick={this.createFeed}>+</button>
                         </h2>
                         {feedBlocks}
                         </div>
@@ -176,6 +179,22 @@ export default class MenuFeeds extends Component {
         e.preventDefault();
 
         StateManager.UpdateValue("UI.ResultsCondensed", false);
+
+    }
+
+    createFeed(e) {
+        e.preventDefault();
+
+        StateManager.UpdateValue(
+            "UI.EditingFeed",
+            {
+                FeedId: -1,
+                RecipeId: StateManager.GetCurrentBabyDetails().RecipeId,
+                Date: moment(parseInt(e.currentTarget.dataset.date)).format("YYYY-MM-DD"),
+                Time: moment().format("HH:mm"),
+                Calories: 0
+            }
+        );
 
     }
 

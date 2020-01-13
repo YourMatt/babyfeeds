@@ -142,7 +142,7 @@ const reducer = (state, action) => {
                 newState.Babies[babyIndex].ExpectedDate = baby.ExpectedDate;
                 newState.Babies[babyIndex].RecipeId = baby.RecipeId;
                 newState.Babies[babyIndex].DailyTotals = baby.DailyTotals;
-                newState.Babies[babyIndex].LastFeedTime = moment(baby.LastFeedTime).format("h:ma");
+                newState.Babies[babyIndex].LastFeedTime = moment(baby.LastFeedTime).format("h:mma");
                 newState.Babies[babyIndex].LastFeedCalories = baby.LastFeedCalories;
                 newState.Babies[babyIndex].MaxFeedCalories = baby.MaxFeedCalories;
                 newState.Babies[babyIndex].FeedsForToday = baby.FeedsForToday;

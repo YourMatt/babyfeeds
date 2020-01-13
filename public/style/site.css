@@ -724,6 +724,7 @@
           font-size: 1.3em; }
           .menu-area .menu .panel-form .content .form-fields .fields input#input-feed-volume, .menu-area .menu .panel-form .content .form-fields .fields select#input-feed-volume, .menu-area .menu .panel-form .content .form-fields .fields textarea#input-feed-volume {
             width: 80px;
+            margin-right: 5px;
             text-align: right; }
           .menu-area .menu .panel-form .content .form-fields .fields input#select-feed-recipe, .menu-area .menu .panel-form .content .form-fields .fields select#select-feed-recipe, .menu-area .menu .panel-form .content .form-fields .fields textarea#select-feed-recipe {
             max-width: 300px; }

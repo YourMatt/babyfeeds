@@ -655,6 +655,8 @@ var _Converters = require("../utils/Converters.jsx");
 
 var _StateManager = _interopRequireDefault(require("../utils/StateManager.jsx"));
 
+var _LoadFeeds = _interopRequireDefault(require("../api/LoadFeeds.jsx"));
+
 var _SaveFeed = _interopRequireDefault(require("../api/SaveFeed.jsx"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
@@ -698,6 +700,7 @@ function (_Component) {
     _this.unsubscribe = _StateManager["default"].Store.subscribe(function () {
       if (_StateManager["default"].ValueChanged(_this.previousState, ["UI.EditingFeed", "UI.IsSaving"])) _this.forceUpdate();
     });
+    _this.changeRecipe = _this.changeRecipe.bind(_assertThisInitialized(_this));
     _this.submitFeed = _this.submitFeed.bind(_assertThisInitialized(_this));
     return _this;
   } // Unmount actions.
@@ -761,7 +764,8 @@ function (_Component) {
       }, _react["default"].createElement("select", {
         id: "select-feed-recipe",
         name: "inputFeedRecipe",
-        defaultValue: feed.RecipeId
+        defaultValue: feed.RecipeId,
+        onChange: this.changeRecipe
       }, optionsRecipes)), _react["default"].createElement("h2", null, "Volume"), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("fields")
       }, _react["default"].createElement("input", {
@@ -769,21 +773,18 @@ function (_Component) {
         name: "inputFeedVolume",
         type: "number",
         defaultValue: volume
-      }), _react["default"].createElement("select", {
-        id: "select-feed-volume-unit",
-        name: "inputFeedVolumeUnit",
-        defaultValue: volumeUnit
-      }, _react["default"].createElement("option", {
-        value: "mls"
-      }, "Mls"), _react["default"].createElement("option", {
-        value: "ozs"
-      }, "Ozs"), _react["default"].createElement("option", {
-        value: "cals"
-      }, "Cals")))), _react["default"].createElement("button", {
+      }), volumeUnit)), _react["default"].createElement("button", {
         type: "submit",
         className: (0, _FormatCssClass["default"])("save"),
         disabled: _StateManager["default"].State().UI.IsSaving
       }, "Save")));
+    }
+  }, {
+    key: "changeRecipe",
+    value: function changeRecipe(e) {
+      e.preventDefault();
+
+      _StateManager["default"].UpdateValue("UI.EditingFeed.RecipeId", parseInt(e.target.value));
     }
   }, {
     key: "submitFeed",
@@ -794,10 +795,12 @@ function (_Component) {
 
       var recipeId = parseInt(e.target.inputFeedRecipe.value);
       var recipeCaloriesPerOunce = 0;
+      var recipeVolumeUnit = "cals";
 
       _StateManager["default"].State().Account.Recipes.forEach(function (recipe) {
         if (recipe.RecipeId === recipeId) {
           recipeCaloriesPerOunce = recipe.CaloriesPerOunce;
+          if (recipeCaloriesPerOunce > 0) recipeVolumeUnit = _StateManager["default"].State().Account.Settings.DisplayVolumeAsMetric ? "mls" : "ozs";
         }
       });
 
@@ -806,16 +809,22 @@ function (_Component) {
       feed.Date = e.target.inputFeedDate.value;
       feed.Time = e.target.inputFeedTime.value;
       feed.RecipeId = recipeId;
-      feed.Calories = (0, _Converters.ConvertVolumeToCalories)(parseInt(e.target.inputFeedVolume.value), e.target.inputFeedVolumeUnit.value, recipeCaloriesPerOunce);
+      feed.Calories = (0, _Converters.ConvertVolumeToCalories)(parseInt(e.target.inputFeedVolume.value), recipeVolumeUnit, recipeCaloriesPerOunce);
       (0, _SaveFeed["default"])({
         feedId: feed.FeedId,
         dateTime: feed.Date + " " + feed.Time,
         calories: feed.Calories,
         recipeId: feed.RecipeId
       }, function (success) {
-        _StateManager["default"].UpdateValue("UI.IsSaving", false);
+        _StateManager["default"].ReloadFromServer(function () {
+          (0, _LoadFeeds["default"])(function (feedData) {
+            _StateManager["default"].UpdateValue("Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Feeds", feedData);
 
-        _StateManager["default"].ResetEditingFeed();
+            _StateManager["default"].UpdateValue("UI.IsSaving", false);
+
+            _StateManager["default"].ResetEditingFeed();
+          });
+        });
       });
     }
   }]);
@@ -826,7 +835,7 @@ function (_Component) {
 exports["default"] = FeedEditor;
 
 
-},{"../api/SaveFeed.jsx":5,"../utils/Converters.jsx":30,"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"react":82}],13:[function(require,module,exports){
+},{"../api/LoadFeeds.jsx":2,"../api/SaveFeed.jsx":5,"../utils/Converters.jsx":30,"../utils/FormatCssClass.jsx":32,"../utils/StateManager.jsx":35,"react":82}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2033,6 +2042,7 @@ function (_Component) {
       "UI.EditingFeed"])) _this.forceUpdate();
     });
     _this.showMoreFeeds = _this.showMoreFeeds.bind(_assertThisInitialized(_this));
+    _this.createFeed = _this.createFeed.bind(_assertThisInitialized(_this));
     _this.editFeed = _this.editFeed.bind(_assertThisInitialized(_this));
     return _this;
   } // Unmount actions.
@@ -2068,7 +2078,9 @@ function (_Component) {
           }, _react["default"].createElement("div", {
             className: (0, _FormatCssClass["default"])("feeds-day-block-contents")
           }, _react["default"].createElement("h2", null, dateLabel, _react["default"].createElement("button", {
-            className: (0, _FormatCssClass["default"])("btn-add")
+            className: (0, _FormatCssClass["default"])("btn-add"),
+            "data-date": checkDate,
+            onClick: this.createFeed
           }, "+")), feedBlocks)));
           iteration++;
           if (_StateManager["default"].State().UI.ResultsCondensed && iteration >= Constants.FeedHistoryDisplayDays) isComplete = true;else if (!_StateManager["default"].State().UI.ResultsCondensed && checkDate.format("Y-MM-DD") === oldestDate) isComplete = true;
@@ -2163,6 +2175,19 @@ function (_Component) {
       e.preventDefault();
 
       _StateManager["default"].UpdateValue("UI.ResultsCondensed", false);
+    }
+  }, {
+    key: "createFeed",
+    value: function createFeed(e) {
+      e.preventDefault();
+
+      _StateManager["default"].UpdateValue("UI.EditingFeed", {
+        FeedId: -1,
+        RecipeId: _StateManager["default"].GetCurrentBabyDetails().RecipeId,
+        Date: moment(parseInt(e.currentTarget.dataset.date)).format("YYYY-MM-DD"),
+        Time: moment().format("HH:mm"),
+        Calories: 0
+      });
     }
   }, {
     key: "editFeed",
@@ -3467,7 +3492,7 @@ var reducer = function reducer(state, action) {
         newState.Babies[babyIndex].ExpectedDate = baby.ExpectedDate;
         newState.Babies[babyIndex].RecipeId = baby.RecipeId;
         newState.Babies[babyIndex].DailyTotals = baby.DailyTotals;
-        newState.Babies[babyIndex].LastFeedTime = moment(baby.LastFeedTime).format("h:ma");
+        newState.Babies[babyIndex].LastFeedTime = moment(baby.LastFeedTime).format("h:mma");
         newState.Babies[babyIndex].LastFeedCalories = baby.LastFeedCalories;
         newState.Babies[babyIndex].MaxFeedCalories = baby.MaxFeedCalories;
         newState.Babies[babyIndex].FeedsForToday = baby.FeedsForToday;

@@ -11,6 +11,7 @@ import {ConvertCaloriesToVolume, ConvertVolumeToCalories} from "../utils/Convert
 import StateManager from "../utils/StateManager.jsx";
 
 // import api interactions
+import ApiLoadFeeds from "../api/LoadFeeds.jsx";
 import ApiSaveFeed from "../api/SaveFeed.jsx";
 
 // export object
@@ -29,6 +30,7 @@ export default class FeedEditor extends Component {
             )) this.forceUpdate();
         });
 
+        this.changeRecipe = this.changeRecipe.bind(this);
         this.submitFeed = this.submitFeed.bind(this);
 
     }
@@ -79,22 +81,26 @@ export default class FeedEditor extends Component {
                         </div>
                         <h2>Recipe</h2>
                         <div className={FormatCssClass("fields")}>
-                            <select id="select-feed-recipe" name="inputFeedRecipe" defaultValue={feed.RecipeId}>{optionsRecipes}</select>
+                            <select id="select-feed-recipe" name="inputFeedRecipe" defaultValue={feed.RecipeId}
+                                onChange={this.changeRecipe}>{optionsRecipes}</select>
                         </div>
                         <h2>Volume</h2>
                         <div className={FormatCssClass("fields")}>
                             <input id="input-feed-volume" name="inputFeedVolume" type="number" defaultValue={volume}/>
-                            <select id="select-feed-volume-unit" name="inputFeedVolumeUnit" defaultValue={volumeUnit}>
-                                <option value="mls">Mls</option>
-                                <option value="ozs">Ozs</option>
-                                <option value="cals">Cals</option>
-                            </select>
+                            {volumeUnit}
                         </div>
                     </div>
                     <button type="submit" className={FormatCssClass("save")} disabled={StateManager.State().UI.IsSaving}>Save</button>
                 </form>
             </div>
         );
+
+    }
+
+    changeRecipe(e) {
+        e.preventDefault();
+
+        StateManager.UpdateValue("UI.EditingFeed.RecipeId", parseInt(e.target.value));
 
     }
 
@@ -105,9 +111,11 @@ export default class FeedEditor extends Component {
 
         let recipeId = parseInt(e.target.inputFeedRecipe.value);
         let recipeCaloriesPerOunce = 0;
+        let recipeVolumeUnit = "cals";
         StateManager.State().Account.Recipes.forEach((recipe) => {
             if (recipe.RecipeId === recipeId) {
                 recipeCaloriesPerOunce = recipe.CaloriesPerOunce;
+                if (recipeCaloriesPerOunce > 0) recipeVolumeUnit = (StateManager.State().Account.Settings.DisplayVolumeAsMetric) ? "mls" : "ozs";
             }
         });
 
@@ -117,7 +125,7 @@ export default class FeedEditor extends Component {
         feed.RecipeId = recipeId;
         feed.Calories = ConvertVolumeToCalories(
             parseInt(e.target.inputFeedVolume.value),
-            e.target.inputFeedVolumeUnit.value,
+            recipeVolumeUnit,
             recipeCaloriesPerOunce
         );
 
@@ -127,8 +135,13 @@ export default class FeedEditor extends Component {
             calories: feed.Calories,
             recipeId: feed.RecipeId
         }, success => {
-            StateManager.UpdateValue("UI.IsSaving", false);
-            StateManager.ResetEditingFeed();
+            StateManager.ReloadFromServer(() => {
+                ApiLoadFeeds(feedData => {
+                    StateManager.UpdateValue("Babies.Baby" + StateManager.State().SelectedBaby + ".Feeds", feedData);
+                    StateManager.UpdateValue("UI.IsSaving", false);
+                    StateManager.ResetEditingFeed();
+                });
+            });
         });
 
     }
