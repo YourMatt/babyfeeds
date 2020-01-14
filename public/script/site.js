@@ -2850,7 +2850,28 @@ function (_Component) {
     key: "changeActiveStatus",
     value: function changeActiveStatus(e) {
       e.preventDefault();
-      console.log("changing active status");
+
+      _StateManager["default"].UpdateValue("UI.IsSaving", true);
+
+      var selectableStatus = _StateManager["default"].State().UI.EditingRecipe.Selectable ? 0 : 1;
+      (0, _SaveRecipe["default"])({
+        recipeId: _StateManager["default"].State().UI.EditingRecipe.RecipeId,
+        name: _StateManager["default"].State().UI.EditingRecipe.Name,
+        // e.target.inputRecipeName.value,
+        caloriesPerOunce: _StateManager["default"].State().UI.EditingRecipe.CaloriesPerOunce,
+        // parseInt(e.target.inputRecipeCalories.value),
+        notes: _StateManager["default"].State().UI.EditingRecipe.Notes,
+        // e.target.inputRecipeNotes.value,
+        selectable: selectableStatus
+      }, function (success) {
+        (0, _LoadRecipes["default"])(function (recipes) {
+          _StateManager["default"].UpdateValue("Account.Recipes", recipes);
+
+          _StateManager["default"].UpdateValue("UI.EditingRecipe.Selectable", selectableStatus);
+
+          _StateManager["default"].UpdateValue("UI.IsSaving", false);
+        });
+      });
     }
   }, {
     key: "setCalorieTypeToVariable",

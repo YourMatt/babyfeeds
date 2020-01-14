@@ -148,7 +148,26 @@ export default class RecipeEditor extends Component {
     changeActiveStatus(e) {
         e.preventDefault();
 
-        console.log("changing active status");
+        StateManager.UpdateValue("UI.IsSaving", true);
+
+        let selectableStatus = (StateManager.State().UI.EditingRecipe.Selectable) ? 0 : 1;
+
+        ApiSaveRecipe(
+            {
+                recipeId: StateManager.State().UI.EditingRecipe.RecipeId,
+                name: StateManager.State().UI.EditingRecipe.Name, // e.target.inputRecipeName.value,
+                caloriesPerOunce: StateManager.State().UI.EditingRecipe.CaloriesPerOunce, // parseInt(e.target.inputRecipeCalories.value),
+                notes: StateManager.State().UI.EditingRecipe.Notes, // e.target.inputRecipeNotes.value,
+                selectable: selectableStatus
+            },
+            success => {
+                ApiLoadRecipes(recipes => {
+                    StateManager.UpdateValue("Account.Recipes", recipes);
+                    StateManager.UpdateValue("UI.EditingRecipe.Selectable", selectableStatus);
+                    StateManager.UpdateValue("UI.IsSaving", false);
+                });
+            }
+        );
 
     }
 
