@@ -914,6 +914,8 @@ function (_Component) {
       if (_StateManager["default"].ValueChanged(_this.previousState, ["Account.Settings.DisplayVolumeAsMetric", "SelectedBaby", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".RecipeId", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".FeedsForToday", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Goals", "Babies.Baby" + _StateManager["default"].State().SelectedBaby + ".Weights", "UI.IsSaving", "UI.FeedRecorder"])) _this.forceUpdate();
     });
     _this.updateVolume = _this.updateVolume.bind(_assertThisInitialized(_this));
+    _this.showVolumeWidget = _this.showVolumeWidget.bind(_assertThisInitialized(_this));
+    _this.hideVolumeWidget = _this.hideVolumeWidget.bind(_assertThisInitialized(_this));
     _this.displayHourSelection = _this.displayHourSelection.bind(_assertThisInitialized(_this));
     _this.displayMinuteSelection = _this.displayMinuteSelection.bind(_assertThisInitialized(_this));
     _this.displayRecipeSelection = _this.displayRecipeSelection.bind(_assertThisInitialized(_this));
@@ -1041,7 +1043,9 @@ function (_Component) {
         max: sliderVolumeData.sliderMax,
         value: selectedVolume,
         step: sliderVolumeData.sliderIncrement,
-        onChange: this.updateVolume
+        onChange: this.updateVolume,
+        onMouseDown: this.showVolumeWidget,
+        onMouseUp: this.hideVolumeWidget
       }))), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("button")
       }, _react["default"].createElement("button", {
@@ -1182,7 +1186,7 @@ function (_Component) {
 
       _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedHour", parseInt(e.target.innerText));
 
-      _StateManager["default"].UpdateValue("UI.SelectedModalData.Content", "");
+      _StateManager["default"].ResetModal();
     } // Updates the minutes to the selection.
 
   }, {
@@ -1192,7 +1196,7 @@ function (_Component) {
 
       _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedMinute", parseInt(e.target.innerText));
 
-      _StateManager["default"].UpdateValue("UI.SelectedModalData.Content", "");
+      _StateManager["default"].ResetModal();
     } // Toggles the time between AM and PM.
 
   }, {
@@ -1202,7 +1206,7 @@ function (_Component) {
 
       _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedAmPm", _StateManager["default"].GetFeedRecorderData().SelectedAmPm === "am" ? "pm" : "am");
 
-      _StateManager["default"].UpdateValue("UI.SelectedModalData.Content", "");
+      _StateManager["default"].ResetModal();
     } // Updates the recipe to the selection.
 
   }, {
@@ -1223,7 +1227,7 @@ function (_Component) {
         _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedVolumeUnit", newUnit);
       }
 
-      _StateManager["default"].UpdateValue("UI.SelectedModalData.Content", "");
+      _StateManager["default"].ResetModal();
     } // opens menu to add a new recipe
 
   }, {
@@ -1242,6 +1246,33 @@ function (_Component) {
     key: "updateVolume",
     value: function updateVolume(e) {
       _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedVolume", e.target.value);
+
+      _StateManager["default"].UpdateValue("UI.SelectedModalData.Content", this.getVolumeWidgetContent(e.target.value));
+    } // Displays a modal with the selected volume while interacting with the volume changer.
+
+  }, {
+    key: "showVolumeWidget",
+    value: function showVolumeWidget(e) {
+      _StateManager["default"].UpdateValue("UI.SelectedModalData", {
+        AllowDismiss: true,
+        HideScreen: true,
+        FixedToTop: true,
+        Content: this.getVolumeWidgetContent(e.target.value)
+      });
+    } // Hides the modal with the selected volume after finished interacting with the volume changer.
+
+  }, {
+    key: "hideVolumeWidget",
+    value: function hideVolumeWidget(e) {
+      _StateManager["default"].ResetModal();
+    } // Loads the content for the volume widget.
+
+  }, {
+    key: "getVolumeWidgetContent",
+    value: function getVolumeWidgetContent(volume) {
+      return _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("volume-widget")
+      }, volume);
     } // Saves the current selections.
 
   }, {
@@ -1902,7 +1933,7 @@ function (_Component) {
     value: function render() {
       return _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("menu-panel-sub open")
-      }, _react["default"].createElement("h1", null, "Account"), _react["default"].createElement("p", null, "Account panel."));
+      }, _react["default"].createElement("h1", null, "Account"), _react["default"].createElement("h5", null, "Need to be able to set:"), _react["default"].createElement("ol", null, _react["default"].createElement("li", null, "Name"), _react["default"].createElement("li", null, "Email"), _react["default"].createElement("li", null, "Setting: Metric Feed Volumes"), _react["default"].createElement("li", null, "Setting: Metric Weight")), _react["default"].createElement("h5", null, "Other"), _react["default"].createElement("ol", null, _react["default"].createElement("li", null, "Change email or password"), _react["default"].createElement("li", null, "Days left in trial or thank you for purchasing")));
     }
   }]);
 
@@ -1940,9 +1971,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -1956,18 +1987,63 @@ function (_Component) {
 
   // Constructor.
   function MenuBabies(props, context) {
+    var _this;
+
     _classCallCheck(this, MenuBabies);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(MenuBabies).call(this, props, context));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MenuBabies).call(this, props, context));
+    _this.addBaby = _this.addBaby.bind(_assertThisInitialized(_this));
+    return _this;
   } // Renders the menu panel.
 
 
   _createClass(MenuBabies, [{
     key: "render",
     value: function render() {
+      var ccntent = "";
       return _react["default"].createElement("div", {
-        className: (0, _FormatCssClass["default"])("menu-panel-sub open")
-      }, _react["default"].createElement("h1", null, "Babies"), _react["default"].createElement("p", null, "Babies panel."));
+        className: (0, _FormatCssClass["default"])(["menu-panel-sub", "menu-babies"])
+      }, _react["default"].createElement("h1", null, "Babies"), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("content")
+      }, _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])("data")
+      }, _react["default"].createElement("button", {
+        key: "button-baby-add",
+        onClick: this.addBaby
+      }, "Add New Baby"), content)));
+      /*
+      return (
+          <div className={FormatCssClass("menu-panel-sub open")}>
+              <h1>Babies</h1>
+                <h5>Need to be able to set:</h5>
+              <ol>
+                  <li>Name</li>
+                  <li>Birth Date</li>
+                  <li>Expected Date (if preemie)</li>
+                  <li>Default Recipe</li>
+                  <li>Goal Calories</li>
+              </ol>
+                <h5>Other</h5>
+              <ol>
+                  <li>Change email or password</li>
+                  <li>Days left in trial or thank you for purchasing</li>
+              </ol>
+            </div>
+      );
+         */
+    }
+  }, {
+    key: "addBaby",
+    value: function addBaby(e) {
+      e.preventDefault();
+      StateManager.UpdateValue("UI.EditingBaby", {
+        RecipeId: -1,
+        Name: "",
+        Notes: "",
+        CaloriesPerOunce: 0,
+        LastUsed: "",
+        Selectable: true
+      });
     }
   }]);
 
@@ -2641,22 +2717,32 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      if (!_StateManager["default"].State().UI.SelectedModalData.Content) return null;
+      var modalData = _StateManager["default"].State().UI.SelectedModalData;
+
+      if (!modalData.Content) return null;
+      var screen = "";
+
+      if (!modalData.HideScreen) {
+        screen = _react["default"].createElement("div", {
+          className: (0, _FormatCssClass["default"])("screen"),
+          onClick: modalData.AllowDismiss ? this.dismissModal : function () {}
+        });
+      }
+
+      var modalClasses = ["modal"];
+      if (modalData.FixedToTop) modalClasses.push("fixed-to-top");
       return _react["default"].createElement("div", {
-        className: (0, _FormatCssClass["default"])("modal")
-      }, _react["default"].createElement("div", {
-        className: (0, _FormatCssClass["default"])("screen"),
-        onClick: _StateManager["default"].State().UI.SelectedModalData.AllowDismiss ? this.dismissModal : function () {}
-      }), _react["default"].createElement("div", {
+        className: (0, _FormatCssClass["default"])(modalClasses)
+      }, screen, _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("content")
-      }, _StateManager["default"].State().UI.SelectedModalData.Content));
+      }, modalData.Content));
     } // Removes the modal window.
 
   }, {
     key: "dismissModal",
     value: function dismissModal() {
       // remove the modal from state
-      _StateManager["default"].UpdateValue("UI.SelectedModalData.Content", "");
+      _StateManager["default"].ResetModal();
     }
   }]);
 
@@ -3480,6 +3566,8 @@ var storeModel = {
     },
     SelectedModalData: {
       AllowDismiss: false,
+      HideScreen: false,
+      FixedToTop: false,
       Content: ""
     }
   }
@@ -3640,6 +3728,16 @@ function () {
         Date: "",
         Time: "",
         Calories: 0
+      });
+    }
+  }, {
+    key: "ResetModal",
+    value: function ResetModal() {
+      this.UpdateValue("UI.SelectedModalData", {
+        AllowDismiss: false,
+        HideScreen: false,
+        FixedToTop: false,
+        Content: ""
       });
     }
   }, {

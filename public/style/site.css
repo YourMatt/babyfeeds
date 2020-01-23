@@ -26,6 +26,12 @@
   width: 100%;
   height: 100vh;
   z-index: 100; }
+  .modal.fixed-to-top {
+    align-items: flex-start; }
+    .modal.fixed-to-top .content {
+      width: 100%;
+      margin: 60px 20px 0px;
+      text-align: center; }
   .modal .screen {
     width: 100%;
     height: 100vh;
@@ -1198,5 +1204,11 @@ body {
       font-size: 1em;
       line-height: 1em;
       cursor: pointer; }
+
+.volume-widget {
+  padding: 20px 0px 33px;
+  font-size: 5em;
+  background: #000;
+  color: #b2e1ff; }
 
 /*# sourceMappingURL=site.css.map */

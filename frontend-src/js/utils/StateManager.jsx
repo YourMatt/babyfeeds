@@ -106,6 +106,8 @@ const storeModel = {
         },
         SelectedModalData: {
             AllowDismiss: false,
+            HideScreen: false,
+            FixedToTop: false,
             Content: ""
         }
     }
@@ -240,6 +242,17 @@ class StateManager {
                 Date: "",
                 Time: "",
                 Calories: 0
+            }
+        );
+    }
+    ResetModal() {
+        this.UpdateValue(
+            "UI.SelectedModalData",
+            {
+                AllowDismiss: false,
+                HideScreen: false,
+                FixedToTop: false,
+                Content: ""
             }
         );
     }

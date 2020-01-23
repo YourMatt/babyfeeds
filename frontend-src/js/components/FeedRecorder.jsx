@@ -45,6 +45,8 @@ export default class FeedRecorder extends Component {
         });
 
         this.updateVolume = this.updateVolume.bind(this);
+        this.showVolumeWidget = this.showVolumeWidget.bind(this);
+        this.hideVolumeWidget = this.hideVolumeWidget.bind(this);
         this.displayHourSelection = this.displayHourSelection.bind(this);
         this.displayMinuteSelection = this.displayMinuteSelection.bind(this);
         this.displayRecipeSelection = this.displayRecipeSelection.bind(this);
@@ -154,6 +156,8 @@ export default class FeedRecorder extends Component {
                                     value={selectedVolume}
                                     step={sliderVolumeData.sliderIncrement}
                                     onChange={this.updateVolume}
+                                    onMouseDown={this.showVolumeWidget}
+                                    onMouseUp={this.hideVolumeWidget}
                                 />
                             </div>
                         </div>
@@ -323,7 +327,7 @@ export default class FeedRecorder extends Component {
         e.preventDefault();
 
         StateManager.UpdateValue("UI.FeedRecorder.SelectedHour", parseInt(e.target.innerText));
-        StateManager.UpdateValue("UI.SelectedModalData.Content", "");
+        StateManager.ResetModal();
 
     }
 
@@ -332,7 +336,7 @@ export default class FeedRecorder extends Component {
         e.preventDefault();
 
         StateManager.UpdateValue("UI.FeedRecorder.SelectedMinute", parseInt(e.target.innerText));
-        StateManager.UpdateValue("UI.SelectedModalData.Content", "");
+        StateManager.ResetModal();
 
     }
 
@@ -341,7 +345,7 @@ export default class FeedRecorder extends Component {
         e.preventDefault();
 
         StateManager.UpdateValue("UI.FeedRecorder.SelectedAmPm", (StateManager.GetFeedRecorderData().SelectedAmPm === "am") ? "pm" : "am");
-        StateManager.UpdateValue("UI.SelectedModalData.Content", "");
+        StateManager.ResetModal();
 
     }
 
@@ -363,7 +367,7 @@ export default class FeedRecorder extends Component {
             StateManager.UpdateValue("UI.FeedRecorder.SelectedVolumeUnit", newUnit);
         }
 
-        StateManager.UpdateValue("UI.SelectedModalData.Content", "");
+        StateManager.ResetModal();
 
     }
 
@@ -383,6 +387,41 @@ export default class FeedRecorder extends Component {
         StateManager.UpdateValue(
             "UI.FeedRecorder.SelectedVolume",
             e.target.value
+        );
+
+        StateManager.UpdateValue("UI.SelectedModalData.Content", this.getVolumeWidgetContent(e.target.value));
+
+    }
+
+    // Displays a modal with the selected volume while interacting with the volume changer.
+    showVolumeWidget(e) {
+
+        StateManager.UpdateValue(
+            "UI.SelectedModalData",
+            {
+                AllowDismiss: true,
+                HideScreen: true,
+                FixedToTop: true,
+                Content: this.getVolumeWidgetContent(e.target.value)
+            }
+        );
+
+    }
+
+    // Hides the modal with the selected volume after finished interacting with the volume changer.
+    hideVolumeWidget(e) {
+
+        StateManager.ResetModal();
+
+    }
+
+    // Loads the content for the volume widget.
+    getVolumeWidgetContent(volume) {
+
+        return (
+            <div className={FormatCssClass("volume-widget")}>
+                {volume}
+            </div>
         );
 
     }

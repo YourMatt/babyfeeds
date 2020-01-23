@@ -37,16 +37,27 @@ export default class Modal extends Component {
     // Renders the modal window.
     render() {
 
-        if (!StateManager.State().UI.SelectedModalData.Content) return null;
+        let modalData = StateManager.State().UI.SelectedModalData;
+        if (!modalData.Content) return null;
 
-        return (
-            <div className={FormatCssClass("modal")}>
+        let screen = "";
+        if (!modalData.HideScreen) {
+            screen = (
                 <div
                     className={FormatCssClass("screen")}
-                    onClick={(StateManager.State().UI.SelectedModalData.AllowDismiss) ? this.dismissModal : () => {}}
+                    onClick={(modalData.AllowDismiss) ? this.dismissModal : () => {}}
                 />
+            );
+        }
+
+        let modalClasses = ["modal"];
+        if (modalData.FixedToTop) modalClasses.push("fixed-to-top");
+
+        return (
+            <div className={FormatCssClass(modalClasses)}>
+                {screen}
                 <div className={FormatCssClass("content")}>
-                    {StateManager.State().UI.SelectedModalData.Content}
+                    {modalData.Content}
                 </div>
             </div>
         );
@@ -57,7 +68,7 @@ export default class Modal extends Component {
     dismissModal() {
 
         // remove the modal from state
-        StateManager.UpdateValue("UI.SelectedModalData.Content", "");
+        StateManager.ResetModal();
 
     }
 

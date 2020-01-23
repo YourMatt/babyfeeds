@@ -23,7 +23,21 @@ export default class MenuAccount extends Component {
         return (
             <div className={FormatCssClass("menu-panel-sub open")}>
                 <h1>Account</h1>
-                <p>Account panel.</p>
+
+                <h5>Need to be able to set:</h5>
+                <ol>
+                    <li>Name</li>
+                    <li>Email</li>
+                    <li>Setting: Metric Feed Volumes</li>
+                    <li>Setting: Metric Weight</li>
+                </ol>
+
+                <h5>Other</h5>
+                <ol>
+                    <li>Change email or password</li>
+                    <li>Days left in trial or thank you for purchasing</li>
+                </ol>
+
             </div>
         );
 
