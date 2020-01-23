@@ -1045,7 +1045,9 @@ function (_Component) {
         step: sliderVolumeData.sliderIncrement,
         onChange: this.updateVolume,
         onMouseDown: this.showVolumeWidget,
-        onMouseUp: this.hideVolumeWidget
+        onMouseUp: this.hideVolumeWidget,
+        onTouchStart: this.showVolumeWidget,
+        onTouchEnd: this.hideVolumeWidget
       }))), _react["default"].createElement("div", {
         className: (0, _FormatCssClass["default"])("button")
       }, _react["default"].createElement("button", {
@@ -1247,7 +1249,10 @@ function (_Component) {
     value: function updateVolume(e) {
       _StateManager["default"].UpdateValue("UI.FeedRecorder.SelectedVolume", e.target.value);
 
-      _StateManager["default"].UpdateValue("UI.SelectedModalData.Content", this.getVolumeWidgetContent(e.target.value));
+      if (_StateManager["default"].State().UI.SelectedModalData.Content) {
+        // only update if the content exists
+        _StateManager["default"].UpdateValue("UI.SelectedModalData.Content", this.getVolumeWidgetContent(e.target.value));
+      }
     } // Displays a modal with the selected volume while interacting with the volume changer.
 
   }, {

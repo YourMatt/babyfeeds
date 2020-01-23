@@ -158,6 +158,8 @@ export default class FeedRecorder extends Component {
                                     onChange={this.updateVolume}
                                     onMouseDown={this.showVolumeWidget}
                                     onMouseUp={this.hideVolumeWidget}
+                                    onTouchStart={this.showVolumeWidget}
+                                    onTouchEnd={this.hideVolumeWidget}
                                 />
                             </div>
                         </div>
@@ -389,7 +391,9 @@ export default class FeedRecorder extends Component {
             e.target.value
         );
 
-        StateManager.UpdateValue("UI.SelectedModalData.Content", this.getVolumeWidgetContent(e.target.value));
+        if (StateManager.State().UI.SelectedModalData.Content) { // only update if the content exists
+            StateManager.UpdateValue("UI.SelectedModalData.Content", this.getVolumeWidgetContent(e.target.value));
+        }
 
     }
 
