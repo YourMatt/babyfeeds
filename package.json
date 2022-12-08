@@ -11,11 +11,11 @@
   "license": "UNLICENSED",
   "dependencies": {
     "async": "~2.2.0",
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.1",
     "compression": "^1.7.4",
     "dotenv": "~4.0.0",
     "ejs": "^2.7.1",
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "moment": "^2.24.0",
     "mysql": "^2.17.1",
     "numeral": "~2.0.6"
